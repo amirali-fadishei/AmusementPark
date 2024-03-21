@@ -5,12 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="586222ac-090b-46db-9726-9853c5537acd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AmusementPark.iml" beforeDir="false" afterPath="$PROJECT_DIR$/AmusementPark.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cards.java" beforeDir="false" afterPath="$PROJECT_DIR$/Cards.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Coins.java" beforeDir="false" afterPath="$PROJECT_DIR$/Coins.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PrizeCards.java" beforeDir="false" afterPath="$PROJECT_DIR$/PrizeCards.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -25,6 +37,8 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;Application.AmusementParkPage.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
@@ -46,7 +60,13 @@
       <option name="presentableId" value="Default" />
       <updated>1710598729019</updated>
       <workItem from="1710598730137" duration="557000" />
-      <workItem from="1710617427204" duration="172000" />
+      <workItem from="1710617427204" duration="1362000" />
+      <workItem from="1710745775113" duration="2866000" />
+      <workItem from="1710749057861" duration="268000" />
+      <workItem from="1710787787674" duration="934000" />
+      <workItem from="1710837921785" duration="24000" />
+      <workItem from="1710940310146" duration="3521000" />
+      <workItem from="1711020145618" duration="123000" />
     </task>
     <servers />
   </component>
