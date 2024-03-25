@@ -5,12 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="586222ac-090b-46db-9726-9853c5537acd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AmusementPark.iml" beforeDir="false" afterPath="$PROJECT_DIR$/AmusementPark.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cards.java" beforeDir="false" afterPath="$PROJECT_DIR$/Cards.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Coins.java" beforeDir="false" afterPath="$PROJECT_DIR$/Coins.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PrizeCards.java" beforeDir="false" afterPath="$PROJECT_DIR$/PrizeCards.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cards.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Coins.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Players.java" beforeDir="false" afterPath="$PROJECT_DIR$/Players.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PrizeCards.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,8 +37,10 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
     &quot;Application.AmusementParkPage.executor&quot;: &quot;Run&quot;,
     &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Application.ResponsivePage.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
@@ -48,6 +50,9 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -67,10 +72,32 @@
       <workItem from="1710837921785" duration="24000" />
       <workItem from="1710940310146" duration="3521000" />
       <workItem from="1711020145618" duration="123000" />
+      <workItem from="1711020618570" duration="4442000" />
+      <workItem from="1711045334028" duration="1042000" />
+      <workItem from="1711094888898" duration="1740000" />
+      <workItem from="1711113600079" duration="1413000" />
+      <workItem from="1711202656361" duration="3420000" />
+      <workItem from="1711270920050" duration="3276000" />
+      <workItem from="1711282286181" duration="4987000" />
+      <workItem from="1711365090540" duration="1380000" />
+      <workItem from="1711376005615" duration="660000" />
+      <workItem from="1711376679027" duration="94000" />
+      <workItem from="1711378837715" duration="8307000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
