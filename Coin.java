@@ -17,9 +17,6 @@ public class Coin {
     public int getNum(){
         return this.num;
     }
-    public void changeNum(int Newnum){
-        this.num-=Newnum;
-    }
 
     //ترتیب سکه ها در تعریف آرایه سکه های هر کارت:
     //سبز-سفید-سیاه-آبی-قرمز-طلایی

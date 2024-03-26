@@ -1,6 +1,6 @@
 public class specialCoin {
     private String type;
-    private int num;
+    int num;
     private void setType(String name){
         this.type = name;
     }
@@ -17,7 +17,7 @@ public class specialCoin {
         this.setType(Type);
         this.setNum(n);
     }
-    public void changeNum(int Newnum){
-        this.num+=Newnum;
+    public void changeNum(int newNum){
+        this.num+=newNum;
     }
 }

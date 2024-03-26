@@ -6,11 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="586222ac-090b-46db-9726-9853c5537acd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cards.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Coins.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Card.java" beforeDir="false" afterPath="$PROJECT_DIR$/Card.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Coin.java" beforeDir="false" afterPath="$PROJECT_DIR$/Coin.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Players.java" beforeDir="false" afterPath="$PROJECT_DIR$/Players.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PrizeCards.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/specialCoin.java" beforeDir="false" afterPath="$PROJECT_DIR$/specialCoin.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,6 +26,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
@@ -83,6 +86,8 @@
       <workItem from="1711376005615" duration="660000" />
       <workItem from="1711376679027" duration="94000" />
       <workItem from="1711378837715" duration="8307000" />
+      <workItem from="1711435586756" duration="11166000" />
+      <workItem from="1711482524595" duration="3759000" />
     </task>
     <servers />
   </component>
@@ -99,5 +104,34 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/Main.java</url>
+          <line>14</line>
+          <properties class="Main" method="&lt;init&gt;">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/Main.java</url>
+          <line>54</line>
+          <properties class="Main" method="openMainPage">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Main.java</url>
+          <line>189</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
