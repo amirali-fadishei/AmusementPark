@@ -196,238 +196,160 @@ public class Main extends JFrame {
         grayPanel.setPreferredSize(new Dimension(1280, 720));
 
 
-        Card prize1 = new Card(3);
-        Card prize2 = new Card(4);
-        Card prize3 = new Card(4);
-        Card card11 = new Card(1);
-        Card card12 = new Card(1);
-        Card card13 = new Card(1);
-        Card card14 = new Card(0);
-        Card card15 = new Card(0);
-        Card card16 = new Card(0);
-        Card card17 = new Card(1);
-        Card card18 = new Card(1);
-        Card card19 = new Card(0);
-        Card card110 = new Card(0);
-        Card card111 = new Card(1);
-        Card card112 = new Card(1);
-        Card card113 = new Card(1);
-        Card card114 = new Card(0);
-        Card card115 = new Card(1);
-        Card card21 = new Card(2);
-        Card card22 = new Card(2);
-        Card card23 = new Card(2);
-        Card card24 = new Card(2);
-        Card card25 = new Card(2);
-        Card card26 = new Card(3);
-        Card card27 = new Card(3);
-        Card card28 = new Card(3);
-        Card card29 = new Card(3);
-        Card card210 = new Card(3);
-        Card card211 = new Card(4);
-        Card card212 = new Card(4);
-        Card card213 = new Card(4);
-        Card card214 = new Card(4);
-        Card card215 = new Card(4);
-        Card card31 = new Card(3);
-        Card card32 = new Card(4);
-        Card card33 = new Card(5);
-        Card card34 = new Card(3);
-        Card card35 = new Card(3);
-        Card card36 = new Card(4);
-        Card card37 = new Card(5);
-        Card card38 = new Card(5);
-        Card card39 = new Card(5);
-        Card card310 = new Card(4);
-        Card card311 = new Card(4);
-        Card card312 = new Card(3);
-        Card card313 = new Card(3);
-        Card card314 = new Card(3);
-        Card card315 = new Card(3);
+        Coin[] prize1Coins = new Coin[]{new Coin(4,"green"),null,null,null,new Coin(4,"red")};
+        Coin[] prize2Coins = new Coin[]{new Coin(5,"green"),null,null,null,new Coin(5,"red")};
+        Coin[] prize3Coins = new Coin[]{new Coin(5,"green"),null,null,new Coin(4,"blue"),null};
+        Card[] prizeList = {new Card(3,prize1Coins,new JLabel(new ImageIcon("images\\card prize\\prize1.png"))),
+                new Card(4,prize2Coins,new JLabel(new ImageIcon("images\\card prize\\prize2.png"))),
+                new Card(4,prize3Coins,new JLabel(new ImageIcon("images\\card prize\\prize3.png")))};
 
-        prize1.coinList[0] = new Coin(4,"green");
-        prize1.coinList[4] = new Coin(4,"red");
-        prize2.coinList[0] = new Coin(5,"green");
-        prize2.coinList[4] = new Coin(5,"red");
-        prize3.coinList[0] = new Coin(5,"green");
-        prize3.coinList[3] = new Coin(4,"blue");
-        card11.SCoins[3] = new specialCoin(1,"blue");
-        card11.coinList[0] = new Coin(2,"green");
-        card11.coinList[4] = new Coin(2,"red");
-        card12.SCoins[3] = new specialCoin(1,"blue");
-        card12.coinList[0] = new Coin(2,"green");
-        card12.coinList[4] = new Coin(3,"red");
-        card13.SCoins[3] = new specialCoin(1,"blue");
-        card13.coinList[0] = new Coin(3,"green");
-        card13.coinList[4] = new Coin(3,"red");
-        card14.SCoins[0] = new specialCoin(1,"green");
-        card14.coinList[3] = new Coin(3,"blue");
-        card14.coinList[4] = new Coin(3,"red");
-        card15.SCoins[0] = new specialCoin(1,"green");
-        card15.coinList[3] = new Coin(3,"blue");
-        card15.coinList[4] = new Coin(2,"red");
-        card16.SCoins[0] = new specialCoin(1,"green");
-        card16.coinList[3] = new Coin(3,"blue");
-        card16.coinList[4] = new Coin(1,"red");
-        card17.SCoins[0] = new specialCoin(1,"green");
-        card17.coinList[3] = new Coin(3,"blue");
-        card17.coinList[4] = new Coin(3,"red");
-        card18.SCoins[0] = new specialCoin(1,"green");
-        card18.coinList[0] = new Coin(1,"green");
-        card18.coinList[3] = new Coin(3,"blue");
-        card18.coinList[4] = new Coin(2,"red");
-        card19.SCoins[0] = new specialCoin(1,"green");
-        card19.coinList[0] = new Coin(1,"green");
-        card19.coinList[3] = new Coin(2,"blue");
-        card19.coinList[4] = new Coin(3,"red");
-        card110.SCoins[4] = new specialCoin(1,"red");
-        card110.coinList[0] = new Coin(2,"green");
-        card110.coinList[3] = new Coin(2,"blue");
-        card111.SCoins[4] = new specialCoin(1,"red");
-        card111.coinList[0] = new Coin(2,"green");
-        card111.coinList[3] = new Coin(2,"blue");
-        card112.SCoins[4] = new specialCoin(1,"red");
-        card112.coinList[0] = new Coin(3,"green");
-        card112.coinList[3] = new Coin(2,"blue");
-        card113.SCoins[4] = new specialCoin(1,"red");
-        card113.coinList[0] = new Coin(3,"green");
-        card113.coinList[3] = new Coin(3,"blue");
-        card114.SCoins[4] = new specialCoin(1,"red");
-        card114.coinList[0] = new Coin(3,"green");
-        card114.coinList[3] = new Coin(3,"blue");
-        card115.SCoins[4] = new specialCoin(1,"red");
-        card115.coinList[0] = new Coin(2,"green");
-        card115.coinList[3] = new Coin(3,"blue");
-        card21.SCoins[3] = new specialCoin(1,"blue");
-        card21.coinList[3] = new Coin(2,"blue");
-        card21.coinList[2] = new Coin(2,"black");
-        card21.coinList[1] = new Coin(2,"white");
-        card22.SCoins[3] = new specialCoin(1,"blue");
-        card22.coinList[3] = new Coin(3,"blue");
-        card22.coinList[2] = new Coin(2,"black");
-        card22.coinList[1] = new Coin(2,"white");
-        card23.SCoins[3] = new specialCoin(1,"blue");
-        card23.coinList[3] = new Coin(3,"blue");
-        card23.coinList[2] = new Coin(3,"black");
-        card23.coinList[1] = new Coin(2,"white");
-        card24.SCoins[3] = new specialCoin(1,"blue");
-        card24.coinList[3] = new Coin(2,"blue");
-        card24.coinList[2] = new Coin(2,"black");
-        card24.coinList[1] = new Coin(4,"white");
-        card25.SCoins[3] = new specialCoin(1,"blue");
-        card25.coinList[3] = new Coin(2,"blue");
-        card25.coinList[2] = new Coin(2,"black");
-        card25.coinList[1] = new Coin(2,"white");
-        card25.coinList[4] = new Coin(2,"red");
-        card26.SCoins[3] = new specialCoin(1,"blue");
-        card26.coinList[3] = new Coin(3,"blue");
-        card26.coinList[2] = new Coin(3,"black");
-        card26.coinList[4] = new Coin(2,"red");
-        card27.SCoins[3] = new specialCoin(1,"blue");
-        card27.coinList[3] = new Coin(3,"blue");
-        card27.coinList[2] = new Coin(2,"black");
-        card27.coinList[4] = new Coin(3,"red");
-        card28.SCoins[3] = new specialCoin(1,"blue");
-        card28.coinList[3] = new Coin(3,"blue");
-        card28.coinList[2] = new Coin(2,"black");
-        card28.coinList[4] = new Coin(2,"red");
-        card29.SCoins[3] = new specialCoin(1,"blue");
-        card29.coinList[3] = new Coin(2,"blue");
-        card29.coinList[2] = new Coin(2,"black");
-        card29.coinList[4] = new Coin(2,"red");
-        card210.SCoins[0] = new specialCoin(1,"green");
-        card210.coinList[3] = new Coin(4,"blue");
-        card210.coinList[2] = new Coin(3,"black");
-        card210.coinList[4] = new Coin(1,"red");
-        card211.SCoins[0] = new specialCoin(1,"green");
-        card211.coinList[3] = new Coin(3,"blue");
-        card211.coinList[2] = new Coin(3,"black");
-        card211.coinList[4] = new Coin(2,"red");
-        card212.SCoins[0] = new specialCoin(1,"green");
-        card212.coinList[3] = new Coin(3,"blue");
-        card212.coinList[2] = new Coin(2,"black");
-        card212.coinList[4] = new Coin(2,"red");
-        card212.coinList[0] = new Coin(1,"green");
-        card213.SCoins[0] = new specialCoin(1,"green");
-        card213.coinList[2] = new Coin(2,"black");
-        card213.coinList[4] = new Coin(2,"red");
-        card213.coinList[0] = new Coin(2,"green");
-        card214.SCoins[0] = new specialCoin(1,"green");
-        card214.coinList[2] = new Coin(2,"black");
-        card214.coinList[4] = new Coin(3,"red");
-        card214.coinList[0] = new Coin(1,"green");
-        card215.SCoins[0] = new specialCoin(1,"green");
-        card215.coinList[2] = new Coin(3,"black");
-        card215.coinList[4] = new Coin(3,"red");
-        card215.coinList[0] = new Coin(1,"green");
-        card31.SCoins[1] = new specialCoin(1,"white");
-        card31.coinList[0] = new Coin(3,"green");
-        card31.coinList[4] = new Coin(4,"red");
-        card31.coinList[2] = new Coin(3,"black");
-        card32.SCoins[1] = new specialCoin(1,"white");
-        card32.coinList[0] = new Coin(2,"green");
-        card32.coinList[4] = new Coin(4,"red");
-        card32.coinList[2] = new Coin(3,"black");
-        card33.SCoins[1] = new specialCoin(1,"white");
-        card33.coinList[0] = new Coin(2,"green");
-        card33.coinList[4] = new Coin(3,"red");
-        card33.coinList[2] = new Coin(3,"black");
-        card34.SCoins[0] = new specialCoin(1,"green");
-        card34.coinList[0] = new Coin(2,"green");
-        card34.coinList[4] = new Coin(3,"red");
-        card34.coinList[2] = new Coin(2,"black");
-        card35.SCoins[0] = new specialCoin(1,"green");
-        card35.coinList[3] = new Coin(2,"blue");
-        card35.coinList[4] = new Coin(3,"red");
-        card35.coinList[2] = new Coin(2,"black");
-        card36.SCoins[0] = new specialCoin(1,"green");
-        card36.coinList[3] = new Coin(3,"blue");
-        card36.coinList[4] = new Coin(3,"red");
-        card36.coinList[2] = new Coin(2,"black");
-        card37.SCoins[0] = new specialCoin(1,"green");
-        card37.coinList[3] = new Coin(3,"blue");
-        card37.coinList[4] = new Coin(3,"red");
-        card37.coinList[2] = new Coin(3,"black");
-        card38.SCoins[1] = new specialCoin(1,"white");
-        card38.coinList[3] = new Coin(3,"blue");
-        card38.coinList[4] = new Coin(3,"red");
-        card38.coinList[2] = new Coin(3,"black");
-        card38.coinList[0] = new Coin(1,"green");
-        card39.SCoins[1] = new specialCoin(1,"white");
-        card39.coinList[3] = new Coin(3,"blue");
-        card39.coinList[4] = new Coin(3,"red");
-        card39.coinList[2] = new Coin(2,"black");
-        card39.coinList[0] = new Coin(2,"green");
-        card310.SCoins[1] = new specialCoin(1,"white");
-        card310.coinList[3] = new Coin(3,"blue");
-        card310.coinList[4] = new Coin(1,"red");
-        card310.coinList[2] = new Coin(2,"black");
-        card310.coinList[0] = new Coin(2,"green");
-        card311.SCoins[1] = new specialCoin(1,"white");
-        card311.coinList[3] = new Coin(2,"blue");
-        card311.coinList[4] = new Coin(1,"red");
-        card311.coinList[2] = new Coin(2,"black");
-        card311.coinList[0] = new Coin(2,"green");
-        card312.SCoins[1] = new specialCoin(1,"white");
-        card312.coinList[3] = new Coin(1,"blue");
-        card312.coinList[4] = new Coin(1,"red");
-        card312.coinList[2] = new Coin(2,"black");
-        card312.coinList[0] = new Coin(3,"green");
-        card313.SCoins[3] = new specialCoin(1,"blue");
-        card313.coinList[3] = new Coin(1,"blue");
-        card313.coinList[4] = new Coin(1,"red");
-        card313.coinList[2] = new Coin(2,"black");
-        card313.coinList[0] = new Coin(3,"green");
-        card314.SCoins[3] = new specialCoin(1,"blue");
-        card314.coinList[3] = new Coin(1,"blue");
-        card314.coinList[4] = new Coin(2,"red");
-        card314.coinList[2] = new Coin(2,"black");
-        card314.coinList[0] = new Coin(2,"green");
-        card315.SCoins[3] = new specialCoin(1,"blue");
-        card315.coinList[3] = new Coin(1,"blue");
-        card315.coinList[4] = new Coin(2,"red");
-        card315.coinList[2] = new Coin(3,"black");
-        card315.coinList[0] = new Coin(2,"green");
+        for (int t=0;t<3;t++){
+            grayPanel.add(prizeList[t].cardImg);
+        }
+
+        Coin[] card11Coins = new Coin[]{new Coin(2,"green"),null,null,null,new Coin(2,"red")};
+        Coin[] card12Coins = new Coin[]{new Coin(2,"green"),null,null,null,new Coin(3,"red")};
+        Coin[] card13Coins = new Coin[]{new Coin(3,"green"),null,null,null,new Coin(3,"red")};
+        Coin[] card14Coins = new Coin[]{null,null,null,new Coin(3,"blue"),new Coin(3,"red")};
+        Coin[] card15Coins = new Coin[]{null,null,null,new Coin(3,"blue"),new Coin(2,"red")};
+        Coin[] card16Coins = new Coin[]{null,null,null,new Coin(3,"blue"),new Coin(1,"red")};
+        Coin[] card17Coins = new Coin[]{null,null,null,new Coin(3,"blue"),new Coin(3,"red")};
+        Coin[] card18Coins = new Coin[]{new Coin(1,"green"),null,null,new Coin(3,"blue"),new Coin(2,"red")};
+        Coin[] card19Coins = new Coin[]{new Coin(1,"green"),null,null,new Coin(2,"blue"),new Coin(3,"red")};
+        Coin[] card110Coins = new Coin[]{new Coin(2,"green"),null,null,new Coin(2,"blue"),null};
+        Coin[] card111Coins = new Coin[]{new Coin(2,"green"),null,null,new Coin(2,"blue"),null};
+        Coin[] card112Coins = new Coin[]{new Coin(3,"green"),null,null,new Coin(2,"blue"),null};
+        Coin[] card113Coins = new Coin[]{new Coin(3,"green"),null,null,new Coin(3,"blue"),null};
+        Coin[] card114Coins = new Coin[]{new Coin(3,"green"),null,null,new Coin(3,"blue"),null};
+        Coin[] card115Coins = new Coin[]{new Coin(2,"green"),null,null,new Coin(3,"blue"),null};
+        Card[] setCard1 = {new Card(1,card11Coins,new JLabel(new ImageIcon("images\\card1\\11.png"))),
+                new Card(1,card12Coins,new JLabel(new ImageIcon("images\\card1\\12.png"))),
+                new Card(1,card13Coins,new JLabel(new ImageIcon("images\\card1\\13.png"))),
+                new Card(0,card14Coins,new JLabel(new ImageIcon("images\\card1\\14.png"))),
+                new Card(0,card15Coins,new JLabel(new ImageIcon("images\\card1\\15.png"))),
+                new Card(0,card16Coins,new JLabel(new ImageIcon("images\\card1\\16.png"))),
+                new Card(1,card17Coins,new JLabel(new ImageIcon("images\\card1\\17.png"))),
+                new Card(1,card18Coins,new JLabel(new ImageIcon("images\\card1\\18.png"))),
+                new Card(0,card19Coins,new JLabel(new ImageIcon("images\\card1\\19.png"))),
+                new Card(0,card110Coins,new JLabel(new ImageIcon("images\\card1\\110.png"))),
+                new Card(1,card111Coins,new JLabel(new ImageIcon("images\\card1\\111.png"))),
+                new Card(1,card112Coins,new JLabel(new ImageIcon("images\\card1\\112.png"))),
+                new Card(1,card113Coins,new JLabel(new ImageIcon("images\\card1\\113.png"))),
+                new Card(0,card114Coins,new JLabel(new ImageIcon("images\\card1\\114.png"))),
+                new Card(1,card115Coins,new JLabel(new ImageIcon("images\\card1\\115.png")))};
+        setCard1[0].SCoins[3] = new specialCoin(1,"blue");
+        setCard1[1].SCoins[3] = new specialCoin(1,"blue");
+        setCard1[2].SCoins[3] = new specialCoin(1,"blue");
+        setCard1[3].SCoins[0] = new specialCoin(1,"green");
+        setCard1[4].SCoins[0] = new specialCoin(1,"green");
+        setCard1[5].SCoins[0] = new specialCoin(1,"green");
+        setCard1[6].SCoins[0] = new specialCoin(1,"green");
+        setCard1[7].SCoins[0] = new specialCoin(1,"green");
+        setCard1[8].SCoins[0] = new specialCoin(1,"green");
+        setCard1[9].SCoins[4] = new specialCoin(1,"red");
+        setCard1[10].SCoins[4] = new specialCoin(1,"red");
+        setCard1[11].SCoins[4] = new specialCoin(1,"red");
+        setCard1[12].SCoins[4] = new specialCoin(1,"red");
+        setCard1[13].SCoins[4] = new specialCoin(1,"red");
+        setCard1[14].SCoins[4] = new specialCoin(1,"red");
+
+        Coin[] card21Coins = new Coin[]{null,new Coin(2,"white"),new Coin(2,"black"),new Coin(2,"blue"),null};
+        Coin[] card22Coins = new Coin[]{null,new Coin(2,"white"),new Coin(2,"black"),new Coin(3,"blue"),null};
+        Coin[] card23Coins = new Coin[]{null,new Coin(2,"white"),new Coin(3,"black"),new Coin(3,"blue"),null};
+        Coin[] card24Coins = new Coin[]{null,new Coin(4,"white"),new Coin(2,"black"),new Coin(3,"blue"),null};
+        Coin[] card25Coins = new Coin[]{null,new Coin(2,"white"),new Coin(2,"black"),new Coin(2,"blue"),new Coin(2,"red")};
+        Coin[] card26Coins = new Coin[]{null,null,new Coin(3,"black"),new Coin(3,"blue"),new Coin(2,"red")};
+        Coin[] card27Coins = new Coin[]{null,null,new Coin(2,"black"),new Coin(3,"blue"),new Coin(3,"red")};
+        Coin[] card28Coins = new Coin[]{null,null,new Coin(2,"black"),new Coin(3,"blue"),new Coin(2,"red")};
+        Coin[] card29Coins = new Coin[]{null,null,new Coin(2,"black"),new Coin(2,"blue"),new Coin(2,"red")};
+        Coin[] card210Coins = new Coin[]{null,null,new Coin(3,"black"),new Coin(2,"blue"),new Coin(1,"red")};
+        Coin[] card211Coins = new Coin[]{null, null, new Coin(3,"black"), new Coin(3,"blue"), new Coin(2,"red")};
+        Coin[] card212Coins = new Coin[]{new Coin(1,"green"), null, new Coin(2,"black"), new Coin(3,"blue"), new Coin(2,"red")};
+        Coin[] card213Coins = new Coin[]{new Coin(2,"green"), null, new Coin(2,"black"), null, new Coin(2,"red")};
+        Coin[] card214Coins = new Coin[]{new Coin(1,"green"), null, new Coin(2,"black"), null, new Coin(3,"red")};
+        Coin[] card215Coins = new Coin[]{new Coin(1,"green"), null, new Coin(3,"black"), null, new Coin(3,"red")};
+        Card[] setCard2 = {new Card(2,card21Coins,new JLabel(new ImageIcon("images\\card prize\\21.png"))),
+                new Card(2,card22Coins,new JLabel(new ImageIcon("images\\card2\\22.png"))),
+                new Card(2,card23Coins,new JLabel(new ImageIcon("images\\card2\\23.png"))),
+                new Card(2,card24Coins,new JLabel(new ImageIcon("images\\card2\\24.png"))),
+                new Card(2,card25Coins,new JLabel(new ImageIcon("images\\card2\\25.png"))),
+                new Card(3,card26Coins,new JLabel(new ImageIcon("images\\card2\\26.png"))),
+                new Card(3,card27Coins,new JLabel(new ImageIcon("images\\card2\\27.png"))),
+                new Card(3,card28Coins,new JLabel(new ImageIcon("images\\card2\\28.png"))),
+                new Card(3,card29Coins,new JLabel(new ImageIcon("images\\card2\\29.png"))),
+                new Card(3,card210Coins,new JLabel(new ImageIcon("images\\card2\\210.png"))),
+                new Card(4,card211Coins,new JLabel(new ImageIcon("images\\card2\\211.png"))),
+                new Card(4,card212Coins,new JLabel(new ImageIcon("images\\card2\\212.png"))),
+                new Card(4,card213Coins,new JLabel(new ImageIcon("images\\card2\\213.png"))),
+                new Card(4,card214Coins,new JLabel(new ImageIcon("images\\card2\\214.png"))),
+                new Card(4,card215Coins,new JLabel(new ImageIcon("images\\card2\\215.png")))};
+        setCard2[0].SCoins[3] = new specialCoin(1,"blue");
+        setCard2[1].SCoins[3] = new specialCoin(1,"blue");
+        setCard2[2].SCoins[3] = new specialCoin(1,"blue");
+        setCard2[3].SCoins[3] = new specialCoin(1,"blue");
+        setCard2[4].SCoins[3] = new specialCoin(1,"blue");
+        setCard2[5].SCoins[3] = new specialCoin(1,"blue");
+        setCard2[6].SCoins[3] = new specialCoin(1,"blue");
+        setCard2[7].SCoins[3] = new specialCoin(1,"blue");
+        setCard2[8].SCoins[3] = new specialCoin(1,"blue");
+        setCard2[9].SCoins[0] = new specialCoin(1,"green");
+        setCard2[10].SCoins[0] = new specialCoin(1,"green");
+        setCard2[11].SCoins[0] = new specialCoin(1,"green");
+        setCard2[12].SCoins[0] = new specialCoin(1,"green");
+        setCard2[13].SCoins[0] = new specialCoin(1,"green");
+        setCard2[14].SCoins[0] = new specialCoin(1,"green");
+
+        Coin[] card31Coins = new Coin[]{new Coin(3,"green"), null, new Coin(3,"black"), null, new Coin(4,"red")};
+        Coin[] card32Coins = new Coin[]{new Coin(2,"green"), null, new Coin(3,"black"), null, new Coin(4,"red")};
+        Coin[] card33Coins = new Coin[]{new Coin(2,"green"), null, new Coin(3,"black"), null, new Coin(3,"red")};
+        Coin[] card34Coins = new Coin[]{new Coin(2,"green"), null, new Coin(2,"black"), null, new Coin(3,"red")};
+        Coin[] card35Coins = new Coin[]{null, null, new Coin(2,"black"), new Coin(2,"blue"), new Coin(3,"red")};
+        Coin[] card36Coins = new Coin[]{null, null, new Coin(2,"black"), new Coin(3,"blue"), new Coin(3,"red")};
+        Coin[] card37Coins = new Coin[]{null, null, new Coin(3,"black"), new Coin(3,"blue"), new Coin(3,"red")};
+        Coin[] card38Coins = new Coin[]{new Coin(1,"green"), null, new Coin(3,"black"), new Coin(3,"blue"), new Coin(3,"red")};
+        Coin[] card39Coins = new Coin[]{new Coin(2,"green"), null, new Coin(2,"black"), new Coin(3,"blue"), new Coin(3,"red")};
+        Coin[] card310Coins = new Coin[]{new Coin(2,"green"), null, new Coin(2,"black"), new Coin(3,"blue"), new Coin(1,"red")};
+        Coin[] card311Coins = new Coin[]{new Coin(2,"green"), null, new Coin(2,"black"), new Coin(2,"blue"), new Coin(1,"red")};
+        Coin[] card312Coins = new Coin[]{new Coin(3,"green"), null, new Coin(2,"black"), new Coin(1,"blue"), new Coin(1,"red")};
+        Coin[] card313Coins = new Coin[]{new Coin(3,"green"), null, new Coin(2,"black"), new Coin(1,"blue"), new Coin(1,"red")};
+        Coin[] card314Coins = new Coin[]{new Coin(2,"green"), null, new Coin(2,"black"), new Coin(1,"blue"), new Coin(2,"red")};
+        Coin[] card315Coins = new Coin[]{new Coin(2,"green"), null, new Coin(3,"black"), new Coin(1,"blue"), new Coin(2,"red")};
+        Card[] setCard3 = {new Card(3,card31Coins,new JLabel(new ImageIcon("images\\card prize\\31.png"))),
+                new Card(4,card32Coins,new JLabel(new ImageIcon("images\\card3\\32.png"))),
+                new Card(5,card33Coins,new JLabel(new ImageIcon("images\\card3\\33.png"))),
+                new Card(3,card34Coins,new JLabel(new ImageIcon("images\\card3\\34.png"))),
+                new Card(3,card35Coins,new JLabel(new ImageIcon("images\\card3\\35.png"))),
+                new Card(4,card36Coins,new JLabel(new ImageIcon("images\\card3\\36.png"))),
+                new Card(5,card37Coins,new JLabel(new ImageIcon("images\\card3\\37.png"))),
+                new Card(5,card38Coins,new JLabel(new ImageIcon("images\\card3\\38.png"))),
+                new Card(5,card39Coins,new JLabel(new ImageIcon("images\\card3\\39.png"))),
+                new Card(4,card310Coins,new JLabel(new ImageIcon("images\\card3\\310.png"))),
+                new Card(4,card311Coins,new JLabel(new ImageIcon("images\\card3\\311.png"))),
+                new Card(3,card312Coins,new JLabel(new ImageIcon("images\\card3\\312.png"))),
+                new Card(3,card313Coins,new JLabel(new ImageIcon("images\\card3\\313.png"))),
+                new Card(3,card314Coins,new JLabel(new ImageIcon("images\\card3\\314.png"))),
+                new Card(3,card315Coins,new JLabel(new ImageIcon("images\\card3\\315.png")))};
+        setCard3[0].SCoins[1] = new specialCoin(1,"white");
+        setCard3[1].SCoins[1] = new specialCoin(1,"white");
+        setCard3[2].SCoins[1] = new specialCoin(1,"white");
+        setCard3[3].SCoins[0] = new specialCoin(1,"green");
+        setCard3[4].SCoins[0] = new specialCoin(1,"green");
+        setCard3[5].SCoins[0] = new specialCoin(1,"green");
+        setCard3[6].SCoins[0] = new specialCoin(1,"green");
+        setCard3[7].SCoins[1] = new specialCoin(1,"white");
+        setCard3[8].SCoins[1] = new specialCoin(1,"white");
+        setCard3[9].SCoins[1] = new specialCoin(1,"white");
+        setCard3[10].SCoins[1] = new specialCoin(1,"white");
+        setCard3[11].SCoins[1] = new specialCoin(1,"white");
+        setCard3[12].SCoins[3] = new specialCoin(1,"blue");
+        setCard3[13].SCoins[3] = new specialCoin(1,"blue");
+        setCard3[14].SCoins[3] = new specialCoin(1,"blue");
+
+        for(int t=0;t<4;t++){
+            grayPanel.add(setCard1[t].cardImg);
+            grayPanel.add(setCard2[t].cardImg);
+            grayPanel.add(setCard3[t].cardImg);
+        }
 
         add(grayPanel);
         revalidate();

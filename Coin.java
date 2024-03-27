@@ -1,6 +1,6 @@
 public class Coin {
     private String type;
-    int num;
+    public int num;
     public Coin(int n,String name){
         setNum(n);
         setType(name);
@@ -13,9 +13,6 @@ public class Coin {
     }
     public String getType(){
         return this.type;
-    }
-    public int getNum(){
-        return this.num;
     }
 
     //ترتیب سکه ها در تعریف آرایه سکه های هر کارت:

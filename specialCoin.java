@@ -17,7 +17,4 @@ public class specialCoin {
         this.setType(Type);
         this.setNum(n);
     }
-    public void changeNum(int newNum){
-        this.num+=newNum;
-    }
 }

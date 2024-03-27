@@ -11,7 +11,7 @@ public class Players {
         boolean sw=true;
         for(int i=0;i<6;i++){
             if(card.coinList[i].getType()!=null){
-                if (card.coinList[i].getType() != this.PlayerCoin[i].getType() || this.PlayerCoin[i].getNum() < card.coinList[i].getNum()) {
+                if (!card.coinList[i].getType().equals(this.PlayerCoin[i].getType()) || this.PlayerCoin[i].num < card.coinList[i].num) {
                     sw=false;
                     break;
                 }
@@ -28,7 +28,7 @@ public class Players {
                 }
             }
             this.playerCard.add(card);
-            this.pScore+=card.Score;
+            this.pScore+=card.getScore();
         }
     }
     public void takeCoin(String color){

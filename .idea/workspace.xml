@@ -10,6 +10,60 @@
       <change beforePath="$PROJECT_DIR$/Coin.java" beforeDir="false" afterPath="$PROJECT_DIR$/Coin.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Players.java" beforeDir="false" afterPath="$PROJECT_DIR$/Players.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 2/21.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 2/210.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 2/211.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 2/212.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 2/213.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 2/214.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 2/215.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 2/22.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 2/23.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 2/24.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 2/25.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 2/26.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 2/27.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 2/28.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 2/29.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 3/31.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 3/310.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 3/311.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 3/312.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 3/313.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 3/314.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 3/315.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 3/32.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 3/33.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 3/34.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 3/35.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 3/36.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 3/37.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 3/38.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card 3/39.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card prize/prize1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card prize/prize2.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card prize/prize3.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card1/11.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card1/110.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card1/111.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card1/112.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card1/113.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card1/114.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card1/115.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card1/12.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card1/13.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card1/14.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card1/15.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card1/16.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card1/17.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card1/18.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/card1/19.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/coins/black.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/coins/blue.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/coins/green.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/coins/red.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/coins/white.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/coins/yellow.svg" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/specialCoin.java" beforeDir="false" afterPath="$PROJECT_DIR$/specialCoin.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -88,6 +142,8 @@
       <workItem from="1711378837715" duration="8307000" />
       <workItem from="1711435586756" duration="11166000" />
       <workItem from="1711482524595" duration="3759000" />
+      <workItem from="1711486705187" duration="1476000" />
+      <workItem from="1711533370930" duration="16924000" />
     </task>
     <servers />
   </component>
