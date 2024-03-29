@@ -1,17 +1,21 @@
 public class Coin {
     private String type;
     public int num;
-    public Coin(int n,String name){
+
+    public Coin(int n, String name) {
         setNum(n);
         setType(name);
     }
-    private void setType(String name){
+
+    private void setType(String name) {
         this.type = name;
     }
-    private void setNum(int n){
+
+    private void setNum(int n) {
         this.num = n;
     }
-    public String getType(){
+
+    public String getType() {
         return this.type;
     }
 
