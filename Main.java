@@ -4,10 +4,13 @@ import java.awt.*;
 public class Main {
     //game main frame
     private final JFrame frame;
+
     //game main panels
     private final JPanel loginPanel;
     private final JPanel mainGamePanel;
     private final JPanel storePanel;
+
+    //turn and players
     int turn = 1;
     Players player1 = new Players();
     Players player2 = new Players();
@@ -15,8 +18,9 @@ public class Main {
 
     public Main() {
         frame = new JFrame("Amusement Park");
-        frame.setSize(1280, 720);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(1280,720);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//close type
+        frame.setLocationRelativeTo(null);
 
         loginPanel = createLoginPanel();
         mainGamePanel = createMainGamePanel();
@@ -27,8 +31,7 @@ public class Main {
     }
 
     private JPanel createLoginPanel() {
-        JPanel panel = new JPanel();
-        JPanel welcomePanel = new JPanel(new GridBagLayout());
+        JPanel welcomePanel = new JPanel(new GridBagLayout());//layout system
         welcomePanel.setPreferredSize(new Dimension(1280, 720));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -50,42 +53,33 @@ public class Main {
         JButton helpButton = new JButton("راهنما");
         helpButton.setPreferredSize(new Dimension(200, 50));
         welcomePanel.add(helpButton, gbc);
-        panel.add(welcomePanel);
-        return panel;
+        return welcomePanel;
     }
 
     public JPanel createMainGamePanel() {
-        JPanel panel = new JPanel();
-
-        JPanel mainPanel = new JPanel();
+        JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setPreferredSize(new Dimension(1280, 720));
-        mainPanel.setBackground(Color.WHITE);
-        mainPanel.setLayout(new BorderLayout());
 
-        JPanel topPanel = new JPanel();
-        topPanel.setBackground(Color.RED);
-        topPanel.setPreferredSize(new Dimension(1280, 100));
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setBackground(Color.MAGENTA);
+        topPanel.setPreferredSize(new Dimension(1280,100));
+        player1.PlayerCoin = new Coin[]{new Coin(0, "green"), new Coin(0, "white"), new Coin(0, "black"), new Coin(0, "blue"), new Coin(0, "red"), new Coin(0, "gold")};
 
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setBackground(Color.BLUE);
-        bottomPanel.setPreferredSize(new Dimension(1280, 100));
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.setBackground(Color.cyan);
+        bottomPanel.setPreferredSize(new Dimension(1280,100));
+        player2.PlayerCoin = new Coin[]{new Coin(0, "green"), new Coin(0, "white"), new Coin(0, "black"), new Coin(0, "blue"), new Coin(0, "red"), new Coin(0, "gold")};
 
-        JPanel sidePanel = new JPanel();
-        sidePanel.setLayout(new GridLayout(6, 3, 10, 10));
+        JPanel sidePanel = new JPanel(new GridLayout(6, 3));
         sidePanel.setBackground(Color.GREEN);
-        sidePanel.setPreferredSize(new Dimension(400, 520));
+        sidePanel.setPreferredSize(new Dimension(400,520));
 
-        Coin[] redCoins = new Coin[1];
-        Coin[] blueCoins = new Coin[1];
-        Coin[] greenCoins = new Coin[1];
-        Coin[] whiteCoins = new Coin[1];
-        Coin[] blackCoins = new Coin[1];
-        redCoins[0] = new Coin(4, "red");
-        blueCoins[0] = new Coin(4, "blue");
-        greenCoins[0] = new Coin(4, "green");
-        whiteCoins[0] = new Coin(4, "white");
-        blackCoins[0] = new Coin(4, "black");
-
+        //slot machines
+        Coin[] redCoins = { new Coin(4, "red") };
+        Coin[] blueCoins = { new Coin(4, "blue") };
+        Coin[] greenCoins = { new Coin(4, "green") };
+        Coin[] whiteCoins = { new Coin(4, "white") };
+        Coin[] blackCoins = { new Coin(4, "black") };
 
         JLabel lableBtn1 = new JLabel(String.valueOf(redCoins[0].num), SwingConstants.CENTER);
         JButton slotButton11 = new JButton("دو سکه قرمز");
@@ -115,6 +109,11 @@ public class Main {
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
+                        for(int j=0;j<2;j++){
+                            JLabel redCoin = new JLabel(new ImageIcon("images\\coins\\red.png"));
+                            topPanel.add(redCoin);
+                            topPanel.revalidate();
+                        }
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -122,8 +121,8 @@ public class Main {
                         slotButton32.setEnabled(true);
                         slotButton42.setEnabled(true);
                         slotButton52.setEnabled(true);
+                        turn *= -1;
                     }
-                    turn *= -1;
                     break;
                 case -1:
                     if (redCoins[0].num == 4 && clickNum < 1) {
@@ -135,6 +134,11 @@ public class Main {
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
+                        for(int j=0;j<2;j++){
+                            JLabel redCoin = new JLabel(new ImageIcon("images\\coins\\red.png"));
+                            bottomPanel.add(redCoin);
+                            bottomPanel.revalidate();
+                        }
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -142,8 +146,8 @@ public class Main {
                         slotButton32.setEnabled(true);
                         slotButton42.setEnabled(true);
                         slotButton52.setEnabled(true);
+                        turn *= -1;
                     }
-                    turn *= -1;
                     break;
             }
             lableBtn1.setText(String.valueOf(Math.max(0, redCoins[0].num)));
@@ -160,6 +164,11 @@ public class Main {
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
+                        for(int j=0;j<2;j++){
+                            JLabel blueCoin = new JLabel(new ImageIcon("images\\coins\\blue.png"));
+                            topPanel.add(blueCoin);
+                            topPanel.revalidate();
+                        }
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -167,8 +176,8 @@ public class Main {
                         slotButton32.setEnabled(true);
                         slotButton42.setEnabled(true);
                         slotButton52.setEnabled(true);
+                        turn *= -1;
                     }
-                    turn *= -1;
                     break;
                 case -1:
                     if (blueCoins[0].num == 4 && clickNum < 1) {
@@ -180,6 +189,11 @@ public class Main {
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
+                        for(int j=0;j<2;j++){
+                            JLabel blueCoin = new JLabel(new ImageIcon("images\\coins\\blue.png"));
+                            bottomPanel.add(blueCoin);
+                            bottomPanel.revalidate();
+                        }
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -187,8 +201,8 @@ public class Main {
                         slotButton32.setEnabled(true);
                         slotButton42.setEnabled(true);
                         slotButton52.setEnabled(true);
+                        turn *= -1;
                     }
-                    turn *= -1;
                     break;
             }
             lableBtn2.setText(String.valueOf(Math.max(0, blueCoins[0].num)));
@@ -205,6 +219,11 @@ public class Main {
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
+                        for(int j=0;j<2;j++){
+                            JLabel greenCoin = new JLabel(new ImageIcon("images\\coins\\green.png"));
+                            topPanel.add(greenCoin);
+                            topPanel.revalidate();
+                        }
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -212,8 +231,8 @@ public class Main {
                         slotButton32.setEnabled(true);
                         slotButton42.setEnabled(true);
                         slotButton52.setEnabled(true);
+                        turn *= -1;
                     }
-                    turn *= -1;
                     break;
                 case -1:
                     if (greenCoins[0].num == 4 && clickNum < 1) {
@@ -225,6 +244,11 @@ public class Main {
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
+                        for(int j=0;j<2;j++){
+                            JLabel greenCoin = new JLabel(new ImageIcon("images\\coins\\green.png"));
+                            bottomPanel.add(greenCoin);
+                            bottomPanel.revalidate();
+                        }
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -232,8 +256,8 @@ public class Main {
                         slotButton32.setEnabled(true);
                         slotButton42.setEnabled(true);
                         slotButton52.setEnabled(true);
+                        turn *= -1;
                     }
-                    turn *= -1;
                     break;
             }
             lableBtn3.setText(String.valueOf(Math.max(0, greenCoins[0].num)));
@@ -243,13 +267,18 @@ public class Main {
                 case 1:
                     if (whiteCoins[0].num == 4 && clickNum < 1) {
                         player1.takeCoin(2, "white");
+                        clickNum++;
                         whiteCoins[0].num -= 2;
                         slotButton12.setEnabled(false);
                         slotButton22.setEnabled(false);
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                        clickNum++;
+                        for(int j=0;j<2;j++){
+                            JLabel whiteCoin = new JLabel(new ImageIcon("images\\coins\\white.png"));
+                            topPanel.add(whiteCoin);
+                            topPanel.revalidate();
+                        }
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -257,19 +286,24 @@ public class Main {
                         slotButton32.setEnabled(true);
                         slotButton42.setEnabled(true);
                         slotButton52.setEnabled(true);
+                        turn *= -1;
                     }
-                    turn *= -1;
                     break;
                 case -1:
                     if (whiteCoins[0].num == 4 && clickNum < 1) {
                         player2.takeCoin(2, "white");
+                        clickNum++;
                         whiteCoins[0].num -= 2;
                         slotButton12.setEnabled(false);
                         slotButton22.setEnabled(false);
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                        clickNum++;
+                        for(int j=0;j<2;j++){
+                            JLabel whiteCoin = new JLabel(new ImageIcon("images\\coins\\white.png"));
+                            bottomPanel.add(whiteCoin);
+                            bottomPanel.revalidate();
+                        }
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -282,8 +316,8 @@ public class Main {
                         slotButton31.setEnabled(true);
                         slotButton41.setEnabled(true);
                         slotButton51.setEnabled(true);
+                        turn *= -1;
                     }
-                    turn *= -1;
                     break;
             }
             lableBtn4.setText(String.valueOf(Math.max(0, whiteCoins[0].num)));
@@ -293,13 +327,18 @@ public class Main {
                 case 1:
                     if (blackCoins[0].num == 4 && clickNum < 1) {
                         player1.takeCoin(2, "black");
+                        clickNum++;
                         blackCoins[0].num -= 2;
                         slotButton12.setEnabled(false);
                         slotButton22.setEnabled(false);
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                        clickNum++;
+                        for(int j=0;j<2;j++){
+                            JLabel blackCoin = new JLabel(new ImageIcon("images\\coins\\black.png"));
+                            topPanel.add(blackCoin);
+                            topPanel.revalidate();
+                        }
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -307,19 +346,24 @@ public class Main {
                         slotButton32.setEnabled(true);
                         slotButton42.setEnabled(true);
                         slotButton52.setEnabled(true);
+                        turn *= -1;
                     }
-                    turn *= -1;
                     break;
                 case -1:
                     if (blackCoins[0].num == 4 && clickNum < 1) {
                         player2.takeCoin(2, "black");
+                        clickNum++;
                         blackCoins[0].num -= 2;
                         slotButton12.setEnabled(false);
                         slotButton22.setEnabled(false);
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                        clickNum++;
+                        for(int j=0;j<2;j++){
+                            JLabel blackCoin = new JLabel(new ImageIcon("images\\coins\\black.png"));
+                            bottomPanel.add(blackCoin);
+                            bottomPanel.revalidate();
+                        }
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -327,8 +371,8 @@ public class Main {
                         slotButton32.setEnabled(true);
                         slotButton42.setEnabled(true);
                         slotButton52.setEnabled(true);
+                        turn *= -1;
                     }
-                    turn *= -1;
                     break;
             }
             lableBtn5.setText(String.valueOf(Math.max(0, blackCoins[0].num)));
@@ -346,6 +390,11 @@ public class Main {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
+                        for(int j=0;j<1;j++){
+                            JLabel redCoin = new JLabel(new ImageIcon("images\\coins\\red.png"));
+                            topPanel.add(redCoin);
+                            topPanel.revalidate();
+                        }
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -358,8 +407,8 @@ public class Main {
                         slotButton31.setEnabled(true);
                         slotButton41.setEnabled(true);
                         slotButton51.setEnabled(true);
+                        turn*=-1;
                     }
-                    turn *= -1;
                     break;
                 case -1:
                     if (redCoins[0].num > 0 && clickNum < 3) {
@@ -372,6 +421,11 @@ public class Main {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
+                        for(int j=0;j<1;j++){
+                            JLabel redCoin = new JLabel(new ImageIcon("images\\coins\\red.png"));
+                            bottomPanel.add(redCoin);
+                            bottomPanel.revalidate();
+                        }
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -384,8 +438,8 @@ public class Main {
                         slotButton31.setEnabled(true);
                         slotButton41.setEnabled(true);
                         slotButton51.setEnabled(true);
+                        turn*=-1;
                     }
-                    turn *= -1;
                     break;
             }
             lableBtn1.setText(String.valueOf(Math.max(0, redCoins[0].num)));
@@ -403,6 +457,11 @@ public class Main {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
+                        for(int j=0;j<1;j++){
+                            JLabel blueCoin = new JLabel(new ImageIcon("images\\coins\\blue.png"));
+                            topPanel.add(blueCoin);
+                            topPanel.revalidate();
+                        }
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -415,8 +474,8 @@ public class Main {
                         slotButton31.setEnabled(true);
                         slotButton41.setEnabled(true);
                         slotButton51.setEnabled(true);
+                        turn*=-1;
                     }
-                    turn *= -1;
                     break;
                 case -1:
                     if (blueCoins[0].num > 0 && clickNum < 3) {
@@ -429,6 +488,11 @@ public class Main {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
+                        for(int j=0;j<1;j++){
+                            JLabel blueCoin = new JLabel(new ImageIcon("images\\coins\\blue.png"));
+                            bottomPanel.add(blueCoin);
+                            bottomPanel.revalidate();
+                        }
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -441,8 +505,8 @@ public class Main {
                         slotButton31.setEnabled(true);
                         slotButton41.setEnabled(true);
                         slotButton51.setEnabled(true);
+                        turn*=-1;
                     }
-                    turn *= -1;
                     break;
             }
             lableBtn2.setText(String.valueOf(Math.max(0, blueCoins[0].num)));
@@ -460,6 +524,11 @@ public class Main {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
+                        for(int j=0;j<1;j++){
+                            JLabel greenCoin = new JLabel(new ImageIcon("images\\coins\\green.png"));
+                            topPanel.add(greenCoin);
+                            topPanel.revalidate();
+                        }
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -472,8 +541,8 @@ public class Main {
                         slotButton31.setEnabled(true);
                         slotButton41.setEnabled(true);
                         slotButton51.setEnabled(true);
+                        turn*=-1;
                     }
-                    turn *= -1;
                     break;
                 case -1:
                     if (greenCoins[0].num > 0 && clickNum < 3) {
@@ -486,6 +555,11 @@ public class Main {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
+                        for(int j=0;j<1;j++){
+                            JLabel greenCoin = new JLabel(new ImageIcon("images\\coins\\green.png"));
+                            bottomPanel.add(greenCoin);
+                            bottomPanel.revalidate();
+                        }
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -498,8 +572,8 @@ public class Main {
                         slotButton31.setEnabled(true);
                         slotButton41.setEnabled(true);
                         slotButton51.setEnabled(true);
+                        turn*=-1;
                     }
-                    turn *= -1;
                     break;
             }
             lableBtn3.setText(String.valueOf(Math.max(0, greenCoins[0].num)));
@@ -517,6 +591,11 @@ public class Main {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
+                        for(int j=0;j<1;j++){
+                            JLabel whiteCoin = new JLabel(new ImageIcon("images\\coins\\white.png"));
+                            topPanel.add(whiteCoin);
+                            topPanel.revalidate();
+                        }
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -529,8 +608,8 @@ public class Main {
                         slotButton31.setEnabled(true);
                         slotButton41.setEnabled(true);
                         slotButton51.setEnabled(true);
+                        turn*=-1;
                     }
-                    turn *= -1;
                     break;
                 case -1:
                     if (whiteCoins[0].num > 0 && clickNum < 3) {
@@ -543,6 +622,12 @@ public class Main {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
+                        for(int j=0;j<1;j++){
+                            JLabel whiteCoin = new JLabel(new ImageIcon("images\\coins\\white.png"));
+                            bottomPanel.add(whiteCoin);
+                            bottomPanel.revalidate();
+                            topPanel.repaint();
+                        }
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -555,8 +640,8 @@ public class Main {
                         slotButton31.setEnabled(true);
                         slotButton41.setEnabled(true);
                         slotButton51.setEnabled(true);
+                        turn*=-1;
                     }
-                    turn *= -1;
                     break;
             }
             lableBtn4.setText(String.valueOf(Math.max(0, whiteCoins[0].num)));
@@ -574,6 +659,11 @@ public class Main {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
+                        for(int j=0;j<1;j++){
+                            JLabel blackCoin = new JLabel(new ImageIcon("images\\coins\\black.png"));
+                            topPanel.add(blackCoin);
+                            topPanel.revalidate();
+                        }
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -586,8 +676,8 @@ public class Main {
                         slotButton31.setEnabled(true);
                         slotButton41.setEnabled(true);
                         slotButton51.setEnabled(true);
+                        turn*=-1;
                     }
-                    turn *= -1;
                     break;
                 case -1:
                     if (blackCoins[0].num > 0 && clickNum < 3) {
@@ -600,6 +690,11 @@ public class Main {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
+                        for(int j=0;j<1;j++){
+                            JLabel blackCoin = new JLabel(new ImageIcon("images\\coins\\black.png"));
+                            bottomPanel.add(blackCoin);
+                            bottomPanel.revalidate();
+                        }
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -612,8 +707,8 @@ public class Main {
                         slotButton31.setEnabled(true);
                         slotButton41.setEnabled(true);
                         slotButton51.setEnabled(true);
+                        turn*=-1;
                     }
-                    turn *= -1;
                     break;
             }
             lableBtn5.setText(String.valueOf(Math.max(0, blackCoins[0].num)));
@@ -639,22 +734,18 @@ public class Main {
         enterButton.addActionListener(e -> switchPanel(storePanel));
         sidePanel.add(enterButton);
 
-        JPanel centerPanel = new JPanel();
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.setPreferredSize(new Dimension(880,520));
         centerPanel.setBackground(Color.YELLOW);
-        centerPanel.setLayout(new BorderLayout());
 
-        centerPanel.add(topPanel, BorderLayout.NORTH);
-        centerPanel.add(bottomPanel, BorderLayout.SOUTH);
-        centerPanel.add(sidePanel, BorderLayout.EAST);
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
+        mainPanel.add(sidePanel, BorderLayout.EAST);
         mainPanel.add(centerPanel, BorderLayout.CENTER);
-        panel.add(mainPanel);
-        return panel;
+        return mainPanel;
     }
 
-
     private JPanel createStorePanel() {
-        JPanel panel = new JPanel();
-
         JPanel grayPanel = new JPanel();
         grayPanel.setPreferredSize(new Dimension(1280, 720));
 
@@ -792,8 +883,7 @@ public class Main {
         grayPanel.add(set1panel);
         grayPanel.add(set2panel);
         grayPanel.add(set3panel);
-        panel.add(grayPanel);
-        return panel;
+        return grayPanel;
     }
 
     // Method to switch between panels

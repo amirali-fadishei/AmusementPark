@@ -2,7 +2,7 @@ import java.util.*;
 
 public class Players {
     public int pScore;
-    public Coin[] PlayerCoin = new Coin[]{new Coin(0, "green"), new Coin(0, "white"), new Coin(0, "black"), new Coin(0, "blue"), new Coin(0, "red"), new Coin(0, "gold")};
+    public Coin[] PlayerCoin = new Coin[6];
     public specialCoin[] PlayerSCoin;
     List<Card> playerCard = new ArrayList<>();
 
