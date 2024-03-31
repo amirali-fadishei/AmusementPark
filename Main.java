@@ -1,21 +1,17 @@
 import javax.swing.*;
 import java.awt.*;
-
 public class Main {
     //game main frame
     private final JFrame frame;
-
     //game main panels
     private final JPanel loginPanel;
     private final JPanel mainGamePanel;
     private final JPanel storePanel;
-
     //turn and players
     int turn = 1;
     Players player1 = new Players();
     Players player2 = new Players();
     int clickNum = 0;
-
     public Main() {
         frame = new JFrame("Amusement Park");
         frame.setSize(1280,720);
@@ -29,7 +25,6 @@ public class Main {
         frame.add(loginPanel);
         frame.setVisible(true);
     }
-
     private JPanel createLoginPanel() {
         JPanel welcomePanel = new JPanel(new GridBagLayout());//layout system
         welcomePanel.setPreferredSize(new Dimension(1280, 720));
@@ -55,24 +50,29 @@ public class Main {
         welcomePanel.add(helpButton, gbc);
         return welcomePanel;
     }
-
     public JPanel createMainGamePanel() {
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setPreferredSize(new Dimension(1280, 720));
 
-        JPanel topPanel = new JPanel(new BorderLayout());
+        JPanel topPanel = new JPanel(new FlowLayout());
         topPanel.setBackground(Color.MAGENTA);
         topPanel.setPreferredSize(new Dimension(1280,100));
         player1.PlayerCoin = new Coin[]{new Coin(0, "green"), new Coin(0, "white"), new Coin(0, "black"), new Coin(0, "blue"), new Coin(0, "red"), new Coin(0, "gold")};
+        player1.PlayerSCoin = new specialCoin[]{new specialCoin(0, "green"), new specialCoin(0, "white"), new specialCoin(0, "black"), new specialCoin(0, "blue"), new specialCoin(0, "red")};
 
-        JPanel bottomPanel = new JPanel(new BorderLayout());
+        JPanel bottomPanel = new JPanel(new FlowLayout());
         bottomPanel.setBackground(Color.cyan);
         bottomPanel.setPreferredSize(new Dimension(1280,100));
         player2.PlayerCoin = new Coin[]{new Coin(0, "green"), new Coin(0, "white"), new Coin(0, "black"), new Coin(0, "blue"), new Coin(0, "red"), new Coin(0, "gold")};
+        player2.PlayerSCoin = new specialCoin[]{new specialCoin(0, "green"), new specialCoin(0, "white"), new specialCoin(0, "black"), new specialCoin(0, "blue"), new specialCoin(0, "red")};
 
         JPanel sidePanel = new JPanel(new GridLayout(6, 3));
         sidePanel.setBackground(Color.GREEN);
         sidePanel.setPreferredSize(new Dimension(400,520));
+
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.setPreferredSize(new Dimension(880,520));
+        centerPanel.setBackground(Color.YELLOW);
 
         //slot machines
         Coin[] redCoins = { new Coin(4, "red") };
@@ -96,6 +96,8 @@ public class Main {
         JLabel lableBtn5 = new JLabel(String.valueOf(blackCoins[0].num), SwingConstants.CENTER);
         JButton slotButton51 = new JButton("دو سکه سیاه");
         JButton slotButton52 = new JButton("یک سکه سیاه");
+        JButton enterButton = new JButton("فروشگاه");
+        enterButton.addActionListener(e -> switchPanel(storePanel));
 
         slotButton11.addActionListener(e -> {
             switch (turn) {
@@ -729,14 +731,7 @@ public class Main {
         sidePanel.add(lableBtn5);
         sidePanel.add(slotButton51);
         sidePanel.add(slotButton52);
-
-        JButton enterButton = new JButton("فروشگاه");
-        enterButton.addActionListener(e -> switchPanel(storePanel));
         sidePanel.add(enterButton);
-
-        JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.setPreferredSize(new Dimension(880,520));
-        centerPanel.setBackground(Color.YELLOW);
 
         mainPanel.add(topPanel, BorderLayout.NORTH);
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
@@ -744,7 +739,6 @@ public class Main {
         mainPanel.add(centerPanel, BorderLayout.CENTER);
         return mainPanel;
     }
-
     private JPanel createStorePanel() {
         JPanel grayPanel = new JPanel();
         grayPanel.setPreferredSize(new Dimension(1280, 720));
@@ -885,7 +879,6 @@ public class Main {
         grayPanel.add(set3panel);
         return grayPanel;
     }
-
     // Method to switch between panels
     private void switchPanel(JPanel panel) {
         frame.getContentPane().removeAll();
@@ -893,7 +886,6 @@ public class Main {
         frame.getContentPane().revalidate();
         frame.getContentPane().repaint();
     }
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(Main::new);
     }

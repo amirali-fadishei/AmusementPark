@@ -1,7 +1,10 @@
 public class specialCoin {
     private String type;
     int num;
-
+    public specialCoin(int n, String Type) {
+        this.setType(Type);
+        this.setNum(n);
+    }
     private void setType(String name) {
         this.type = name;
     }
@@ -16,10 +19,5 @@ public class specialCoin {
 
     public int getNum() {
         return this.num;
-    }
-
-    public specialCoin(int n, String Type) {
-        this.setType(Type);
-        this.setNum(n);
     }
 }

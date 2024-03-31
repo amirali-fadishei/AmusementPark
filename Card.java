@@ -1,8 +1,8 @@
 import javax.swing.*;
 
 public class Card {
-    public specialCoin[] SCoins = new specialCoin[6];
     public Coin[] coinList = new Coin[6];
+    public specialCoin[] SCoins = new specialCoin[5];
     private int Score;
     public JLabel cardImg;
 
