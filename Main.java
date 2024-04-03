@@ -12,11 +12,13 @@ public class Main {
     private final JPanel centerPanel = new JPanel(new BorderLayout());
     private final JPanel topPanel = new JPanel(new FlowLayout());
     private final JPanel bottomPanel = new JPanel(new FlowLayout());
-    JPanel sidePanel = new JPanel(new GridLayout(6, 3));
+    private final JPanel sidePanel = new JPanel(new GridLayout(6, 3));
     private final JPanel tScorePanel = new JPanel();
     private final JPanel bScorePanel = new JPanel();
     private final JPanel tCoinPanel = new JPanel(new FlowLayout());
     private final JPanel bCoinPanel = new JPanel(new FlowLayout());
+    private final JPanel tSCoinPanel = new JPanel(new FlowLayout());
+    private final JPanel bSCoinPanel = new JPanel(new FlowLayout());
     private final JPanel tCardPanel = new JPanel(new FlowLayout());
     private final JPanel bCardPanel = new JPanel(new FlowLayout());
     //turn and players
@@ -24,50 +26,154 @@ public class Main {
     private final Players player1 = new Players();
     private final Players player2 = new Players();
     private int clickNum = 0;
+    Coin[] greenCoins = {new Coin(4, "green")};
+    Coin[] whiteCoins = {new Coin(4, "white")};
+    Coin[] blackCoins = {new Coin(4, "black")};
+    Coin[] blueCoins = {new Coin(4, "blue")};
+    Coin[] redCoins = {new Coin(4, "red")};
+    Coin[][] slotCoin = {greenCoins, whiteCoins, blackCoins, blueCoins, redCoins};
 
-    public void cardPrinter(JPanel panel1) {
-        if (turn == 1) {
-            for (int k = 0; k < player1.playerCard.length; k++) {
-                if (player1.playerCard[k] != null) {
-                    tCardPanel.add(player1.playerCard[k].cardImg);
-                    tCardPanel.revalidate();
-                    tCardPanel.repaint();
-                    panel1.add(tCardPanel, BorderLayout.NORTH);
-                }
+    public void cardPrinter() {
+        for (int k = 0; k < player1.playerCard.length; k++) {
+            if (player1.playerCard[k] != null) {
+                tCardPanel.add(player1.playerCard[k].cardImg);
+                tCardPanel.revalidate();
+                tCardPanel.repaint();
+                centerPanel.add(tCardPanel, BorderLayout.NORTH);
             }
-        } else {
-            for (int k = 0; k < player2.playerCard.length; k++) {
-                if (player2.playerCard[k] != null) {
-                    bCardPanel.add(player2.playerCard[k].cardImg);
-                    bCardPanel.revalidate();
-                    bCardPanel.repaint();
-                    panel1.add(bCardPanel, BorderLayout.SOUTH);
-                }
+        }
+        for (int k = 0; k < player2.playerCard.length; k++) {
+            if (player2.playerCard[k] != null) {
+                bCardPanel.add(player2.playerCard[k].cardImg);
+                bCardPanel.revalidate();
+                bCardPanel.repaint();
+                centerPanel.add(bCardPanel, BorderLayout.SOUTH);
             }
         }
     }
-    public void coinPrinter(JPanel panel1, JPanel panel2, Players currentPlayer) {
-        panel1.removeAll();
+
+    public void coinPrinter() {
+        tCoinPanel.removeAll();
+        bCoinPanel.removeAll();
         String[] coinColors = {"green", "white", "black", "blue", "red"};
 
-        for (int i = 0; i < currentPlayer.playerCoin.length; i++) {
-            for (int k = 0; k < currentPlayer.playerCoin[i].num; k++) {
-                panel1.add(new JLabel(new ImageIcon("images\\coins\\" + coinColors[i] + ".png")));
+        for (int i = 0; i < player1.playerCoin.length; i++) {
+            for (int k = 0; k < player1.playerCoin[i].num; k++) {
+                tCoinPanel.add(new JLabel(new ImageIcon("images\\coins\\" + coinColors[i] + ".png")));
+            }
+        }
+        for (int i = 0; i < player2.playerCoin.length; i++) {
+            for (int k = 0; k < player2.playerCoin[i].num; k++) {
+                bCoinPanel.add(new JLabel(new ImageIcon("images\\coins\\" + coinColors[i] + ".png")));
             }
         }
 
-        panel1.revalidate();
-        panel1.repaint();
-        panel2.add(panel1);
+        tCoinPanel.revalidate();
+        bCoinPanel.revalidate();
+        tCoinPanel.repaint();
+        bCoinPanel.repaint();
+        topPanel.add(tCoinPanel);
+        bottomPanel.add(bCoinPanel);
     }
-    public void scorePrinter(JPanel panel1, JPanel panel2) {
-        Players currentPlayer = (turn == 1) ? player1 : player2;
-        JLabel scoreLabel = new JLabel(String.valueOf(Math.max(0, currentPlayer.pScore)));
-        panel1.removeAll();
-        panel1.add(scoreLabel);
-        panel1.revalidate();
-        panel1.repaint();
-        panel2.add(panel1);
+
+    public void scoinPrinter() {
+        tSCoinPanel.removeAll();
+        bSCoinPanel.removeAll();
+        String[] ScoinColors = {"green", "white", "black", "blue", "red"};
+
+        for (int i = 0; i < player1.playerSCoin.length; i++) {
+            for (int k = 0; k < player1.playerSCoin[i].num; k++) {
+                tSCoinPanel.add(new JLabel(new ImageIcon("images\\coins\\" + ScoinColors[i] + ".png")));
+            }
+        }
+        for (int i = 0; i < player2.playerSCoin.length; i++) {
+            for (int k = 0; k < player2.playerSCoin[i].num; k++) {
+                bSCoinPanel.add(new JLabel(new ImageIcon("images\\coins\\" + ScoinColors[i] + ".png")));
+            }
+        }
+
+        tSCoinPanel.revalidate();
+        bSCoinPanel.revalidate();
+        tSCoinPanel.repaint();
+        bSCoinPanel.repaint();
+        topPanel.add(tSCoinPanel);
+        bottomPanel.add(bSCoinPanel);
+    }
+
+    public void scorePrinter() {
+        JLabel scoreLabel1 = new JLabel(String.valueOf(Math.max(0, player1.pScore)));
+        JLabel scoreLabel2 = new JLabel(String.valueOf(Math.max(0, player2.pScore)));
+        tScorePanel.removeAll();
+        tScorePanel.add(scoreLabel1);
+        tScorePanel.revalidate();
+        tScorePanel.repaint();
+        topPanel.add(tScorePanel);
+        bScorePanel.removeAll();
+        bScorePanel.add(scoreLabel2);
+        bScorePanel.revalidate();
+        bScorePanel.repaint();
+        bottomPanel.add(bScorePanel);
+    }
+
+    public void buy(Card card, Players player) {
+        boolean sw = true;
+        for (int i = 0; i < 5; i++) {
+            if (card.coinList[i] != null) {
+                if (!card.coinList[i].getType().equals(player.playerCoin[i].getType()) || player.playerCoin[i].num < card.coinList[i].num) {
+                    sw = false;
+                    break;
+                }
+            }
+        }
+        if (sw) {
+            for (int i = 0; i < 5; i++) {
+                if (card.coinList[i] != null) {
+                    if (player.playerSCoin[i] != null) {
+                        slotCoin[i][0].num += card.coinList[i].num;
+                        card.coinList[i].num -= player.playerSCoin[i].num;
+                    }
+                    player.playerCoin[i].num -= card.coinList[i].num;
+                }
+                if (card.SCoins[i] != null && player.playerSCoin[i] != null) {
+                    player.playerSCoin[i].num += card.SCoins[i].num;
+                }
+            }
+            player.pScore += card.getScore();
+            for (int j = 0; j < 45; j++) {
+                if (player.playerCard[j] == null) {
+                    player.playerCard[j] = card;
+                    card.setAvailability(false);
+                    break;
+                }
+            }
+        }
+    }
+
+    public void buyPrize(Card card, Players player) {
+        boolean sw = true;
+        for (int i = 0; i < 5; i++) {
+            if (card.SCoins[i] != null) {
+                if (!card.SCoins[i].getType().equals(player.playerSCoin[i].getType()) || player.playerSCoin[i].num < card.SCoins[i].num) {
+                    sw = false;
+                    break;
+                }
+            }
+        }
+        if (sw) {
+            for (int i = 0; i < 5; i++) {
+                if (card.SCoins[i] != null) {
+                    player.playerSCoin[i].num -= card.SCoins[i].num;
+                }
+            }
+            player.pScore += card.getScore();
+            for (int j = 0; j < 48; j++) {
+                if (player.playerCard[j] == null) {
+                    player.playerCard[j] = card;
+                    card.setAvailability(false);
+                    break;
+                }
+            }
+        }
     }
 
     public Main() {
@@ -109,7 +215,7 @@ public class Main {
         return welcomePanel;
     }
 
-    public JPanel createMainGamePanel() {
+    private JPanel createMainGamePanel() {
         JPanel mainPanel = new JPanel(new BorderLayout());
 
         topPanel.setBackground(Color.MAGENTA);
@@ -123,19 +229,12 @@ public class Main {
         player2.playerSCoin = new specialCoin[]{new specialCoin(0, "green"), new specialCoin(0, "white"), new specialCoin(0, "black"), new specialCoin(0, "blue"), new specialCoin(0, "red")};
 
         sidePanel.setBackground(Color.GREEN);
-        sidePanel.setPreferredSize(new Dimension(320, 520));
+        sidePanel.setPreferredSize(new Dimension(320, 880));
 
         centerPanel.setBackground(Color.YELLOW);
-        centerPanel.setPreferredSize(new Dimension(1600, 520));
+        centerPanel.setPreferredSize(new Dimension(1600, 880));
         tCardPanel.setBackground(Color.YELLOW);
         bCardPanel.setBackground(Color.YELLOW);
-
-        //slot machines
-        Coin[] redCoins = {new Coin(4, "red")};
-        Coin[] blueCoins = {new Coin(4, "blue")};
-        Coin[] greenCoins = {new Coin(4, "green")};
-        Coin[] whiteCoins = {new Coin(4, "white")};
-        Coin[] blackCoins = {new Coin(4, "black")};
 
         JLabel labelBtn1 = new JLabel(String.valueOf(redCoins[0].num), SwingConstants.CENTER);
         JButton slotButton11 = new JButton("دو سکه قرمز");
@@ -154,6 +253,19 @@ public class Main {
         JButton slotButton52 = new JButton("یک سکه سیاه");
         JButton enterButton = new JButton("فروشگاه");
         enterButton.addActionListener(e -> switchPanel(storePanel));
+        JButton[] btns = {slotButton11, slotButton12, slotButton21, slotButton22, slotButton31, slotButton32, slotButton41, slotButton42, slotButton51, slotButton52};
+
+        for (JButton btn : btns) {
+            btn.addActionListener(e -> {
+                coinPrinter();
+                labelBtn1.setText(String.valueOf(Math.max(0, redCoins[0].num)));
+                labelBtn2.setText(String.valueOf(Math.max(0, blueCoins[0].num)));
+                labelBtn3.setText(String.valueOf(Math.max(0, greenCoins[0].num)));
+                labelBtn4.setText(String.valueOf(Math.max(0, whiteCoins[0].num)));
+                labelBtn5.setText(String.valueOf(Math.max(0, blackCoins[0].num)));
+
+            });
+        }
 
         slotButton11.addActionListener(e -> {
             switch (turn) {
@@ -167,7 +279,6 @@ public class Main {
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                        coinPrinter(tCoinPanel, topPanel,player1);
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -188,7 +299,6 @@ public class Main {
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                        coinPrinter(bCoinPanel, bottomPanel,player2);
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -200,7 +310,6 @@ public class Main {
                     }
                     break;
             }
-            labelBtn1.setText(String.valueOf(Math.max(0, redCoins[0].num)));
         });
         slotButton21.addActionListener(e -> {
             switch (turn) {
@@ -214,7 +323,6 @@ public class Main {
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                        coinPrinter(tCoinPanel, topPanel,player1);
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -235,7 +343,6 @@ public class Main {
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                        coinPrinter(bCoinPanel, bottomPanel,player2);
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -247,7 +354,6 @@ public class Main {
                     }
                     break;
             }
-            labelBtn2.setText(String.valueOf(Math.max(0, blueCoins[0].num)));
         });
         slotButton31.addActionListener(e -> {
             switch (turn) {
@@ -261,7 +367,6 @@ public class Main {
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                        coinPrinter(tCoinPanel, topPanel,player1);
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -282,7 +387,6 @@ public class Main {
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                        coinPrinter(bCoinPanel, bottomPanel,player2);
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -294,7 +398,6 @@ public class Main {
                     }
                     break;
             }
-            labelBtn3.setText(String.valueOf(Math.max(0, greenCoins[0].num)));
         });
         slotButton41.addActionListener(e -> {
             switch (turn) {
@@ -308,7 +411,6 @@ public class Main {
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                        coinPrinter(tCoinPanel, topPanel,player1);
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -329,7 +431,6 @@ public class Main {
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                        coinPrinter(bCoinPanel, bottomPanel,player2);
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -346,7 +447,6 @@ public class Main {
                     }
                     break;
             }
-            labelBtn4.setText(String.valueOf(Math.max(0, whiteCoins[0].num)));
         });
         slotButton51.addActionListener(e -> {
             switch (turn) {
@@ -360,7 +460,6 @@ public class Main {
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                        coinPrinter(tCoinPanel, topPanel,player1);
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -381,7 +480,6 @@ public class Main {
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                        coinPrinter(bCoinPanel, bottomPanel,player2);
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -393,7 +491,6 @@ public class Main {
                     }
                     break;
             }
-            labelBtn5.setText(String.valueOf(Math.max(0, blackCoins[0].num)));
         });
         slotButton12.addActionListener(e -> {
             switch (turn) {
@@ -408,7 +505,6 @@ public class Main {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
-                        coinPrinter(tCoinPanel, topPanel,player1);
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -435,7 +531,6 @@ public class Main {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
-                        coinPrinter(bCoinPanel, bottomPanel,player2);
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -452,7 +547,6 @@ public class Main {
                     }
                     break;
             }
-            labelBtn1.setText(String.valueOf(Math.max(0, redCoins[0].num)));
         });
         slotButton22.addActionListener(e -> {
             switch (turn) {
@@ -467,7 +561,6 @@ public class Main {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
-                        coinPrinter(tCoinPanel, topPanel,player1);
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -494,7 +587,6 @@ public class Main {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
-                        coinPrinter(bCoinPanel, bottomPanel,player2);
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -511,7 +603,6 @@ public class Main {
                     }
                     break;
             }
-            labelBtn2.setText(String.valueOf(Math.max(0, blueCoins[0].num)));
         });
         slotButton32.addActionListener(e -> {
             switch (turn) {
@@ -526,7 +617,6 @@ public class Main {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
-                        coinPrinter(tCoinPanel, topPanel,player1);
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -553,7 +643,6 @@ public class Main {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
-                        coinPrinter(bCoinPanel, bottomPanel,player2);
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -570,7 +659,6 @@ public class Main {
                     }
                     break;
             }
-            labelBtn3.setText(String.valueOf(Math.max(0, greenCoins[0].num)));
         });
         slotButton42.addActionListener(e -> {
             switch (turn) {
@@ -585,7 +673,6 @@ public class Main {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
-                        coinPrinter(tCoinPanel, topPanel,player1);
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -612,7 +699,6 @@ public class Main {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
-                        coinPrinter(bCoinPanel, bottomPanel,player2);
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -629,7 +715,6 @@ public class Main {
                     }
                     break;
             }
-            labelBtn4.setText(String.valueOf(Math.max(0, whiteCoins[0].num)));
         });
         slotButton52.addActionListener(e -> {
             switch (turn) {
@@ -644,7 +729,7 @@ public class Main {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
-                        coinPrinter(tCoinPanel, topPanel,player1);
+
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -671,7 +756,6 @@ public class Main {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
-                        coinPrinter(bCoinPanel, bottomPanel,player2);
                     } else {
                         clickNum = 0;
                         slotButton22.setEnabled(true);
@@ -688,7 +772,6 @@ public class Main {
                     }
                     break;
             }
-            labelBtn5.setText(String.valueOf(Math.max(0, blackCoins[0].num)));
         });
 
         JLabel[] labels = {labelBtn1, labelBtn2, labelBtn3, labelBtn4, labelBtn5};
@@ -877,14 +960,13 @@ public class Main {
             card.cardImg.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     if (turn == 1) {
-                        player1.buyPrize(card);
-                        scorePrinter(tScorePanel, topPanel);
-
+                        buyPrize(card, player1);
                     } else {
-                        player2.buyPrize(card);
-                        scorePrinter(bScorePanel, bottomPanel);
+                        buyPrize(card, player2);
                     }
-                    cardPrinter(centerPanel);
+                    scorePrinter();
+                    scoinPrinter();
+                    cardPrinter();
                 }
             });
         }
@@ -892,7 +974,7 @@ public class Main {
             card.cardImg.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     if (turn == 1) {
-                        player1.buy(card);
+                        buy(card, player1);
                         int availableCount = 0;
                         for (Card card : setCard1) {
                             availableCount++;
@@ -905,10 +987,8 @@ public class Main {
                                 availableCount--;
                             }
                         }
-                        scorePrinter(tScorePanel, topPanel);
-
                     } else {
-                        player2.buy(card);
+                        buy(card, player2);
                         int availableCount = 0;
                         for (Card card : setCard1) {
                             availableCount++;
@@ -921,9 +1001,10 @@ public class Main {
                                 availableCount--;
                             }
                         }
-                        scorePrinter(bScorePanel, bottomPanel);
                     }
-                    cardPrinter(centerPanel);
+                    scorePrinter();
+                    scoinPrinter();
+                    cardPrinter();
                 }
             });
         }
@@ -931,7 +1012,7 @@ public class Main {
             card.cardImg.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     if (turn == 1) {
-                        player1.buy(card);
+                        buy(card, player1);
                         int availableCount = 0;
                         for (Card card : setCard2) {
                             availableCount++;
@@ -944,9 +1025,8 @@ public class Main {
                                 availableCount--;
                             }
                         }
-                        scorePrinter(tScorePanel, topPanel);
                     } else {
-                        player2.buy(card);
+                        buy(card, player2);
                         int availableCount = 0;
                         for (Card card : setCard2) {
                             availableCount++;
@@ -959,9 +1039,10 @@ public class Main {
                                 availableCount--;
                             }
                         }
-                        scorePrinter(bScorePanel, bottomPanel);
                     }
-                    cardPrinter(centerPanel);
+                    scoinPrinter();
+                    scorePrinter();
+                    cardPrinter();
                 }
             });
         }
@@ -969,7 +1050,7 @@ public class Main {
             card.cardImg.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     if (turn == 1) {
-                        player1.buy(card);
+                        buy(card, player1);
                         int availableCount = 0;
                         for (Card card : setCard3) {
                             availableCount++;
@@ -982,9 +1063,8 @@ public class Main {
                                 availableCount--;
                             }
                         }
-                        scorePrinter(tScorePanel, topPanel);
                     } else {
-                        player2.buy(card);
+                        buy(card, player2);
                         int availableCount = 0;
                         for (Card card : setCard3) {
                             availableCount++;
@@ -997,9 +1077,10 @@ public class Main {
                                 availableCount--;
                             }
                         }
-                        scorePrinter(bScorePanel, bottomPanel);
                     }
-                    cardPrinter(centerPanel);
+                    scorePrinter();
+                    scoinPrinter();
+                    cardPrinter();
                 }
             });
         }
