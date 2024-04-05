@@ -31,6 +31,12 @@ public class Main {
     Coin[] goldCoins = {new Coin(5, "gold")};
     Coin[][] slotCoins = {greenCoins, whiteCoins, blackCoins, blueCoins, redCoins};
 
+    JLabel labelBtn1 = new JLabel(String.valueOf(redCoins[0].num), SwingConstants.CENTER);
+    JLabel labelBtn2 = new JLabel(String.valueOf(blueCoins[0].num), SwingConstants.CENTER);
+    JLabel labelBtn3 = new JLabel(String.valueOf(greenCoins[0].num), SwingConstants.CENTER);
+    JLabel labelBtn4 = new JLabel(String.valueOf(whiteCoins[0].num), SwingConstants.CENTER);
+    JLabel labelBtn5 = new JLabel(String.valueOf(blackCoins[0].num), SwingConstants.CENTER);
+
     public void updateAvailableCards(Card[] cards, JPanel panel) {
         panel.removeAll();
         int availableCount = 0;
@@ -73,12 +79,80 @@ public class Main {
 
         for (int i = 0; i < player1.playerCoin.length; i++) {
             for (int k = 0; k < player1.playerCoin[i].num; k++) {
-                tCoinPanel.add(new JLabel(new ImageIcon("images\\coins\\" + coinColors[i] + ".png")));
+                JLabel coinLabel = new JLabel(new ImageIcon("images\\coins\\" + coinColors[i] + ".png"));
+                int finalI = i;
+                coinLabel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (player1.coinCounter() > 10) {
+                            String coinColor = coinColors[finalI];
+                            switch (coinColor) {
+                                case "green" -> {
+                                    slotCoins[0][0].num++;
+                                    labelBtn3.setText(String.valueOf(Math.max(0, greenCoins[0].num)));
+                                }
+                                case "white" -> {
+                                    slotCoins[1][0].num++;
+                                    labelBtn4.setText(String.valueOf(Math.max(0, whiteCoins[0].num)));
+                                }
+                                case "black" -> {
+                                    slotCoins[2][0].num++;
+                                    labelBtn5.setText(String.valueOf(Math.max(0, blackCoins[0].num)));
+                                }
+                                case "blue" -> {
+                                    slotCoins[3][0].num++;
+                                    labelBtn2.setText(String.valueOf(Math.max(0, blueCoins[0].num)));
+                                }
+                                case "red" -> {
+                                    slotCoins[4][0].num++;
+                                    labelBtn1.setText(String.valueOf(Math.max(0, redCoins[0].num)));
+                                }
+                            }
+                            player1.playerCoin[finalI].num--;
+                            coinPrinter();
+                        }
+                    }
+                });
+                tCoinPanel.add(coinLabel);
             }
         }
         for (int i = 0; i < player2.playerCoin.length; i++) {
             for (int k = 0; k < player2.playerCoin[i].num; k++) {
-                bCoinPanel.add(new JLabel(new ImageIcon("images\\coins\\" + coinColors[i] + ".png")));
+                JLabel coinLabel = new JLabel(new ImageIcon("images\\coins\\" + coinColors[i] + ".png"));
+                int finalI = i;
+                coinLabel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (player2.coinCounter() > 10) {
+                            String coinColor = coinColors[finalI];
+                            switch (coinColor) {
+                                case "green" -> {
+                                    slotCoins[0][0].num++;
+                                    labelBtn3.setText(String.valueOf(Math.max(0, greenCoins[0].num)));
+                                }
+                                case "white" -> {
+                                    slotCoins[1][0].num++;
+                                    labelBtn4.setText(String.valueOf(Math.max(0, whiteCoins[0].num)));
+                                }
+                                case "black" -> {
+                                    slotCoins[2][0].num++;
+                                    labelBtn5.setText(String.valueOf(Math.max(0, blackCoins[0].num)));
+                                }
+                                case "blue" -> {
+                                    slotCoins[3][0].num++;
+                                    labelBtn2.setText(String.valueOf(Math.max(0, blueCoins[0].num)));
+                                }
+                                case "red" -> {
+                                    slotCoins[4][0].num++;
+                                    labelBtn1.setText(String.valueOf(Math.max(0, redCoins[0].num)));
+                                }
+                            }
+                            player2.playerCoin[finalI].num--;
+                            coinPrinter();
+                        }
+                    }
+                });
+                bCoinPanel.add(coinLabel);
             }
         }
 
@@ -196,10 +270,10 @@ public class Main {
         }
     }
 
-    public void buyReserve(Players player){
-        for(Card card:player.reservCard){
-            if(card!=null){
-                buy(card,player);
+    public void buyReserve(Players player) {
+        for (Card card : player.reservCard) {
+            if (card != null) {
+                buy(card, player);
             }
         }
     }
@@ -282,20 +356,14 @@ public class Main {
         centerPanel.setPreferredSize(new Dimension(1600, 880));
         tCardPanel.setBackground(Color.YELLOW);
         bCardPanel.setBackground(Color.YELLOW);
-
-        JLabel labelBtn1 = new JLabel(String.valueOf(redCoins[0].num), SwingConstants.CENTER);
         JButton slotButton11 = new JButton("دو سکه قرمز");
         JButton slotButton12 = new JButton("یک سکه قرمز");
-        JLabel labelBtn2 = new JLabel(String.valueOf(blueCoins[0].num), SwingConstants.CENTER);
         JButton slotButton21 = new JButton("دو سکه آبی");
         JButton slotButton22 = new JButton("یک سکه آبی");
-        JLabel labelBtn3 = new JLabel(String.valueOf(greenCoins[0].num), SwingConstants.CENTER);
         JButton slotButton31 = new JButton("دو سکه سبز");
         JButton slotButton32 = new JButton("یک سکه سبز");
-        JLabel labelBtn4 = new JLabel(String.valueOf(whiteCoins[0].num), SwingConstants.CENTER);
         JButton slotButton41 = new JButton("دو سکه سفید");
         JButton slotButton42 = new JButton("یک سکه سفید");
-        JLabel labelBtn5 = new JLabel(String.valueOf(blackCoins[0].num), SwingConstants.CENTER);
         JButton slotButton51 = new JButton("دو سکه سیاه");
         JButton slotButton52 = new JButton("یک سکه سیاه");
         JButton enterButton = new JButton("فروشگاه");

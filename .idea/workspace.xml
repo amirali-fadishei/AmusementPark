@@ -8,6 +8,13 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Coin.java" beforeDir="false" afterPath="$PROJECT_DIR$/Coin.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Players.java" beforeDir="false" afterPath="$PROJECT_DIR$/Players.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/background.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/enterbtn.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/guide/g1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/guide/g2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/guide/g3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/guide/g4.png" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -119,6 +126,7 @@
       <workItem from="1712315506301" duration="240000" />
       <workItem from="1712328110172" duration="4875000" />
       <workItem from="1712334058376" duration="791000" />
+      <workItem from="1712335648386" duration="6123000" />
     </task>
     <servers />
   </component>
@@ -141,7 +149,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/Players.java</url>
-          <line>19</line>
+          <line>27</line>
           <option name="timeStamp" value="43" />
         </line-breakpoint>
       </breakpoints>
