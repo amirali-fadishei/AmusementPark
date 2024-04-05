@@ -7,17 +7,19 @@ public class Coin {
         setType(name);
     }
 
-    private void setType(String name) {
+    public void setType(String name) {
         this.type = name;
-    }
-
-    private void setNum(int n) {
-        this.num = n;
     }
 
     public String getType() {
         return this.type;
     }
-    //ترتیب سکه ها در تعریف آرایه سکه های هر کارت:
-    //سبز-سفید-سیاه-آبی-قرمز-طلایی
+
+    public void setNum(int n) {
+        this.num = n;
+    }
+
+    public int getNum() {
+        return this.num;
+    }
 }

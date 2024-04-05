@@ -3,9 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class Main {
-    //game main frame
     private final JFrame frame;
-    //game main panels
     private final JPanel loginPanel;
     private final JPanel mainGamePanel;
     private final JPanel storePanel;
@@ -21,7 +19,6 @@ public class Main {
     private final JPanel bSCoinPanel = new JPanel(new FlowLayout());
     private final JPanel tCardPanel = new JPanel(new FlowLayout());
     private final JPanel bCardPanel = new JPanel(new FlowLayout());
-    //turn and players
     private int turn = 1;
     private final Players player1 = new Players();
     private final Players player2 = new Players();
@@ -144,8 +141,6 @@ public class Main {
                 }
             }
         }
-
-        // اگر تمام سکه‌های مورد نیاز (معمولی یا طلا) موجود بودند، خرید انجام می‌شود
         if (sw) {
             for (int i = 0; i < 5; i++) {
                 if (card.coinList[i] != null) {
@@ -187,14 +182,7 @@ public class Main {
             }
         }
         if (sw) {
-            for (int i = 0; i < 5; i++) {
-                if (card.SCoins[i] != null) {
-                    player.playerSCoin[i].num -= card.SCoins[i].num;
-                }
-            }
             player.pScore += card.getScore();
-            sCoinPrinter();
-            scorePrinter();
             for (int j = 0; j < 48; j++) {
                 if (player.playerCard[j] == null) {
                     player.playerCard[j] = card;
@@ -208,40 +196,49 @@ public class Main {
         }
     }
 
+    public void buyReserve(Players player){
+        for(Card card:player.reservCard){
+            if(card!=null){
+                buy(card,player);
+            }
+        }
+    }
+
+    public boolean reserveDone = false;
+
     public void reserve(Card card, Players player) {
         if (player.reserveCount < 3) {
+            player.reserveCount++;
+            if (goldCoins[0].num != 0) {
+                goldCoins[0].num--;
+                player.playerCoin[5].num++;
+            }
             for (int t = 0; t < player.reservCard.length; t++) {
                 if (player.reservCard[t] == null) {
                     player.reservCard[t] = card;
                     card.setAvailability(false);
-                    player.reserveCount++;
-                    if (goldCoins[0].num != 0) {
-                        goldCoins[0].num--;
-                        player.playerCoin[5].num++;
-                    }
-                    coinPrinter();
+                    reserveDone = true;
                     break;
                 }
             }
+            coinPrinter();
         }
     }
 
     public Main() {
         frame = new JFrame("Amusement Park");
         frame.setSize(1920, 1080);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//close type
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-
         loginPanel = createLoginPanel();
         mainGamePanel = createMainGamePanel();
         storePanel = createStorePanel();
-
         frame.add(loginPanel);
         frame.setVisible(true);
     }
 
     private JPanel createLoginPanel() {
-        JPanel welcomePanel = new JPanel(new GridBagLayout());//layout system
+        JPanel welcomePanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -307,6 +304,13 @@ public class Main {
 
         for (JButton btn : btns) {
             btn.addActionListener(e -> {
+                for (Coin[] coinArray : slotCoins) {
+                    for (Coin coin : coinArray) {
+                        if (coin.getNum() > 4) {
+                            coin.setNum(4);
+                        }
+                    }
+                }
                 coinPrinter();
                 labelBtn1.setText(String.valueOf(Math.max(0, redCoins[0].num)));
                 labelBtn2.setText(String.valueOf(Math.max(0, blueCoins[0].num)));
@@ -335,7 +339,9 @@ public class Main {
                         slotButton32.setEnabled(true);
                         slotButton42.setEnabled(true);
                         slotButton52.setEnabled(true);
+                        buyReserve(player1);
                         turn *= -1;
+                        reserveDone = false;
                     }
                     break;
                 case -1:
@@ -355,7 +361,9 @@ public class Main {
                         slotButton32.setEnabled(true);
                         slotButton42.setEnabled(true);
                         slotButton52.setEnabled(true);
+                        buyReserve(player2);
                         turn *= -1;
+                        reserveDone = false;
                     }
                     break;
             }
@@ -379,7 +387,9 @@ public class Main {
                         slotButton32.setEnabled(true);
                         slotButton42.setEnabled(true);
                         slotButton52.setEnabled(true);
+                        buyReserve(player1);
                         turn *= -1;
+                        reserveDone = false;
                     }
                     break;
                 case -1:
@@ -399,7 +409,9 @@ public class Main {
                         slotButton32.setEnabled(true);
                         slotButton42.setEnabled(true);
                         slotButton52.setEnabled(true);
+                        buyReserve(player2);
                         turn *= -1;
+                        reserveDone = false;
                     }
                     break;
             }
@@ -423,7 +435,9 @@ public class Main {
                         slotButton32.setEnabled(true);
                         slotButton42.setEnabled(true);
                         slotButton52.setEnabled(true);
+                        buyReserve(player1);
                         turn *= -1;
+                        reserveDone = false;
                     }
                     break;
                 case -1:
@@ -443,7 +457,9 @@ public class Main {
                         slotButton32.setEnabled(true);
                         slotButton42.setEnabled(true);
                         slotButton52.setEnabled(true);
+                        buyReserve(player1);
                         turn *= -1;
+                        reserveDone = false;
                     }
                     break;
             }
@@ -467,7 +483,9 @@ public class Main {
                         slotButton32.setEnabled(true);
                         slotButton42.setEnabled(true);
                         slotButton52.setEnabled(true);
+                        buyReserve(player1);
                         turn *= -1;
+                        reserveDone = false;
                     }
                     break;
                 case -1:
@@ -492,7 +510,9 @@ public class Main {
                         slotButton31.setEnabled(true);
                         slotButton41.setEnabled(true);
                         slotButton51.setEnabled(true);
+                        buyReserve(player2);
                         turn *= -1;
+                        reserveDone = false;
                     }
                     break;
             }
@@ -516,7 +536,9 @@ public class Main {
                         slotButton32.setEnabled(true);
                         slotButton42.setEnabled(true);
                         slotButton52.setEnabled(true);
+                        buyReserve(player1);
                         turn *= -1;
+                        reserveDone = false;
                     }
                     break;
                 case -1:
@@ -536,7 +558,9 @@ public class Main {
                         slotButton32.setEnabled(true);
                         slotButton42.setEnabled(true);
                         slotButton52.setEnabled(true);
+                        buyReserve(player2);
                         turn *= -1;
+                        reserveDone = false;
                     }
                     break;
             }
@@ -566,7 +590,9 @@ public class Main {
                         slotButton31.setEnabled(true);
                         slotButton41.setEnabled(true);
                         slotButton51.setEnabled(true);
+                        buyReserve(player1);
                         turn *= -1;
+                        reserveDone = false;
                     }
                     break;
                 case -1:
@@ -592,7 +618,9 @@ public class Main {
                         slotButton31.setEnabled(true);
                         slotButton41.setEnabled(true);
                         slotButton51.setEnabled(true);
+                        buyReserve(player2);
                         turn *= -1;
+                        reserveDone = false;
                     }
                     break;
             }
@@ -622,7 +650,9 @@ public class Main {
                         slotButton31.setEnabled(true);
                         slotButton41.setEnabled(true);
                         slotButton51.setEnabled(true);
+                        buyReserve(player1);
                         turn *= -1;
+                        reserveDone = false;
                     }
                     break;
                 case -1:
@@ -648,7 +678,9 @@ public class Main {
                         slotButton31.setEnabled(true);
                         slotButton41.setEnabled(true);
                         slotButton51.setEnabled(true);
+                        buyReserve(player2);
                         turn *= -1;
+                        reserveDone = false;
                     }
                     break;
             }
@@ -678,7 +710,9 @@ public class Main {
                         slotButton31.setEnabled(true);
                         slotButton41.setEnabled(true);
                         slotButton51.setEnabled(true);
+                        buyReserve(player1);
                         turn *= -1;
+                        reserveDone = false;
                     }
                     break;
                 case -1:
@@ -704,7 +738,9 @@ public class Main {
                         slotButton31.setEnabled(true);
                         slotButton41.setEnabled(true);
                         slotButton51.setEnabled(true);
+                        buyReserve(player2);
                         turn *= -1;
+                        reserveDone = false;
                     }
                     break;
             }
@@ -734,7 +770,9 @@ public class Main {
                         slotButton31.setEnabled(true);
                         slotButton41.setEnabled(true);
                         slotButton51.setEnabled(true);
+                        buyReserve(player1);
                         turn *= -1;
+                        reserveDone = false;
                     }
                     break;
                 case -1:
@@ -760,7 +798,9 @@ public class Main {
                         slotButton31.setEnabled(true);
                         slotButton41.setEnabled(true);
                         slotButton51.setEnabled(true);
+                        buyReserve(player2);
                         turn *= -1;
+                        reserveDone = false;
                     }
                     break;
             }
@@ -791,7 +831,9 @@ public class Main {
                         slotButton31.setEnabled(true);
                         slotButton41.setEnabled(true);
                         slotButton51.setEnabled(true);
+                        buyReserve(player1);
                         turn *= -1;
+                        reserveDone = false;
                     }
                     break;
                 case -1:
@@ -817,7 +859,9 @@ public class Main {
                         slotButton31.setEnabled(true);
                         slotButton41.setEnabled(true);
                         slotButton51.setEnabled(true);
+                        buyReserve(player2);
                         turn *= -1;
+                        reserveDone = false;
                     }
                     break;
             }
@@ -968,7 +1012,6 @@ public class Main {
         updateAvailableCards(setCard1, set1panel);
         updateAvailableCards(setCard2, set2panel);
         updateAvailableCards(setCard3, set3panel);
-
         for (Card card : prizeList) {
             card.cardImg.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
@@ -987,13 +1030,17 @@ public class Main {
                         if (SwingUtilities.isLeftMouseButton(e)) {
                             buy(card, player1);
                         } else if (SwingUtilities.isRightMouseButton(e)) {
-                            reserve(card, player1);
+                            if (!reserveDone) {
+                                reserve(card, player1);
+                            }
                         }
                     } else {
                         if (SwingUtilities.isLeftMouseButton(e)) {
                             buy(card, player2);
                         } else if (SwingUtilities.isRightMouseButton(e)) {
-                            reserve(card, player2);
+                            if (!reserveDone) {
+                                reserve(card, player2);
+                            }
                         }
                     }
                     updateAvailableCards(setCard1, set1panel);
@@ -1007,13 +1054,17 @@ public class Main {
                         if (SwingUtilities.isLeftMouseButton(e)) {
                             buy(card, player1);
                         } else if (SwingUtilities.isRightMouseButton(e)) {
-                            reserve(card, player1);
+                            if (!reserveDone) {
+                                reserve(card, player1);
+                            }
                         }
                     } else {
                         if (SwingUtilities.isLeftMouseButton(e)) {
                             buy(card, player2);
                         } else if (SwingUtilities.isRightMouseButton(e)) {
-                            reserve(card, player2);
+                            if (!reserveDone) {
+                                reserve(card, player2);
+                            }
                         }
                     }
                     updateAvailableCards(setCard2, set2panel);
@@ -1027,13 +1078,17 @@ public class Main {
                         if (SwingUtilities.isLeftMouseButton(e)) {
                             buy(card, player1);
                         } else if (SwingUtilities.isRightMouseButton(e)) {
-                            reserve(card, player1);
+                            if (!reserveDone) {
+                                reserve(card, player1);
+                            }
                         }
                     } else {
                         if (SwingUtilities.isLeftMouseButton(e)) {
                             buy(card, player2);
                         } else if (SwingUtilities.isRightMouseButton(e)) {
-                            reserve(card, player2);
+                            if (!reserveDone) {
+                                reserve(card, player2);
+                            }
                         }
                     }
                     updateAvailableCards(setCard3, set3panel);
@@ -1050,7 +1105,6 @@ public class Main {
         return grayPanel;
     }
 
-    // Method to switch between panels
     private void switchPanel(JPanel panel) {
         frame.getContentPane().removeAll();
         frame.getContentPane().add(panel);
