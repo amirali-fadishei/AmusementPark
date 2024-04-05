@@ -31,7 +31,24 @@ public class Main {
     Coin[] blackCoins = {new Coin(4, "black")};
     Coin[] blueCoins = {new Coin(4, "blue")};
     Coin[] redCoins = {new Coin(4, "red")};
-    Coin[][] slotCoin = {greenCoins, whiteCoins, blackCoins, blueCoins, redCoins};
+    Coin[] goldCoins = {new Coin(5, "gold")};
+    Coin[][] slotCoins = {greenCoins, whiteCoins, blackCoins, blueCoins, redCoins};
+
+    public void updateAvailableCards(Card[] cards, JPanel panel) {
+        panel.removeAll();
+        int availableCount = 0;
+        for (Card card : cards) {
+            if (card.getAvailability()) {
+                panel.add(card.cardImg);
+                availableCount++;
+                if (availableCount == 4) {
+                    break;
+                }
+            }
+        }
+        panel.revalidate();
+        panel.repaint();
+    }
 
     public void cardPrinter() {
         for (int k = 0; k < player1.playerCard.length; k++) {
@@ -55,7 +72,7 @@ public class Main {
     public void coinPrinter() {
         tCoinPanel.removeAll();
         bCoinPanel.removeAll();
-        String[] coinColors = {"green", "white", "black", "blue", "red"};
+        String[] coinColors = {"green", "white", "black", "blue", "red", "gold"};
 
         for (int i = 0; i < player1.playerCoin.length; i++) {
             for (int k = 0; k < player1.playerCoin[i].num; k++) {
@@ -69,34 +86,34 @@ public class Main {
         }
 
         tCoinPanel.revalidate();
-        bCoinPanel.revalidate();
         tCoinPanel.repaint();
-        bCoinPanel.repaint();
         topPanel.add(tCoinPanel);
+        bCoinPanel.revalidate();
+        bCoinPanel.repaint();
         bottomPanel.add(bCoinPanel);
     }
 
-    public void scoinPrinter() {
+    public void sCoinPrinter() {
         tSCoinPanel.removeAll();
         bSCoinPanel.removeAll();
-        String[] ScoinColors = {"green", "white", "black", "blue", "red"};
+        String[] sCoinColors = {"green", "white", "black", "blue", "red"};
 
-        for (int i = 0; i < player1.playerSCoin.length; i++) {
+        for (int i = 0; i < player1.playerSCoin.length - 1; i++) {
             for (int k = 0; k < player1.playerSCoin[i].num; k++) {
-                tSCoinPanel.add(new JLabel(new ImageIcon("images\\coins\\" + ScoinColors[i] + ".png")));
+                tSCoinPanel.add(new JLabel(new ImageIcon("images\\coins\\" + sCoinColors[i] + ".png")));
             }
         }
-        for (int i = 0; i < player2.playerSCoin.length; i++) {
+        for (int i = 0; i < player2.playerSCoin.length - 1; i++) {
             for (int k = 0; k < player2.playerSCoin[i].num; k++) {
-                bSCoinPanel.add(new JLabel(new ImageIcon("images\\coins\\" + ScoinColors[i] + ".png")));
+                bSCoinPanel.add(new JLabel(new ImageIcon("images\\coins\\" + sCoinColors[i] + ".png")));
             }
         }
 
         tSCoinPanel.revalidate();
-        bSCoinPanel.revalidate();
         tSCoinPanel.repaint();
-        bSCoinPanel.repaint();
         topPanel.add(tSCoinPanel);
+        bSCoinPanel.revalidate();
+        bSCoinPanel.repaint();
         bottomPanel.add(bSCoinPanel);
     }
 
@@ -119,19 +136,25 @@ public class Main {
         boolean sw = true;
         for (int i = 0; i < 5; i++) {
             if (card.coinList[i] != null) {
-                if (!card.coinList[i].getType().equals(player.playerCoin[i].getType()) || player.playerCoin[i].num < card.coinList[i].num) {
-                    sw = false;
-                    break;
+                if ((player.playerCoin[i].num + player.playerSCoin[i].num) < card.coinList[i].num) {
+                    if ((player.playerCoin[5].num + player.playerCoin[i].num + player.playerSCoin[i].num) < card.coinList[i].num) {
+                        sw = false;
+                        break;
+                    }
                 }
             }
         }
+
+        // اگر تمام سکه‌های مورد نیاز (معمولی یا طلا) موجود بودند، خرید انجام می‌شود
         if (sw) {
             for (int i = 0; i < 5; i++) {
                 if (card.coinList[i] != null) {
-                    if (player.playerSCoin[i] != null) {
-                        slotCoin[i][0].num += card.coinList[i].num;
-                        card.coinList[i].num -= player.playerSCoin[i].num;
-                    }
+                    slotCoins[i][0].num += card.coinList[i].num;
+                    int remain = card.coinList[i].num - (player.playerCoin[i].num + player.playerSCoin[i].num);
+                    card.coinList[i].num -= remain;
+                    player.playerCoin[5].num -= remain;
+                    goldCoins[0].num += remain;
+                    card.coinList[i].num -= player.playerSCoin[i].num;
                     player.playerCoin[i].num -= card.coinList[i].num;
                 }
                 if (card.SCoins[i] != null && player.playerSCoin[i] != null) {
@@ -146,6 +169,10 @@ public class Main {
                     break;
                 }
             }
+            coinPrinter();
+            sCoinPrinter();
+            scorePrinter();
+            cardPrinter();
         }
     }
 
@@ -166,10 +193,33 @@ public class Main {
                 }
             }
             player.pScore += card.getScore();
+            sCoinPrinter();
+            scorePrinter();
             for (int j = 0; j < 48; j++) {
                 if (player.playerCard[j] == null) {
                     player.playerCard[j] = card;
                     card.setAvailability(false);
+                    break;
+                }
+            }
+            sCoinPrinter();
+            scorePrinter();
+            cardPrinter();
+        }
+    }
+
+    public void reserve(Card card, Players player) {
+        if (player.reserveCount < 3) {
+            for (int t = 0; t < player.reservCard.length; t++) {
+                if (player.reservCard[t] == null) {
+                    player.reservCard[t] = card;
+                    card.setAvailability(false);
+                    player.reserveCount++;
+                    if (goldCoins[0].num != 0) {
+                        goldCoins[0].num--;
+                        player.playerCoin[5].num++;
+                    }
+                    coinPrinter();
                     break;
                 }
             }
@@ -263,7 +313,6 @@ public class Main {
                 labelBtn3.setText(String.valueOf(Math.max(0, greenCoins[0].num)));
                 labelBtn4.setText(String.valueOf(Math.max(0, whiteCoins[0].num)));
                 labelBtn5.setText(String.valueOf(Math.max(0, blackCoins[0].num)));
-
             });
         }
 
@@ -796,22 +845,22 @@ public class Main {
         JPanel grayPanel = new JPanel();
 
         JPanel prizePanel = new JPanel();
-        prizePanel.setPreferredSize(new Dimension(800, 160));
         prizePanel.setLayout(new GridLayout(1, 4));
+        prizePanel.setPreferredSize(new Dimension(800, 160));
         JButton backward = new JButton("بازگشت");
         backward.addActionListener(e -> switchPanel(mainGamePanel));
 
         JPanel set1panel = new JPanel();
-        set1panel.setPreferredSize(new Dimension(800, 160));
         set1panel.setLayout(new GridLayout(1, 4));
+        set1panel.setPreferredSize(new Dimension(800, 160));
 
         JPanel set2panel = new JPanel();
-        set2panel.setPreferredSize(new Dimension(800, 160));
         set2panel.setLayout(new GridLayout(1, 4));
+        set2panel.setPreferredSize(new Dimension(800, 160));
 
         JPanel set3panel = new JPanel();
-        set3panel.setPreferredSize(new Dimension(800, 160));
         set3panel.setLayout(new GridLayout(1, 4));
+        set3panel.setPreferredSize(new Dimension(800, 160));
 
         specialCoin[] prize1Coins = new specialCoin[]{new specialCoin(4, "green"), null, null, null, new specialCoin(4, "red")};
         specialCoin[] prize2Coins = new specialCoin[]{new specialCoin(5, "green"), null, null, null, new specialCoin(5, "red")};
@@ -914,47 +963,11 @@ public class Main {
         specialCoin[] card315prize = new specialCoin[]{null, null, null, new specialCoin(1, "blue"), null};
         Card[] setCard3 = {new Card(3, card31Coins, card31prize, new JLabel(new ImageIcon("images\\card3\\31.png"))), new Card(4, card32Coins, card32prize, new JLabel(new ImageIcon("images\\card3\\32.png"))), new Card(5, card33Coins, card33prize, new JLabel(new ImageIcon("images\\card3\\33.png"))), new Card(3, card34Coins, card34prize, new JLabel(new ImageIcon("images\\card3\\34.png"))), new Card(3, card35Coins, card35prize, new JLabel(new ImageIcon("images\\card3\\35.png"))), new Card(4, card36Coins, card36prize, new JLabel(new ImageIcon("images\\card3\\36.png"))), new Card(5, card37Coins, card37prize, new JLabel(new ImageIcon("images\\card3\\37.png"))), new Card(5, card38Coins, card38prize, new JLabel(new ImageIcon("images\\card3\\38.png"))), new Card(5, card39Coins, card39prize, new JLabel(new ImageIcon("images\\card3\\39.png"))), new Card(4, card310Coins, card310prize, new JLabel(new ImageIcon("images\\card3\\310.png"))), new Card(4, card311Coins, card311prize, new JLabel(new ImageIcon("images\\card3\\311.png"))), new Card(3, card312Coins, card312prize, new JLabel(new ImageIcon("images\\card3\\312.png"))), new Card(3, card313Coins, card313prize, new JLabel(new ImageIcon("images\\card3\\313.png"))), new Card(3, card314Coins, card314prize, new JLabel(new ImageIcon("images\\card3\\314.png"))), new Card(3, card315Coins, card315prize, new JLabel(new ImageIcon("images\\card3\\315.png")))};
 
-        for (Card card : prizeList) {
-            if (card.getAvailability()) {
-                prizePanel.add(card.cardImg);
-            }
-        }
-        int availableCount = 0;
-        for (Card card : setCard1) {
-            availableCount++;
-            if (card.getAvailability()) {
-                set1panel.add(card.cardImg);
-                if (availableCount == 4) {
-                    break;
-                }
-            } else {
-                availableCount--;
-            }
-        }
-        availableCount = 0;
-        for (Card card : setCard2) {
-            availableCount++;
-            if (card.getAvailability()) {
-                set2panel.add(card.cardImg);
-                if (availableCount == 4) {
-                    break;
-                }
-            } else {
-                availableCount--;
-            }
-        }
-        availableCount = 0;
-        for (Card card : setCard3) {
-            availableCount++;
-            if (card.getAvailability()) {
-                set3panel.add(card.cardImg);
-                if (availableCount == 4) {
-                    break;
-                }
-            } else {
-                availableCount--;
-            }
-        }
+
+        updateAvailableCards(prizeList, prizePanel);
+        updateAvailableCards(setCard1, set1panel);
+        updateAvailableCards(setCard2, set2panel);
+        updateAvailableCards(setCard3, set3panel);
 
         for (Card card : prizeList) {
             card.cardImg.addMouseListener(new MouseAdapter() {
@@ -964,9 +977,6 @@ public class Main {
                     } else {
                         buyPrize(card, player2);
                     }
-                    scorePrinter();
-                    scoinPrinter();
-                    cardPrinter();
                 }
             });
         }
@@ -974,37 +984,19 @@ public class Main {
             card.cardImg.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     if (turn == 1) {
-                        buy(card, player1);
-                        int availableCount = 0;
-                        for (Card card : setCard1) {
-                            availableCount++;
-                            if (card.getAvailability()) {
-                                set1panel.add(card.cardImg);
-                                if (availableCount == 4) {
-                                    break;
-                                }
-                            } else {
-                                availableCount--;
-                            }
+                        if (SwingUtilities.isLeftMouseButton(e)) {
+                            buy(card, player1);
+                        } else if (SwingUtilities.isRightMouseButton(e)) {
+                            reserve(card, player1);
                         }
                     } else {
-                        buy(card, player2);
-                        int availableCount = 0;
-                        for (Card card : setCard1) {
-                            availableCount++;
-                            if (card.getAvailability()) {
-                                set1panel.add(card.cardImg);
-                                if (availableCount == 4) {
-                                    break;
-                                }
-                            } else {
-                                availableCount--;
-                            }
+                        if (SwingUtilities.isLeftMouseButton(e)) {
+                            buy(card, player2);
+                        } else if (SwingUtilities.isRightMouseButton(e)) {
+                            reserve(card, player2);
                         }
                     }
-                    scorePrinter();
-                    scoinPrinter();
-                    cardPrinter();
+                    updateAvailableCards(setCard1, set1panel);
                 }
             });
         }
@@ -1012,37 +1004,19 @@ public class Main {
             card.cardImg.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     if (turn == 1) {
-                        buy(card, player1);
-                        int availableCount = 0;
-                        for (Card card : setCard2) {
-                            availableCount++;
-                            if (card.getAvailability()) {
-                                set2panel.add(card.cardImg);
-                                if (availableCount == 4) {
-                                    break;
-                                }
-                            } else {
-                                availableCount--;
-                            }
+                        if (SwingUtilities.isLeftMouseButton(e)) {
+                            buy(card, player1);
+                        } else if (SwingUtilities.isRightMouseButton(e)) {
+                            reserve(card, player1);
                         }
                     } else {
-                        buy(card, player2);
-                        int availableCount = 0;
-                        for (Card card : setCard2) {
-                            availableCount++;
-                            if (card.getAvailability()) {
-                                set2panel.add(card.cardImg);
-                                if (availableCount == 4) {
-                                    break;
-                                }
-                            } else {
-                                availableCount--;
-                            }
+                        if (SwingUtilities.isLeftMouseButton(e)) {
+                            buy(card, player2);
+                        } else if (SwingUtilities.isRightMouseButton(e)) {
+                            reserve(card, player2);
                         }
                     }
-                    scoinPrinter();
-                    scorePrinter();
-                    cardPrinter();
+                    updateAvailableCards(setCard2, set2panel);
                 }
             });
         }
@@ -1050,37 +1024,19 @@ public class Main {
             card.cardImg.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     if (turn == 1) {
-                        buy(card, player1);
-                        int availableCount = 0;
-                        for (Card card : setCard3) {
-                            availableCount++;
-                            if (card.getAvailability()) {
-                                set3panel.add(card.cardImg);
-                                if (availableCount == 4) {
-                                    break;
-                                }
-                            } else {
-                                availableCount--;
-                            }
+                        if (SwingUtilities.isLeftMouseButton(e)) {
+                            buy(card, player1);
+                        } else if (SwingUtilities.isRightMouseButton(e)) {
+                            reserve(card, player1);
                         }
                     } else {
-                        buy(card, player2);
-                        int availableCount = 0;
-                        for (Card card : setCard3) {
-                            availableCount++;
-                            if (card.getAvailability()) {
-                                set3panel.add(card.cardImg);
-                                if (availableCount == 4) {
-                                    break;
-                                }
-                            } else {
-                                availableCount--;
-                            }
+                        if (SwingUtilities.isLeftMouseButton(e)) {
+                            buy(card, player2);
+                        } else if (SwingUtilities.isRightMouseButton(e)) {
+                            reserve(card, player2);
                         }
                     }
-                    scorePrinter();
-                    scoinPrinter();
-                    cardPrinter();
+                    updateAvailableCards(setCard3, set3panel);
                 }
             });
         }
