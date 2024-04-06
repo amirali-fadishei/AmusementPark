@@ -4,13 +4,13 @@ public class Card {
     public Coin[] coinList = new Coin[5];
     public specialCoin[] SCoins = new specialCoin[5];
     private int Score;
-    public JLabel cardImg;
+    private JLabel cardImg;
     private boolean availability = true;
 
     public Card(int score, Coin[] coins, specialCoin[] sCoins, JLabel img) {
         this.setScore(score);
         this.coinList = coins;
-        this.cardImg = img;
+        this.setCardImg(img);
         this.SCoins = sCoins;
     }
 
@@ -28,5 +28,13 @@ public class Card {
 
     public boolean getAvailability() {
         return this.availability;
+    }
+
+    public void setCardImg(JLabel image) {
+        this.cardImg = image;
+    }
+
+    public JLabel getCardImg() {
+        return this.cardImg;
     }
 }

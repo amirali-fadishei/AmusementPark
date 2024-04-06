@@ -1,10 +1,10 @@
 public class specialCoin {
     private String type;
-    int num;
+    public int sNum;
 
     public specialCoin(int n, String Type) {
         this.setType(Type);
-        this.setNum(n);
+        this.setsNum(n);
     }
 
     private void setType(String name) {
@@ -15,11 +15,11 @@ public class specialCoin {
         return this.type;
     }
 
-    private void setNum(int n) {
-        this.num = n;
+    private void setsNum(int n) {
+        this.sNum = n;
     }
 
-    public int getNum() {
-        return this.num;
+    public int getsNum() {
+        return this.sNum;
     }
 }

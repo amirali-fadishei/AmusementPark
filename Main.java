@@ -1,16 +1,40 @@
+//Swing needs
+
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class Main {
+    //game Font
+    InputStream is = Main.class.getResourceAsStream("Vazirmatn-regular.ttf");
+    Font font;
+
+    {
+        try {
+            if (is != null) {
+                font = Font.createFont(Font.TRUETYPE_FONT, is);
+            }
+        } catch (FontFormatException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    Font bigFont = font.deriveFont(40f);
+    Font normalFont = font.deriveFont(20f);
+    //Frames and panels
     private final JFrame frame;
     private final JPanel loginPanel;
     private final JPanel mainGamePanel;
     private final JPanel storePanel;
+    private final JPanel winnerPanel;
+    private final JPanel coinPanel;
     private final JPanel centerPanel = new JPanel(new BorderLayout());
     private final JPanel topPanel = new JPanel(new FlowLayout());
     private final JPanel bottomPanel = new JPanel(new FlowLayout());
-    private final JPanel sidePanel = new JPanel(new GridLayout(6, 3));
+    private final JPanel sidePanel = new JPanel(new GridBagLayout());
     private final JPanel tScorePanel = new JPanel();
     private final JPanel bScorePanel = new JPanel();
     private final JPanel tCoinPanel = new JPanel(new FlowLayout());
@@ -19,30 +43,29 @@ public class Main {
     private final JPanel bSCoinPanel = new JPanel(new FlowLayout());
     private final JPanel tCardPanel = new JPanel(new FlowLayout());
     private final JPanel bCardPanel = new JPanel(new FlowLayout());
-    private int turn = 1;
+    //frame background
+    private final Image bgImage = Toolkit.getDefaultToolkit().createImage("images\\background.png");
+    //turn system and players
     private final Players player1 = new Players();
     private final Players player2 = new Players();
+    private int turn = 1;
     private int clickNum = 0;
-    Coin[] greenCoins = {new Coin(4, "green")};
-    Coin[] whiteCoins = {new Coin(4, "white")};
-    Coin[] blackCoins = {new Coin(4, "black")};
-    Coin[] blueCoins = {new Coin(4, "blue")};
-    Coin[] redCoins = {new Coin(4, "red")};
-    Coin[] goldCoins = {new Coin(5, "gold")};
-    Coin[][] slotCoins = {greenCoins, whiteCoins, blackCoins, blueCoins, redCoins};
+    //coin slots
+    private Coin[] slotCoins = {new Coin(4, "green"), new Coin(4, "white"), new Coin(4, "black"), new Coin(4, "blue"), new Coin(4, "red"), new Coin(5, "gold")};
+    //slots label
+    JLabel labelBtn1 = new JLabel("تعداد سکه های قرمز : ".concat(String.valueOf(slotCoins[4].getNum())), SwingConstants.CENTER);
+    JLabel labelBtn2 = new JLabel("تعداد سکه های آبی : ".concat(String.valueOf(slotCoins[3].getNum())), SwingConstants.CENTER);
+    JLabel labelBtn3 = new JLabel("تعداد سکه های سبز : ".concat(String.valueOf(slotCoins[0].getNum())), SwingConstants.CENTER);
+    JLabel labelBtn4 = new JLabel("تعداد سکه های سفید : ".concat(String.valueOf(slotCoins[1].getNum())), SwingConstants.CENTER);
+    JLabel labelBtn5 = new JLabel("تعداد سکه های سیاه : ".concat(String.valueOf(slotCoins[2].getNum())), SwingConstants.CENTER);
 
-    JLabel labelBtn1 = new JLabel(String.valueOf(redCoins[0].num), SwingConstants.CENTER);
-    JLabel labelBtn2 = new JLabel(String.valueOf(blueCoins[0].num), SwingConstants.CENTER);
-    JLabel labelBtn3 = new JLabel(String.valueOf(greenCoins[0].num), SwingConstants.CENTER);
-    JLabel labelBtn4 = new JLabel(String.valueOf(whiteCoins[0].num), SwingConstants.CENTER);
-    JLabel labelBtn5 = new JLabel(String.valueOf(blackCoins[0].num), SwingConstants.CENTER);
-
+    //show cards in shop panel
     public void updateAvailableCards(Card[] cards, JPanel panel) {
         panel.removeAll();
         int availableCount = 0;
         for (Card card : cards) {
             if (card.getAvailability()) {
-                panel.add(card.cardImg);
+                panel.add(card.getCardImg());
                 availableCount++;
                 if (availableCount == 4) {
                     break;
@@ -53,32 +76,32 @@ public class Main {
         panel.repaint();
     }
 
+    //show players cards
     public void cardPrinter() {
         for (int k = 0; k < player1.playerCard.length; k++) {
             if (player1.playerCard[k] != null) {
-                tCardPanel.add(player1.playerCard[k].cardImg);
+                tCardPanel.add(player1.playerCard[k].getCardImg());
                 tCardPanel.revalidate();
                 tCardPanel.repaint();
-                centerPanel.add(tCardPanel, BorderLayout.NORTH);
             }
         }
         for (int k = 0; k < player2.playerCard.length; k++) {
             if (player2.playerCard[k] != null) {
-                bCardPanel.add(player2.playerCard[k].cardImg);
+                bCardPanel.add(player2.playerCard[k].getCardImg());
                 bCardPanel.revalidate();
                 bCardPanel.repaint();
-                centerPanel.add(bCardPanel, BorderLayout.SOUTH);
             }
         }
     }
 
+    //show players coins
     public void coinPrinter() {
         tCoinPanel.removeAll();
         bCoinPanel.removeAll();
         String[] coinColors = {"green", "white", "black", "blue", "red", "gold"};
 
         for (int i = 0; i < player1.playerCoin.length; i++) {
-            for (int k = 0; k < player1.playerCoin[i].num; k++) {
+            for (int k = 0; k < player1.playerCoin[i].getNum(); k++) {
                 JLabel coinLabel = new JLabel(new ImageIcon("images\\coins\\" + coinColors[i] + ".png"));
                 int finalI = i;
                 coinLabel.addMouseListener(new MouseAdapter() {
@@ -88,24 +111,24 @@ public class Main {
                             String coinColor = coinColors[finalI];
                             switch (coinColor) {
                                 case "green" -> {
-                                    slotCoins[0][0].num++;
-                                    labelBtn3.setText(String.valueOf(Math.max(0, greenCoins[0].num)));
+                                    slotCoins[0].num++;
+                                    labelBtn3.setText(String.valueOf(Math.max(0, slotCoins[0].getNum())));
                                 }
                                 case "white" -> {
-                                    slotCoins[1][0].num++;
-                                    labelBtn4.setText(String.valueOf(Math.max(0, whiteCoins[0].num)));
+                                    slotCoins[1].num++;
+                                    labelBtn4.setText(String.valueOf(Math.max(0, slotCoins[1].getNum())));
                                 }
                                 case "black" -> {
-                                    slotCoins[2][0].num++;
-                                    labelBtn5.setText(String.valueOf(Math.max(0, blackCoins[0].num)));
+                                    slotCoins[2].num++;
+                                    labelBtn5.setText(String.valueOf(Math.max(0, slotCoins[2].getNum())));
                                 }
                                 case "blue" -> {
-                                    slotCoins[3][0].num++;
-                                    labelBtn2.setText(String.valueOf(Math.max(0, blueCoins[0].num)));
+                                    slotCoins[3].num++;
+                                    labelBtn2.setText(String.valueOf(Math.max(0, slotCoins[3].getNum())));
                                 }
                                 case "red" -> {
-                                    slotCoins[4][0].num++;
-                                    labelBtn1.setText(String.valueOf(Math.max(0, redCoins[0].num)));
+                                    slotCoins[4].num++;
+                                    labelBtn1.setText(String.valueOf(Math.max(0, slotCoins[4].getNum())));
                                 }
                             }
                             player1.playerCoin[finalI].num--;
@@ -117,7 +140,7 @@ public class Main {
             }
         }
         for (int i = 0; i < player2.playerCoin.length; i++) {
-            for (int k = 0; k < player2.playerCoin[i].num; k++) {
+            for (int k = 0; k < player2.playerCoin[i].getNum(); k++) {
                 JLabel coinLabel = new JLabel(new ImageIcon("images\\coins\\" + coinColors[i] + ".png"));
                 int finalI = i;
                 coinLabel.addMouseListener(new MouseAdapter() {
@@ -127,24 +150,24 @@ public class Main {
                             String coinColor = coinColors[finalI];
                             switch (coinColor) {
                                 case "green" -> {
-                                    slotCoins[0][0].num++;
-                                    labelBtn3.setText(String.valueOf(Math.max(0, greenCoins[0].num)));
+                                    slotCoins[0].num++;
+                                    labelBtn3.setText(String.valueOf(Math.max(0, slotCoins[0].getNum())));
                                 }
                                 case "white" -> {
-                                    slotCoins[1][0].num++;
-                                    labelBtn4.setText(String.valueOf(Math.max(0, whiteCoins[0].num)));
+                                    slotCoins[1].num++;
+                                    labelBtn4.setText(String.valueOf(Math.max(0, slotCoins[1].getNum())));
                                 }
                                 case "black" -> {
-                                    slotCoins[2][0].num++;
-                                    labelBtn5.setText(String.valueOf(Math.max(0, blackCoins[0].num)));
+                                    slotCoins[2].num++;
+                                    labelBtn5.setText(String.valueOf(Math.max(0, slotCoins[2].getNum())));
                                 }
                                 case "blue" -> {
-                                    slotCoins[3][0].num++;
-                                    labelBtn2.setText(String.valueOf(Math.max(0, blueCoins[0].num)));
+                                    slotCoins[3].num++;
+                                    labelBtn2.setText(String.valueOf(Math.max(0, slotCoins[3].getNum())));
                                 }
                                 case "red" -> {
-                                    slotCoins[4][0].num++;
-                                    labelBtn1.setText(String.valueOf(Math.max(0, redCoins[0].num)));
+                                    slotCoins[4].num++;
+                                    labelBtn1.setText(String.valueOf(Math.max(0, slotCoins[4].getNum())));
                                 }
                             }
                             player2.playerCoin[finalI].num--;
@@ -164,18 +187,19 @@ public class Main {
         bottomPanel.add(bCoinPanel);
     }
 
+    //show players special coins
     public void sCoinPrinter() {
         tSCoinPanel.removeAll();
         bSCoinPanel.removeAll();
         String[] sCoinColors = {"green", "white", "black", "blue", "red"};
 
         for (int i = 0; i < player1.playerSCoin.length - 1; i++) {
-            for (int k = 0; k < player1.playerSCoin[i].num; k++) {
+            for (int k = 0; k < player1.playerSCoin[i].getsNum(); k++) {
                 tSCoinPanel.add(new JLabel(new ImageIcon("images\\coins\\" + sCoinColors[i] + ".png")));
             }
         }
         for (int i = 0; i < player2.playerSCoin.length - 1; i++) {
-            for (int k = 0; k < player2.playerSCoin[i].num; k++) {
+            for (int k = 0; k < player2.playerSCoin[i].getsNum(); k++) {
                 bSCoinPanel.add(new JLabel(new ImageIcon("images\\coins\\" + sCoinColors[i] + ".png")));
             }
         }
@@ -188,6 +212,7 @@ public class Main {
         bottomPanel.add(bSCoinPanel);
     }
 
+    //show players score
     public void scorePrinter() {
         JLabel scoreLabel1 = new JLabel(String.valueOf(Math.max(0, player1.pScore)));
         JLabel scoreLabel2 = new JLabel(String.valueOf(Math.max(0, player2.pScore)));
@@ -203,748 +228,123 @@ public class Main {
         bottomPanel.add(bScorePanel);
     }
 
-    public void buy(Card card, Players player) {
-        boolean sw = true;
-        for (int i = 0; i < 5; i++) {
-            if (card.coinList[i] != null) {
-                if ((player.playerCoin[i].num + player.playerSCoin[i].num) < card.coinList[i].num) {
-                    if ((player.playerCoin[5].num + player.playerCoin[i].num + player.playerSCoin[i].num) < card.coinList[i].num) {
-                        sw = false;
-                        break;
-                    }
-                }
-            }
-        }
-        if (sw) {
-            for (int i = 0; i < 5; i++) {
-                if (card.coinList[i] != null) {
-                    slotCoins[i][0].num += card.coinList[i].num;
-                    int remain = card.coinList[i].num - (player.playerCoin[i].num + player.playerSCoin[i].num);
-                    card.coinList[i].num -= remain;
-                    player.playerCoin[5].num -= remain;
-                    goldCoins[0].num += remain;
-                    card.coinList[i].num -= player.playerSCoin[i].num;
-                    player.playerCoin[i].num -= card.coinList[i].num;
-                }
-                if (card.SCoins[i] != null && player.playerSCoin[i] != null) {
-                    player.playerSCoin[i].num += card.SCoins[i].num;
-                }
-            }
-            player.pScore += card.getScore();
-            for (int j = 0; j < 45; j++) {
-                if (player.playerCard[j] == null) {
-                    player.playerCard[j] = card;
-                    card.setAvailability(false);
-                    break;
-                }
-            }
-            coinPrinter();
-            sCoinPrinter();
-            scorePrinter();
-            cardPrinter();
-        }
-    }
-
-    public void buyPrize(Card card, Players player) {
-        boolean sw = true;
-        for (int i = 0; i < 5; i++) {
-            if (card.SCoins[i] != null) {
-                if (!card.SCoins[i].getType().equals(player.playerSCoin[i].getType()) || player.playerSCoin[i].num < card.SCoins[i].num) {
-                    sw = false;
-                    break;
-                }
-            }
-        }
-        if (sw) {
-            player.pScore += card.getScore();
-            for (int j = 0; j < 48; j++) {
-                if (player.playerCard[j] == null) {
-                    player.playerCard[j] = card;
-                    card.setAvailability(false);
-                    break;
-                }
-            }
-            sCoinPrinter();
-            scorePrinter();
-            cardPrinter();
-        }
-    }
-
+    //buy players reserve cards
     public void buyReserve(Players player) {
         for (Card card : player.reservCard) {
             if (card != null) {
-                buy(card, player);
+                player.buy(card, player, slotCoins);
+                coinPrinter();
+                sCoinPrinter();
+                scorePrinter();
+                cardPrinter();
             }
         }
     }
-
     public boolean reserveDone = false;
 
-    public void reserve(Card card, Players player) {
-        if (player.reserveCount < 3) {
-            player.reserveCount++;
-            if (goldCoins[0].num != 0) {
-                goldCoins[0].num--;
-                player.playerCoin[5].num++;
-            }
-            for (int t = 0; t < player.reservCard.length; t++) {
-                if (player.reservCard[t] == null) {
-                    player.reservCard[t] = card;
-                    card.setAvailability(false);
-                    reserveDone = true;
-                    break;
-                }
-            }
-            coinPrinter();
-        }
-    }
-
     public Main() {
-        frame = new JFrame("Amusement Park");
-        frame.setSize(1920, 1080);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame = new JFrame("Amusement Park");//frame title
+        frame.setSize(1920, 1080);//frame window size
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//type of close operation
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);//maximize the window
+
         loginPanel = createLoginPanel();
         mainGamePanel = createMainGamePanel();
         storePanel = createStorePanel();
-        frame.add(loginPanel);
-        frame.setVisible(true);
+        coinPanel = createCoinPanel();
+        winnerPanel = createWinnerPanel();
+
+        frame.add(loginPanel);//first panel
+        frame.setVisible(true);//show window
     }
 
     private JPanel createLoginPanel() {
-        JPanel welcomePanel = new JPanel(new GridBagLayout());
+        JPanel welcomePanel = new JPanel(new GridBagLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(bgImage, 0, 0, this.getWidth(), this.getHeight(), this);
+            }
+        };
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(0, 0, 20, 0);
+        gbc.insets = new Insets(0, 0, 40, 0);
 
         JLabel titleLabel = new JLabel("به شهربازی خوش آمدید!", SwingConstants.CENTER);
+        titleLabel.setFont(bigFont);
+        titleLabel.setForeground(Color.RED);
+        titleLabel.setBackground(Color.BLACK);
+        titleLabel.setOpaque(true);
         welcomePanel.add(titleLabel, gbc);
 
-        gbc.gridy = 1;
+        GridBagConstraints gbcButton = new GridBagConstraints();
+        gbcButton.gridx = 0;
+        gbcButton.gridy = 1;
+        gbcButton.gridwidth = 1;
+        gbcButton.fill = GridBagConstraints.VERTICAL;
+
         JButton startButton = new JButton("شروع بازی");
         startButton.setPreferredSize(new Dimension(200, 50));
+        startButton.setFont(normalFont);
+        startButton.setBackground(Color.MAGENTA);
+        startButton.setForeground(Color.white);
         startButton.addActionListener(e -> switchPanel(mainGamePanel));
-        welcomePanel.add(startButton, gbc);
+        welcomePanel.add(startButton, gbcButton);
 
-        gbc.gridy = 2;
-        JButton helpButton = new JButton("راهنما");
-        helpButton.setPreferredSize(new Dimension(200, 50));
-        welcomePanel.add(helpButton, gbc);
         return welcomePanel;
     }
 
     private JPanel createMainGamePanel() {
-        JPanel mainPanel = new JPanel(new BorderLayout());
+        JPanel mainPanel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics c) {
+                super.paintComponent(c);
+                c.drawImage(bgImage, 0, 0, this.getWidth(), this.getHeight(), this);
+            }
+        };
 
-        topPanel.setBackground(Color.MAGENTA);
+        topPanel.setOpaque(false);
         topPanel.setPreferredSize(new Dimension(1920, 100));
+        topPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
         player1.playerCoin = new Coin[]{new Coin(0, "green"), new Coin(0, "white"), new Coin(0, "black"), new Coin(0, "blue"), new Coin(0, "red"), new Coin(0, "gold")};
         player1.playerSCoin = new specialCoin[]{new specialCoin(0, "green"), new specialCoin(0, "white"), new specialCoin(0, "black"), new specialCoin(0, "blue"), new specialCoin(0, "red")};
+        tCardPanel.setOpaque(false);
 
-        bottomPanel.setBackground(Color.cyan);
+        bottomPanel.setOpaque(false);
         bottomPanel.setPreferredSize(new Dimension(1920, 100));
+        bottomPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
         player2.playerCoin = new Coin[]{new Coin(0, "green"), new Coin(0, "white"), new Coin(0, "black"), new Coin(0, "blue"), new Coin(0, "red"), new Coin(0, "gold")};
         player2.playerSCoin = new specialCoin[]{new specialCoin(0, "green"), new specialCoin(0, "white"), new specialCoin(0, "black"), new specialCoin(0, "blue"), new specialCoin(0, "red")};
+        bCardPanel.setOpaque(false);
 
-        sidePanel.setBackground(Color.GREEN);
-        sidePanel.setPreferredSize(new Dimension(320, 880));
+        sidePanel.setOpaque(false);
+        sidePanel.setPreferredSize(new Dimension(300, 880));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(0, 0, 40, 40);
+        JButton shopButton = new JButton("فروشگاه");
+        shopButton.setPreferredSize(new Dimension(100, 50));
+        shopButton.setFont(normalFont);
+        shopButton.addActionListener(e -> switchPanel(storePanel));
+        sidePanel.add(shopButton, gbc);
+        gbc.gridy = 1;
+        gbc.insets = new Insets(0, 0, 0, 40);
+        JButton coinButton = new JButton("دریافت سکه");
+        coinButton.setPreferredSize(new Dimension(200, 50));
+        coinButton.setFont(normalFont);
+        coinButton.addActionListener(e -> switchPanel(coinPanel));
+        sidePanel.add(coinButton, gbc);
 
-        centerPanel.setBackground(Color.YELLOW);
-        centerPanel.setPreferredSize(new Dimension(1600, 880));
-        tCardPanel.setBackground(Color.YELLOW);
-        bCardPanel.setBackground(Color.YELLOW);
-        JButton slotButton11 = new JButton("دو سکه قرمز");
-        JButton slotButton12 = new JButton("یک سکه قرمز");
-        JButton slotButton21 = new JButton("دو سکه آبی");
-        JButton slotButton22 = new JButton("یک سکه آبی");
-        JButton slotButton31 = new JButton("دو سکه سبز");
-        JButton slotButton32 = new JButton("یک سکه سبز");
-        JButton slotButton41 = new JButton("دو سکه سفید");
-        JButton slotButton42 = new JButton("یک سکه سفید");
-        JButton slotButton51 = new JButton("دو سکه سیاه");
-        JButton slotButton52 = new JButton("یک سکه سیاه");
-        JButton enterButton = new JButton("فروشگاه");
-        enterButton.addActionListener(e -> switchPanel(storePanel));
-        JButton[] btns = {slotButton11, slotButton12, slotButton21, slotButton22, slotButton31, slotButton32, slotButton41, slotButton42, slotButton51, slotButton52};
-
-        for (JButton btn : btns) {
-            btn.addActionListener(e -> {
-                for (Coin[] coinArray : slotCoins) {
-                    for (Coin coin : coinArray) {
-                        if (coin.getNum() > 4) {
-                            coin.setNum(4);
-                        }
-                    }
-                }
-                coinPrinter();
-                labelBtn1.setText(String.valueOf(Math.max(0, redCoins[0].num)));
-                labelBtn2.setText(String.valueOf(Math.max(0, blueCoins[0].num)));
-                labelBtn3.setText(String.valueOf(Math.max(0, greenCoins[0].num)));
-                labelBtn4.setText(String.valueOf(Math.max(0, whiteCoins[0].num)));
-                labelBtn5.setText(String.valueOf(Math.max(0, blackCoins[0].num)));
-            });
-        }
-
-        slotButton11.addActionListener(e -> {
-            switch (turn) {
-                case 1:
-                    if (redCoins[0].num == 4 && clickNum < 1) {
-                        player1.takeCoin(2, "red");
-                        clickNum++;
-                        redCoins[0].num -= 2;
-                        slotButton12.setEnabled(false);
-                        slotButton22.setEnabled(false);
-                        slotButton32.setEnabled(false);
-                        slotButton42.setEnabled(false);
-                        slotButton52.setEnabled(false);
-                    } else {
-                        clickNum = 0;
-                        slotButton22.setEnabled(true);
-                        slotButton12.setEnabled(true);
-                        slotButton32.setEnabled(true);
-                        slotButton42.setEnabled(true);
-                        slotButton52.setEnabled(true);
-                        buyReserve(player1);
-                        turn *= -1;
-                        reserveDone = false;
-                    }
-                    break;
-                case -1:
-                    if (redCoins[0].num == 4 && clickNum < 1) {
-                        player2.takeCoin(2, "red");
-                        redCoins[0].num -= 2;
-                        clickNum++;
-                        slotButton12.setEnabled(false);
-                        slotButton22.setEnabled(false);
-                        slotButton32.setEnabled(false);
-                        slotButton42.setEnabled(false);
-                        slotButton52.setEnabled(false);
-                    } else {
-                        clickNum = 0;
-                        slotButton22.setEnabled(true);
-                        slotButton12.setEnabled(true);
-                        slotButton32.setEnabled(true);
-                        slotButton42.setEnabled(true);
-                        slotButton52.setEnabled(true);
-                        buyReserve(player2);
-                        turn *= -1;
-                        reserveDone = false;
-                    }
-                    break;
-            }
-        });
-        slotButton21.addActionListener(e -> {
-            switch (turn) {
-                case 1:
-                    if (blueCoins[0].num == 4 && clickNum < 1) {
-                        player1.takeCoin(2, "blue");
-                        blueCoins[0].num -= 2;
-                        clickNum++;
-                        slotButton12.setEnabled(false);
-                        slotButton22.setEnabled(false);
-                        slotButton32.setEnabled(false);
-                        slotButton42.setEnabled(false);
-                        slotButton52.setEnabled(false);
-                    } else {
-                        clickNum = 0;
-                        slotButton22.setEnabled(true);
-                        slotButton12.setEnabled(true);
-                        slotButton32.setEnabled(true);
-                        slotButton42.setEnabled(true);
-                        slotButton52.setEnabled(true);
-                        buyReserve(player1);
-                        turn *= -1;
-                        reserveDone = false;
-                    }
-                    break;
-                case -1:
-                    if (blueCoins[0].num == 4 && clickNum < 1) {
-                        player2.takeCoin(2, "blue");
-                        blueCoins[0].num -= 2;
-                        clickNum++;
-                        slotButton12.setEnabled(false);
-                        slotButton22.setEnabled(false);
-                        slotButton32.setEnabled(false);
-                        slotButton42.setEnabled(false);
-                        slotButton52.setEnabled(false);
-                    } else {
-                        clickNum = 0;
-                        slotButton22.setEnabled(true);
-                        slotButton12.setEnabled(true);
-                        slotButton32.setEnabled(true);
-                        slotButton42.setEnabled(true);
-                        slotButton52.setEnabled(true);
-                        buyReserve(player2);
-                        turn *= -1;
-                        reserveDone = false;
-                    }
-                    break;
-            }
-        });
-        slotButton31.addActionListener(e -> {
-            switch (turn) {
-                case 1:
-                    if (greenCoins[0].num == 4 && clickNum < 1) {
-                        player1.takeCoin(2, "green");
-                        greenCoins[0].num -= 2;
-                        clickNum++;
-                        slotButton12.setEnabled(false);
-                        slotButton22.setEnabled(false);
-                        slotButton32.setEnabled(false);
-                        slotButton42.setEnabled(false);
-                        slotButton52.setEnabled(false);
-                    } else {
-                        clickNum = 0;
-                        slotButton22.setEnabled(true);
-                        slotButton12.setEnabled(true);
-                        slotButton32.setEnabled(true);
-                        slotButton42.setEnabled(true);
-                        slotButton52.setEnabled(true);
-                        buyReserve(player1);
-                        turn *= -1;
-                        reserveDone = false;
-                    }
-                    break;
-                case -1:
-                    if (greenCoins[0].num == 4 && clickNum < 1) {
-                        player2.takeCoin(2, "green");
-                        greenCoins[0].num -= 2;
-                        clickNum++;
-                        slotButton12.setEnabled(false);
-                        slotButton22.setEnabled(false);
-                        slotButton32.setEnabled(false);
-                        slotButton42.setEnabled(false);
-                        slotButton52.setEnabled(false);
-                    } else {
-                        clickNum = 0;
-                        slotButton22.setEnabled(true);
-                        slotButton12.setEnabled(true);
-                        slotButton32.setEnabled(true);
-                        slotButton42.setEnabled(true);
-                        slotButton52.setEnabled(true);
-                        buyReserve(player1);
-                        turn *= -1;
-                        reserveDone = false;
-                    }
-                    break;
-            }
-        });
-        slotButton41.addActionListener(e -> {
-            switch (turn) {
-                case 1:
-                    if (whiteCoins[0].num == 4 && clickNum < 1) {
-                        player1.takeCoin(2, "white");
-                        clickNum++;
-                        whiteCoins[0].num -= 2;
-                        slotButton12.setEnabled(false);
-                        slotButton22.setEnabled(false);
-                        slotButton32.setEnabled(false);
-                        slotButton42.setEnabled(false);
-                        slotButton52.setEnabled(false);
-                    } else {
-                        clickNum = 0;
-                        slotButton22.setEnabled(true);
-                        slotButton12.setEnabled(true);
-                        slotButton32.setEnabled(true);
-                        slotButton42.setEnabled(true);
-                        slotButton52.setEnabled(true);
-                        buyReserve(player1);
-                        turn *= -1;
-                        reserveDone = false;
-                    }
-                    break;
-                case -1:
-                    if (whiteCoins[0].num == 4 && clickNum < 1) {
-                        player2.takeCoin(2, "white");
-                        clickNum++;
-                        whiteCoins[0].num -= 2;
-                        slotButton12.setEnabled(false);
-                        slotButton22.setEnabled(false);
-                        slotButton32.setEnabled(false);
-                        slotButton42.setEnabled(false);
-                        slotButton52.setEnabled(false);
-                    } else {
-                        clickNum = 0;
-                        slotButton22.setEnabled(true);
-                        slotButton12.setEnabled(true);
-                        slotButton32.setEnabled(true);
-                        slotButton42.setEnabled(true);
-                        slotButton52.setEnabled(true);
-                        slotButton11.setEnabled(true);
-                        slotButton21.setEnabled(true);
-                        slotButton31.setEnabled(true);
-                        slotButton41.setEnabled(true);
-                        slotButton51.setEnabled(true);
-                        buyReserve(player2);
-                        turn *= -1;
-                        reserveDone = false;
-                    }
-                    break;
-            }
-        });
-        slotButton51.addActionListener(e -> {
-            switch (turn) {
-                case 1:
-                    if (blackCoins[0].num == 4 && clickNum < 1) {
-                        player1.takeCoin(2, "black");
-                        clickNum++;
-                        blackCoins[0].num -= 2;
-                        slotButton12.setEnabled(false);
-                        slotButton22.setEnabled(false);
-                        slotButton32.setEnabled(false);
-                        slotButton42.setEnabled(false);
-                        slotButton52.setEnabled(false);
-                    } else {
-                        clickNum = 0;
-                        slotButton22.setEnabled(true);
-                        slotButton12.setEnabled(true);
-                        slotButton32.setEnabled(true);
-                        slotButton42.setEnabled(true);
-                        slotButton52.setEnabled(true);
-                        buyReserve(player1);
-                        turn *= -1;
-                        reserveDone = false;
-                    }
-                    break;
-                case -1:
-                    if (blackCoins[0].num == 4 && clickNum < 1) {
-                        player2.takeCoin(2, "black");
-                        clickNum++;
-                        blackCoins[0].num -= 2;
-                        slotButton12.setEnabled(false);
-                        slotButton22.setEnabled(false);
-                        slotButton32.setEnabled(false);
-                        slotButton42.setEnabled(false);
-                        slotButton52.setEnabled(false);
-                    } else {
-                        clickNum = 0;
-                        slotButton22.setEnabled(true);
-                        slotButton12.setEnabled(true);
-                        slotButton32.setEnabled(true);
-                        slotButton42.setEnabled(true);
-                        slotButton52.setEnabled(true);
-                        buyReserve(player2);
-                        turn *= -1;
-                        reserveDone = false;
-                    }
-                    break;
-            }
-        });
-        slotButton12.addActionListener(e -> {
-            switch (turn) {
-                case 1:
-                    if (redCoins[0].num > 0 && clickNum < 3) {
-                        player1.takeCoin(1, "red");
-                        redCoins[0].num--;
-                        clickNum++;
-                        slotButton12.setEnabled(false);
-                        slotButton11.setEnabled(false);
-                        slotButton21.setEnabled(false);
-                        slotButton31.setEnabled(false);
-                        slotButton41.setEnabled(false);
-                        slotButton51.setEnabled(false);
-                    } else {
-                        clickNum = 0;
-                        slotButton22.setEnabled(true);
-                        slotButton12.setEnabled(true);
-                        slotButton32.setEnabled(true);
-                        slotButton42.setEnabled(true);
-                        slotButton52.setEnabled(true);
-                        slotButton11.setEnabled(true);
-                        slotButton21.setEnabled(true);
-                        slotButton31.setEnabled(true);
-                        slotButton41.setEnabled(true);
-                        slotButton51.setEnabled(true);
-                        buyReserve(player1);
-                        turn *= -1;
-                        reserveDone = false;
-                    }
-                    break;
-                case -1:
-                    if (redCoins[0].num > 0 && clickNum < 3) {
-                        player2.takeCoin(1, "red");
-                        redCoins[0].num--;
-                        clickNum++;
-                        slotButton12.setEnabled(false);
-                        slotButton11.setEnabled(false);
-                        slotButton21.setEnabled(false);
-                        slotButton31.setEnabled(false);
-                        slotButton41.setEnabled(false);
-                        slotButton51.setEnabled(false);
-                    } else {
-                        clickNum = 0;
-                        slotButton22.setEnabled(true);
-                        slotButton12.setEnabled(true);
-                        slotButton32.setEnabled(true);
-                        slotButton42.setEnabled(true);
-                        slotButton52.setEnabled(true);
-                        slotButton11.setEnabled(true);
-                        slotButton21.setEnabled(true);
-                        slotButton31.setEnabled(true);
-                        slotButton41.setEnabled(true);
-                        slotButton51.setEnabled(true);
-                        buyReserve(player2);
-                        turn *= -1;
-                        reserveDone = false;
-                    }
-                    break;
-            }
-        });
-        slotButton22.addActionListener(e -> {
-            switch (turn) {
-                case 1:
-                    if (blueCoins[0].num > 0 && clickNum < 3) {
-                        player1.takeCoin(1, "blue");
-                        blueCoins[0].num--;
-                        clickNum++;
-                        slotButton22.setEnabled(false);
-                        slotButton11.setEnabled(false);
-                        slotButton21.setEnabled(false);
-                        slotButton31.setEnabled(false);
-                        slotButton41.setEnabled(false);
-                        slotButton51.setEnabled(false);
-                    } else {
-                        clickNum = 0;
-                        slotButton22.setEnabled(true);
-                        slotButton12.setEnabled(true);
-                        slotButton32.setEnabled(true);
-                        slotButton42.setEnabled(true);
-                        slotButton52.setEnabled(true);
-                        slotButton11.setEnabled(true);
-                        slotButton21.setEnabled(true);
-                        slotButton31.setEnabled(true);
-                        slotButton41.setEnabled(true);
-                        slotButton51.setEnabled(true);
-                        buyReserve(player1);
-                        turn *= -1;
-                        reserveDone = false;
-                    }
-                    break;
-                case -1:
-                    if (blueCoins[0].num > 0 && clickNum < 3) {
-                        player2.takeCoin(1, "blue");
-                        blueCoins[0].num--;
-                        clickNum++;
-                        slotButton22.setEnabled(false);
-                        slotButton11.setEnabled(false);
-                        slotButton21.setEnabled(false);
-                        slotButton31.setEnabled(false);
-                        slotButton41.setEnabled(false);
-                        slotButton51.setEnabled(false);
-                    } else {
-                        clickNum = 0;
-                        slotButton22.setEnabled(true);
-                        slotButton12.setEnabled(true);
-                        slotButton32.setEnabled(true);
-                        slotButton42.setEnabled(true);
-                        slotButton52.setEnabled(true);
-                        slotButton11.setEnabled(true);
-                        slotButton21.setEnabled(true);
-                        slotButton31.setEnabled(true);
-                        slotButton41.setEnabled(true);
-                        slotButton51.setEnabled(true);
-                        buyReserve(player2);
-                        turn *= -1;
-                        reserveDone = false;
-                    }
-                    break;
-            }
-        });
-        slotButton32.addActionListener(e -> {
-            switch (turn) {
-                case 1:
-                    if (greenCoins[0].num > 0 && clickNum < 3) {
-                        player1.takeCoin(1, "green");
-                        greenCoins[0].num--;
-                        clickNum++;
-                        slotButton32.setEnabled(false);
-                        slotButton11.setEnabled(false);
-                        slotButton21.setEnabled(false);
-                        slotButton31.setEnabled(false);
-                        slotButton41.setEnabled(false);
-                        slotButton51.setEnabled(false);
-                    } else {
-                        clickNum = 0;
-                        slotButton22.setEnabled(true);
-                        slotButton12.setEnabled(true);
-                        slotButton32.setEnabled(true);
-                        slotButton42.setEnabled(true);
-                        slotButton52.setEnabled(true);
-                        slotButton11.setEnabled(true);
-                        slotButton21.setEnabled(true);
-                        slotButton31.setEnabled(true);
-                        slotButton41.setEnabled(true);
-                        slotButton51.setEnabled(true);
-                        buyReserve(player1);
-                        turn *= -1;
-                        reserveDone = false;
-                    }
-                    break;
-                case -1:
-                    if (greenCoins[0].num > 0 && clickNum < 3) {
-                        player2.takeCoin(1, "green");
-                        greenCoins[0].num--;
-                        clickNum++;
-                        slotButton32.setEnabled(false);
-                        slotButton11.setEnabled(false);
-                        slotButton21.setEnabled(false);
-                        slotButton31.setEnabled(false);
-                        slotButton41.setEnabled(false);
-                        slotButton51.setEnabled(false);
-                    } else {
-                        clickNum = 0;
-                        slotButton22.setEnabled(true);
-                        slotButton12.setEnabled(true);
-                        slotButton32.setEnabled(true);
-                        slotButton42.setEnabled(true);
-                        slotButton52.setEnabled(true);
-                        slotButton11.setEnabled(true);
-                        slotButton21.setEnabled(true);
-                        slotButton31.setEnabled(true);
-                        slotButton41.setEnabled(true);
-                        slotButton51.setEnabled(true);
-                        buyReserve(player2);
-                        turn *= -1;
-                        reserveDone = false;
-                    }
-                    break;
-            }
-        });
-        slotButton42.addActionListener(e -> {
-            switch (turn) {
-                case 1:
-                    if (whiteCoins[0].num > 0 && clickNum < 3) {
-                        player1.takeCoin(1, "white");
-                        whiteCoins[0].num--;
-                        clickNum++;
-                        slotButton42.setEnabled(false);
-                        slotButton11.setEnabled(false);
-                        slotButton21.setEnabled(false);
-                        slotButton31.setEnabled(false);
-                        slotButton41.setEnabled(false);
-                        slotButton51.setEnabled(false);
-                    } else {
-                        clickNum = 0;
-                        slotButton22.setEnabled(true);
-                        slotButton12.setEnabled(true);
-                        slotButton32.setEnabled(true);
-                        slotButton42.setEnabled(true);
-                        slotButton52.setEnabled(true);
-                        slotButton11.setEnabled(true);
-                        slotButton21.setEnabled(true);
-                        slotButton31.setEnabled(true);
-                        slotButton41.setEnabled(true);
-                        slotButton51.setEnabled(true);
-                        buyReserve(player1);
-                        turn *= -1;
-                        reserveDone = false;
-                    }
-                    break;
-                case -1:
-                    if (whiteCoins[0].num > 0 && clickNum < 3) {
-                        player2.takeCoin(1, "white");
-                        whiteCoins[0].num--;
-                        clickNum++;
-                        slotButton42.setEnabled(false);
-                        slotButton11.setEnabled(false);
-                        slotButton21.setEnabled(false);
-                        slotButton31.setEnabled(false);
-                        slotButton41.setEnabled(false);
-                        slotButton51.setEnabled(false);
-                    } else {
-                        clickNum = 0;
-                        slotButton22.setEnabled(true);
-                        slotButton12.setEnabled(true);
-                        slotButton32.setEnabled(true);
-                        slotButton42.setEnabled(true);
-                        slotButton52.setEnabled(true);
-                        slotButton11.setEnabled(true);
-                        slotButton21.setEnabled(true);
-                        slotButton31.setEnabled(true);
-                        slotButton41.setEnabled(true);
-                        slotButton51.setEnabled(true);
-                        buyReserve(player2);
-                        turn *= -1;
-                        reserveDone = false;
-                    }
-                    break;
-            }
-        });
-        slotButton52.addActionListener(e -> {
-            switch (turn) {
-                case 1:
-                    if (blackCoins[0].num > 0 && clickNum < 3) {
-                        player1.takeCoin(1, "black");
-                        blackCoins[0].num--;
-                        clickNum++;
-                        slotButton52.setEnabled(false);
-                        slotButton11.setEnabled(false);
-                        slotButton21.setEnabled(false);
-                        slotButton31.setEnabled(false);
-                        slotButton41.setEnabled(false);
-                        slotButton51.setEnabled(false);
-
-                    } else {
-                        clickNum = 0;
-                        slotButton22.setEnabled(true);
-                        slotButton12.setEnabled(true);
-                        slotButton32.setEnabled(true);
-                        slotButton42.setEnabled(true);
-                        slotButton52.setEnabled(true);
-                        slotButton11.setEnabled(true);
-                        slotButton21.setEnabled(true);
-                        slotButton31.setEnabled(true);
-                        slotButton41.setEnabled(true);
-                        slotButton51.setEnabled(true);
-                        buyReserve(player1);
-                        turn *= -1;
-                        reserveDone = false;
-                    }
-                    break;
-                case -1:
-                    if (blackCoins[0].num > 0 && clickNum < 3) {
-                        player2.takeCoin(1, "black");
-                        blackCoins[0].num--;
-                        clickNum++;
-                        slotButton52.setEnabled(false);
-                        slotButton11.setEnabled(false);
-                        slotButton21.setEnabled(false);
-                        slotButton31.setEnabled(false);
-                        slotButton41.setEnabled(false);
-                        slotButton51.setEnabled(false);
-                    } else {
-                        clickNum = 0;
-                        slotButton22.setEnabled(true);
-                        slotButton12.setEnabled(true);
-                        slotButton32.setEnabled(true);
-                        slotButton42.setEnabled(true);
-                        slotButton52.setEnabled(true);
-                        slotButton11.setEnabled(true);
-                        slotButton21.setEnabled(true);
-                        slotButton31.setEnabled(true);
-                        slotButton41.setEnabled(true);
-                        slotButton51.setEnabled(true);
-                        buyReserve(player2);
-                        turn *= -1;
-                        reserveDone = false;
-                    }
-                    break;
-            }
-        });
-
-        JLabel[] labels = {labelBtn1, labelBtn2, labelBtn3, labelBtn4, labelBtn5};
-        JButton[][] buttons = {{slotButton11, slotButton12}, {slotButton21, slotButton22}, {slotButton31, slotButton32}, {slotButton41, slotButton42}, {slotButton51, slotButton52}};
-        for (int i = 0; i < labels.length; i++) {
-            sidePanel.add(labels[i]);
-            for (int j = 0; j < buttons[i].length; j++) {
-                sidePanel.add(buttons[i][j]);
-            }
-        }
-        sidePanel.add(enterButton);
-
+        centerPanel.setOpaque(false);
+        centerPanel.setPreferredSize(new Dimension(1620, 880));
+        centerPanel.add(tCardPanel, BorderLayout.NORTH);
+        centerPanel.add(bCardPanel, BorderLayout.SOUTH);
 
         mainPanel.add(topPanel, BorderLayout.NORTH);
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
@@ -954,25 +354,37 @@ public class Main {
     }
 
     private JPanel createStorePanel() {
-        JPanel grayPanel = new JPanel();
+        JPanel grayPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics b) {
+                super.paintComponent(b);
+                b.drawImage(bgImage, 0, 0, this.getWidth(), this.getHeight(), this);
+            }
+        };
 
         JPanel prizePanel = new JPanel();
+        prizePanel.setBorder(new EmptyBorder(20, 0, 0, 0));
+        prizePanel.setOpaque(false);
         prizePanel.setLayout(new GridLayout(1, 4));
-        prizePanel.setPreferredSize(new Dimension(800, 160));
+        prizePanel.setPreferredSize(new Dimension(800, 185));
         JButton backward = new JButton("بازگشت");
+        backward.setFont(normalFont);
         backward.addActionListener(e -> switchPanel(mainGamePanel));
 
         JPanel set1panel = new JPanel();
+        set1panel.setOpaque(false);
         set1panel.setLayout(new GridLayout(1, 4));
-        set1panel.setPreferredSize(new Dimension(800, 160));
+        set1panel.setPreferredSize(new Dimension(800, 185));
 
         JPanel set2panel = new JPanel();
+        set2panel.setOpaque(false);
         set2panel.setLayout(new GridLayout(1, 4));
-        set2panel.setPreferredSize(new Dimension(800, 160));
+        set2panel.setPreferredSize(new Dimension(800, 185));
 
         JPanel set3panel = new JPanel();
+        set3panel.setOpaque(false);
         set3panel.setLayout(new GridLayout(1, 4));
-        set3panel.setPreferredSize(new Dimension(800, 160));
+        set3panel.setPreferredSize(new Dimension(800, 185));
 
         specialCoin[] prize1Coins = new specialCoin[]{new specialCoin(4, "green"), null, null, null, new specialCoin(4, "red")};
         specialCoin[] prize2Coins = new specialCoin[]{new specialCoin(5, "green"), null, null, null, new specialCoin(5, "red")};
@@ -1080,34 +492,53 @@ public class Main {
         updateAvailableCards(setCard1, set1panel);
         updateAvailableCards(setCard2, set2panel);
         updateAvailableCards(setCard3, set3panel);
+
         for (Card card : prizeList) {
-            card.cardImg.addMouseListener(new MouseAdapter() {
+            card.getCardImg().addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     if (turn == 1) {
-                        buyPrize(card, player1);
+                        player1.buyPrize(card, player1);
+                        sCoinPrinter();
+                        scorePrinter();
+                        cardPrinter();
                     } else {
-                        buyPrize(card, player2);
+                        player2.buyPrize(card, player2);
+                        sCoinPrinter();
+                        scorePrinter();
+                        cardPrinter();
                     }
                 }
             });
         }
         for (Card card : setCard1) {
-            card.cardImg.addMouseListener(new MouseAdapter() {
+            card.getCardImg().addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     if (turn == 1) {
                         if (SwingUtilities.isLeftMouseButton(e)) {
-                            buy(card, player1);
+                            player1.buy(card, player1, slotCoins);
+                            coinPrinter();
+                            sCoinPrinter();
+                            scorePrinter();
+                            cardPrinter();
                         } else if (SwingUtilities.isRightMouseButton(e)) {
                             if (!reserveDone) {
-                                reserve(card, player1);
+                                player1.reserve(card, player1, slotCoins);
+                                reserveDone = true;
+                                coinPrinter();
                             }
                         }
                     } else {
                         if (SwingUtilities.isLeftMouseButton(e)) {
-                            buy(card, player2);
+                            player2.buy(card, player2, slotCoins);
+                            coinPrinter();
+                            sCoinPrinter();
+                            scorePrinter();
+                            cardPrinter();
                         } else if (SwingUtilities.isRightMouseButton(e)) {
                             if (!reserveDone) {
-                                reserve(card, player2);
+                                player2.reserve(card, player2, slotCoins);
+                                reserveDone = true;
+                                coinPrinter();
                             }
                         }
                     }
@@ -1116,22 +547,34 @@ public class Main {
             });
         }
         for (Card card : setCard2) {
-            card.cardImg.addMouseListener(new MouseAdapter() {
+            card.getCardImg().addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     if (turn == 1) {
                         if (SwingUtilities.isLeftMouseButton(e)) {
-                            buy(card, player1);
+                            player1.buy(card, player1, slotCoins);
+                            coinPrinter();
+                            sCoinPrinter();
+                            scorePrinter();
+                            cardPrinter();
                         } else if (SwingUtilities.isRightMouseButton(e)) {
                             if (!reserveDone) {
-                                reserve(card, player1);
+                                player1.reserve(card, player1, slotCoins);
+                                reserveDone = true;
+                                coinPrinter();
                             }
                         }
                     } else {
                         if (SwingUtilities.isLeftMouseButton(e)) {
-                            buy(card, player2);
+                            player2.buy(card, player2, slotCoins);
+                            coinPrinter();
+                            sCoinPrinter();
+                            scorePrinter();
+                            cardPrinter();
                         } else if (SwingUtilities.isRightMouseButton(e)) {
                             if (!reserveDone) {
-                                reserve(card, player2);
+                                player2.reserve(card, player2, slotCoins);
+                                reserveDone = true;
+                                coinPrinter();
                             }
                         }
                     }
@@ -1140,22 +583,34 @@ public class Main {
             });
         }
         for (Card card : setCard3) {
-            card.cardImg.addMouseListener(new MouseAdapter() {
+            card.getCardImg().addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     if (turn == 1) {
                         if (SwingUtilities.isLeftMouseButton(e)) {
-                            buy(card, player1);
+                            player1.buy(card, player1, slotCoins);
+                            coinPrinter();
+                            sCoinPrinter();
+                            scorePrinter();
+                            cardPrinter();
                         } else if (SwingUtilities.isRightMouseButton(e)) {
                             if (!reserveDone) {
-                                reserve(card, player1);
+                                player1.reserve(card, player1, slotCoins);
+                                reserveDone = true;
+                                coinPrinter();
                             }
                         }
                     } else {
                         if (SwingUtilities.isLeftMouseButton(e)) {
-                            buy(card, player2);
+                            player2.buy(card, player2, slotCoins);
+                            coinPrinter();
+                            sCoinPrinter();
+                            scorePrinter();
+                            cardPrinter();
                         } else if (SwingUtilities.isRightMouseButton(e)) {
                             if (!reserveDone) {
-                                reserve(card, player2);
+                                player2.reserve(card, player2, slotCoins);
+                                reserveDone = true;
+                                coinPrinter();
                             }
                         }
                     }
@@ -1173,6 +628,693 @@ public class Main {
         return grayPanel;
     }
 
+    private JPanel createCoinPanel() {
+        JPanel slotPanel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics b) {
+                super.paintComponent(b);
+                b.drawImage(bgImage, 0, 0, this.getWidth(), this.getHeight(), this);
+            }
+        };
+
+        JPanel slotContainer = new JPanel(new GridBagLayout());
+        slotContainer.setOpaque(false);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10); // Padding around components
+
+
+        JButton returnButton = new JButton("بازگشت");
+        returnButton.setFont(normalFont);
+        returnButton.addActionListener(e -> switchPanel(mainGamePanel));
+
+        labelBtn1.setFont(normalFont);
+        labelBtn2.setFont(normalFont);
+        labelBtn3.setFont(normalFont);
+        labelBtn4.setFont(normalFont);
+        labelBtn5.setFont(normalFont);
+        JButton slotButton11 = new JButton("دو قرمز");
+        JButton slotButton12 = new JButton("یک قرمز");
+        JButton slotButton21 = new JButton("دو آبی");
+        JButton slotButton22 = new JButton("یک آبی");
+        JButton slotButton31 = new JButton("دو سبز");
+        JButton slotButton32 = new JButton("یک سبز");
+        JButton slotButton41 = new JButton("دو سفید");
+        JButton slotButton42 = new JButton("یک سفید");
+        JButton slotButton51 = new JButton("دو سیاه");
+        JButton slotButton52 = new JButton("یک سیاه");
+        JButton[] btns = {slotButton11, slotButton12, slotButton21, slotButton22, slotButton31, slotButton32, slotButton41, slotButton42, slotButton51, slotButton52};
+
+        for (JButton btn : btns) {
+            btn.setFont(normalFont);
+            btn.setPreferredSize(new Dimension(150, 50));
+            btn.addActionListener(e -> {
+                for (Coin coin : slotCoins) {
+                    if (coin.getNum() > 4) {
+                        coin.setNum(4);
+                    }
+                }
+                coinPrinter();
+                labelBtn1.setText("تعداد سکه های قرمز : ".concat(String.valueOf(slotCoins[4].getNum())));
+                labelBtn2.setText("تعداد سکه های آبی : ".concat(String.valueOf(slotCoins[3].getNum())));
+                labelBtn3.setText("تعداد سکه های سبز : ".concat(String.valueOf(slotCoins[0].getNum())));
+                labelBtn4.setText("تعداد سکه های سفید : ".concat(String.valueOf(slotCoins[1].getNum())));
+                labelBtn5.setText("تعداد سکه های سیاه : ".concat(String.valueOf(slotCoins[2].getNum())));
+            });
+        }
+
+        slotButton11.addActionListener(e -> {
+            switch (turn) {
+                case 1:
+                    if (slotCoins[4].getNum() == 4 && clickNum < 1) {
+                        player1.takeCoin(2, "red");
+                        clickNum++;
+                        slotCoins[4].num -= 2;
+                        slotButton12.setEnabled(false);
+                        slotButton22.setEnabled(false);
+                        slotButton32.setEnabled(false);
+                        slotButton42.setEnabled(false);
+                        slotButton52.setEnabled(false);
+                    } else {
+                        clickNum = 0;
+                        slotButton22.setEnabled(true);
+                        slotButton12.setEnabled(true);
+                        slotButton32.setEnabled(true);
+                        slotButton42.setEnabled(true);
+                        slotButton52.setEnabled(true);
+                        buyReserve(player1);
+                        turn *= -1;
+                        reserveDone = false;
+                    }
+                    break;
+                case -1:
+                    if (slotCoins[4].getNum() == 4 && clickNum < 1) {
+                        player2.takeCoin(2, "red");
+                        slotCoins[4].num -= 2;
+                        clickNum++;
+                        slotButton12.setEnabled(false);
+                        slotButton22.setEnabled(false);
+                        slotButton32.setEnabled(false);
+                        slotButton42.setEnabled(false);
+                        slotButton52.setEnabled(false);
+                    } else {
+                        clickNum = 0;
+                        slotButton22.setEnabled(true);
+                        slotButton12.setEnabled(true);
+                        slotButton32.setEnabled(true);
+                        slotButton42.setEnabled(true);
+                        slotButton52.setEnabled(true);
+                        buyReserve(player2);
+                        turn *= -1;
+                        reserveDone = false;
+                    }
+                    break;
+            }
+        });
+        slotButton21.addActionListener(e -> {
+            switch (turn) {
+                case 1:
+                    if (slotCoins[3].getNum() == 4 && clickNum < 1) {
+                        player1.takeCoin(2, "blue");
+                        slotCoins[3].num -= 2;
+                        clickNum++;
+                        slotButton12.setEnabled(false);
+                        slotButton22.setEnabled(false);
+                        slotButton32.setEnabled(false);
+                        slotButton42.setEnabled(false);
+                        slotButton52.setEnabled(false);
+                    } else {
+                        clickNum = 0;
+                        slotButton22.setEnabled(true);
+                        slotButton12.setEnabled(true);
+                        slotButton32.setEnabled(true);
+                        slotButton42.setEnabled(true);
+                        slotButton52.setEnabled(true);
+                        buyReserve(player1);
+                        turn *= -1;
+                        reserveDone = false;
+                    }
+                    break;
+                case -1:
+                    if (slotCoins[3].getNum() == 4 && clickNum < 1) {
+                        player2.takeCoin(2, "blue");
+                        slotCoins[3].num -= 2;
+                        clickNum++;
+                        slotButton12.setEnabled(false);
+                        slotButton22.setEnabled(false);
+                        slotButton32.setEnabled(false);
+                        slotButton42.setEnabled(false);
+                        slotButton52.setEnabled(false);
+                    } else {
+                        clickNum = 0;
+                        slotButton22.setEnabled(true);
+                        slotButton12.setEnabled(true);
+                        slotButton32.setEnabled(true);
+                        slotButton42.setEnabled(true);
+                        slotButton52.setEnabled(true);
+                        buyReserve(player2);
+                        turn *= -1;
+                        reserveDone = false;
+                    }
+                    break;
+            }
+        });
+        slotButton31.addActionListener(e -> {
+            switch (turn) {
+                case 1:
+                    if (slotCoins[0].getNum() == 4 && clickNum < 1) {
+                        player1.takeCoin(2, "green");
+                        slotCoins[0].num -= 2;
+                        clickNum++;
+                        slotButton12.setEnabled(false);
+                        slotButton22.setEnabled(false);
+                        slotButton32.setEnabled(false);
+                        slotButton42.setEnabled(false);
+                        slotButton52.setEnabled(false);
+                    } else {
+                        clickNum = 0;
+                        slotButton22.setEnabled(true);
+                        slotButton12.setEnabled(true);
+                        slotButton32.setEnabled(true);
+                        slotButton42.setEnabled(true);
+                        slotButton52.setEnabled(true);
+                        buyReserve(player1);
+                        turn *= -1;
+                        reserveDone = false;
+                    }
+                    break;
+                case -1:
+                    if (slotCoins[0].getNum() == 4 && clickNum < 1) {
+                        player2.takeCoin(2, "green");
+                        slotCoins[0].num -= 2;
+                        clickNum++;
+                        slotButton12.setEnabled(false);
+                        slotButton22.setEnabled(false);
+                        slotButton32.setEnabled(false);
+                        slotButton42.setEnabled(false);
+                        slotButton52.setEnabled(false);
+                    } else {
+                        clickNum = 0;
+                        slotButton22.setEnabled(true);
+                        slotButton12.setEnabled(true);
+                        slotButton32.setEnabled(true);
+                        slotButton42.setEnabled(true);
+                        slotButton52.setEnabled(true);
+                        buyReserve(player1);
+                        turn *= -1;
+                        reserveDone = false;
+                    }
+                    break;
+            }
+        });
+        slotButton41.addActionListener(e -> {
+            switch (turn) {
+                case 1:
+                    if (slotCoins[1].getNum() == 4 && clickNum < 1) {
+                        player1.takeCoin(2, "white");
+                        clickNum++;
+                        slotCoins[1].num -= 2;
+                        slotButton12.setEnabled(false);
+                        slotButton22.setEnabled(false);
+                        slotButton32.setEnabled(false);
+                        slotButton42.setEnabled(false);
+                        slotButton52.setEnabled(false);
+                    } else {
+                        clickNum = 0;
+                        slotButton22.setEnabled(true);
+                        slotButton12.setEnabled(true);
+                        slotButton32.setEnabled(true);
+                        slotButton42.setEnabled(true);
+                        slotButton52.setEnabled(true);
+                        buyReserve(player1);
+                        turn *= -1;
+                        reserveDone = false;
+                    }
+                    break;
+                case -1:
+                    if (slotCoins[1].getNum() == 4 && clickNum < 1) {
+                        player2.takeCoin(2, "white");
+                        clickNum++;
+                        slotCoins[1].num -= 2;
+                        slotButton12.setEnabled(false);
+                        slotButton22.setEnabled(false);
+                        slotButton32.setEnabled(false);
+                        slotButton42.setEnabled(false);
+                        slotButton52.setEnabled(false);
+                    } else {
+                        clickNum = 0;
+                        slotButton22.setEnabled(true);
+                        slotButton12.setEnabled(true);
+                        slotButton32.setEnabled(true);
+                        slotButton42.setEnabled(true);
+                        slotButton52.setEnabled(true);
+                        slotButton11.setEnabled(true);
+                        slotButton21.setEnabled(true);
+                        slotButton31.setEnabled(true);
+                        slotButton41.setEnabled(true);
+                        slotButton51.setEnabled(true);
+                        buyReserve(player2);
+                        turn *= -1;
+                        reserveDone = false;
+                    }
+                    break;
+            }
+        });
+        slotButton51.addActionListener(e -> {
+            switch (turn) {
+                case 1:
+                    if (slotCoins[2].getNum() == 4 && clickNum < 1) {
+                        player1.takeCoin(2, "black");
+                        clickNum++;
+                        slotCoins[2].num -= 2;
+                        slotButton12.setEnabled(false);
+                        slotButton22.setEnabled(false);
+                        slotButton32.setEnabled(false);
+                        slotButton42.setEnabled(false);
+                        slotButton52.setEnabled(false);
+                    } else {
+                        clickNum = 0;
+                        slotButton22.setEnabled(true);
+                        slotButton12.setEnabled(true);
+                        slotButton32.setEnabled(true);
+                        slotButton42.setEnabled(true);
+                        slotButton52.setEnabled(true);
+                        buyReserve(player1);
+                        turn *= -1;
+                        reserveDone = false;
+                    }
+                    break;
+                case -1:
+                    if (slotCoins[2].getNum() == 4 && clickNum < 1) {
+                        player2.takeCoin(2, "black");
+                        clickNum++;
+                        slotCoins[2].num -= 2;
+                        slotButton12.setEnabled(false);
+                        slotButton22.setEnabled(false);
+                        slotButton32.setEnabled(false);
+                        slotButton42.setEnabled(false);
+                        slotButton52.setEnabled(false);
+                    } else {
+                        clickNum = 0;
+                        slotButton22.setEnabled(true);
+                        slotButton12.setEnabled(true);
+                        slotButton32.setEnabled(true);
+                        slotButton42.setEnabled(true);
+                        slotButton52.setEnabled(true);
+                        buyReserve(player2);
+                        turn *= -1;
+                        reserveDone = false;
+                    }
+                    break;
+            }
+        });
+        slotButton12.addActionListener(e -> {
+            switch (turn) {
+                case 1:
+                    if (slotCoins[4].getNum() > 0 && clickNum < 3) {
+                        player1.takeCoin(1, "red");
+                        slotCoins[4].num--;
+                        clickNum++;
+                        slotButton12.setEnabled(false);
+                        slotButton11.setEnabled(false);
+                        slotButton21.setEnabled(false);
+                        slotButton31.setEnabled(false);
+                        slotButton41.setEnabled(false);
+                        slotButton51.setEnabled(false);
+                    } else {
+                        clickNum = 0;
+                        slotButton22.setEnabled(true);
+                        slotButton12.setEnabled(true);
+                        slotButton32.setEnabled(true);
+                        slotButton42.setEnabled(true);
+                        slotButton52.setEnabled(true);
+                        slotButton11.setEnabled(true);
+                        slotButton21.setEnabled(true);
+                        slotButton31.setEnabled(true);
+                        slotButton41.setEnabled(true);
+                        slotButton51.setEnabled(true);
+                        buyReserve(player1);
+                        turn *= -1;
+                        reserveDone = false;
+                    }
+                    break;
+                case -1:
+                    if (slotCoins[4].getNum() > 0 && clickNum < 3) {
+                        player2.takeCoin(1, "red");
+                        slotCoins[4].num--;
+                        clickNum++;
+                        slotButton12.setEnabled(false);
+                        slotButton11.setEnabled(false);
+                        slotButton21.setEnabled(false);
+                        slotButton31.setEnabled(false);
+                        slotButton41.setEnabled(false);
+                        slotButton51.setEnabled(false);
+                    } else {
+                        clickNum = 0;
+                        slotButton22.setEnabled(true);
+                        slotButton12.setEnabled(true);
+                        slotButton32.setEnabled(true);
+                        slotButton42.setEnabled(true);
+                        slotButton52.setEnabled(true);
+                        slotButton11.setEnabled(true);
+                        slotButton21.setEnabled(true);
+                        slotButton31.setEnabled(true);
+                        slotButton41.setEnabled(true);
+                        slotButton51.setEnabled(true);
+                        buyReserve(player2);
+                        turn *= -1;
+                        reserveDone = false;
+                    }
+                    break;
+            }
+        });
+        slotButton22.addActionListener(e -> {
+            switch (turn) {
+                case 1:
+                    if (slotCoins[3].getNum() > 0 && clickNum < 3) {
+                        player1.takeCoin(1, "blue");
+                        slotCoins[3].num--;
+                        clickNum++;
+                        slotButton22.setEnabled(false);
+                        slotButton11.setEnabled(false);
+                        slotButton21.setEnabled(false);
+                        slotButton31.setEnabled(false);
+                        slotButton41.setEnabled(false);
+                        slotButton51.setEnabled(false);
+                    } else {
+                        clickNum = 0;
+                        slotButton22.setEnabled(true);
+                        slotButton12.setEnabled(true);
+                        slotButton32.setEnabled(true);
+                        slotButton42.setEnabled(true);
+                        slotButton52.setEnabled(true);
+                        slotButton11.setEnabled(true);
+                        slotButton21.setEnabled(true);
+                        slotButton31.setEnabled(true);
+                        slotButton41.setEnabled(true);
+                        slotButton51.setEnabled(true);
+                        buyReserve(player1);
+                        turn *= -1;
+                        reserveDone = false;
+                    }
+                    break;
+                case -1:
+                    if (slotCoins[3].getNum() > 0 && clickNum < 3) {
+                        player2.takeCoin(1, "blue");
+                        slotCoins[3].num--;
+                        clickNum++;
+                        slotButton22.setEnabled(false);
+                        slotButton11.setEnabled(false);
+                        slotButton21.setEnabled(false);
+                        slotButton31.setEnabled(false);
+                        slotButton41.setEnabled(false);
+                        slotButton51.setEnabled(false);
+                    } else {
+                        clickNum = 0;
+                        slotButton22.setEnabled(true);
+                        slotButton12.setEnabled(true);
+                        slotButton32.setEnabled(true);
+                        slotButton42.setEnabled(true);
+                        slotButton52.setEnabled(true);
+                        slotButton11.setEnabled(true);
+                        slotButton21.setEnabled(true);
+                        slotButton31.setEnabled(true);
+                        slotButton41.setEnabled(true);
+                        slotButton51.setEnabled(true);
+                        buyReserve(player2);
+                        turn *= -1;
+                        reserveDone = false;
+                    }
+                    break;
+            }
+        });
+        slotButton32.addActionListener(e -> {
+            switch (turn) {
+                case 1:
+                    if (slotCoins[0].getNum() > 0 && clickNum < 3) {
+                        player1.takeCoin(1, "green");
+                        slotCoins[0].num--;
+                        clickNum++;
+                        slotButton32.setEnabled(false);
+                        slotButton11.setEnabled(false);
+                        slotButton21.setEnabled(false);
+                        slotButton31.setEnabled(false);
+                        slotButton41.setEnabled(false);
+                        slotButton51.setEnabled(false);
+                    } else {
+                        clickNum = 0;
+                        slotButton22.setEnabled(true);
+                        slotButton12.setEnabled(true);
+                        slotButton32.setEnabled(true);
+                        slotButton42.setEnabled(true);
+                        slotButton52.setEnabled(true);
+                        slotButton11.setEnabled(true);
+                        slotButton21.setEnabled(true);
+                        slotButton31.setEnabled(true);
+                        slotButton41.setEnabled(true);
+                        slotButton51.setEnabled(true);
+                        buyReserve(player1);
+                        turn *= -1;
+                        reserveDone = false;
+                    }
+                    break;
+                case -1:
+                    if (slotCoins[0].getNum() > 0 && clickNum < 3) {
+                        player2.takeCoin(1, "green");
+                        slotCoins[0].num--;
+                        clickNum++;
+                        slotButton32.setEnabled(false);
+                        slotButton11.setEnabled(false);
+                        slotButton21.setEnabled(false);
+                        slotButton31.setEnabled(false);
+                        slotButton41.setEnabled(false);
+                        slotButton51.setEnabled(false);
+                    } else {
+                        clickNum = 0;
+                        slotButton22.setEnabled(true);
+                        slotButton12.setEnabled(true);
+                        slotButton32.setEnabled(true);
+                        slotButton42.setEnabled(true);
+                        slotButton52.setEnabled(true);
+                        slotButton11.setEnabled(true);
+                        slotButton21.setEnabled(true);
+                        slotButton31.setEnabled(true);
+                        slotButton41.setEnabled(true);
+                        slotButton51.setEnabled(true);
+                        buyReserve(player2);
+                        turn *= -1;
+                        reserveDone = false;
+                    }
+                    break;
+            }
+        });
+        slotButton42.addActionListener(e -> {
+            switch (turn) {
+                case 1:
+                    if (slotCoins[1].getNum() > 0 && clickNum < 3) {
+                        player1.takeCoin(1, "white");
+                        slotCoins[1].num--;
+                        clickNum++;
+                        slotButton42.setEnabled(false);
+                        slotButton11.setEnabled(false);
+                        slotButton21.setEnabled(false);
+                        slotButton31.setEnabled(false);
+                        slotButton41.setEnabled(false);
+                        slotButton51.setEnabled(false);
+                    } else {
+                        clickNum = 0;
+                        slotButton22.setEnabled(true);
+                        slotButton12.setEnabled(true);
+                        slotButton32.setEnabled(true);
+                        slotButton42.setEnabled(true);
+                        slotButton52.setEnabled(true);
+                        slotButton11.setEnabled(true);
+                        slotButton21.setEnabled(true);
+                        slotButton31.setEnabled(true);
+                        slotButton41.setEnabled(true);
+                        slotButton51.setEnabled(true);
+                        buyReserve(player1);
+                        turn *= -1;
+                        reserveDone = false;
+                    }
+                    break;
+                case -1:
+                    if (slotCoins[1].getNum() > 0 && clickNum < 3) {
+                        player2.takeCoin(1, "white");
+                        slotCoins[1].num--;
+                        clickNum++;
+                        slotButton42.setEnabled(false);
+                        slotButton11.setEnabled(false);
+                        slotButton21.setEnabled(false);
+                        slotButton31.setEnabled(false);
+                        slotButton41.setEnabled(false);
+                        slotButton51.setEnabled(false);
+                    } else {
+                        clickNum = 0;
+                        slotButton22.setEnabled(true);
+                        slotButton12.setEnabled(true);
+                        slotButton32.setEnabled(true);
+                        slotButton42.setEnabled(true);
+                        slotButton52.setEnabled(true);
+                        slotButton11.setEnabled(true);
+                        slotButton21.setEnabled(true);
+                        slotButton31.setEnabled(true);
+                        slotButton41.setEnabled(true);
+                        slotButton51.setEnabled(true);
+                        buyReserve(player2);
+                        turn *= -1;
+                        reserveDone = false;
+                    }
+                    break;
+            }
+        });
+        slotButton52.addActionListener(e -> {
+            switch (turn) {
+                case 1:
+                    if (slotCoins[2].getNum() > 0 && clickNum < 3) {
+                        player1.takeCoin(1, "black");
+                        slotCoins[2].num--;
+                        clickNum++;
+                        slotButton52.setEnabled(false);
+                        slotButton11.setEnabled(false);
+                        slotButton21.setEnabled(false);
+                        slotButton31.setEnabled(false);
+                        slotButton41.setEnabled(false);
+                        slotButton51.setEnabled(false);
+
+                    } else {
+                        clickNum = 0;
+                        slotButton22.setEnabled(true);
+                        slotButton12.setEnabled(true);
+                        slotButton32.setEnabled(true);
+                        slotButton42.setEnabled(true);
+                        slotButton52.setEnabled(true);
+                        slotButton11.setEnabled(true);
+                        slotButton21.setEnabled(true);
+                        slotButton31.setEnabled(true);
+                        slotButton41.setEnabled(true);
+                        slotButton51.setEnabled(true);
+                        buyReserve(player1);
+                        turn *= -1;
+                        reserveDone = false;
+                    }
+                    break;
+                case -1:
+                    if (slotCoins[2].getNum() > 0 && clickNum < 3) {
+                        player2.takeCoin(1, "black");
+                        slotCoins[2].num--;
+                        clickNum++;
+                        slotButton52.setEnabled(false);
+                        slotButton11.setEnabled(false);
+                        slotButton21.setEnabled(false);
+                        slotButton31.setEnabled(false);
+                        slotButton41.setEnabled(false);
+                        slotButton51.setEnabled(false);
+                    } else {
+                        clickNum = 0;
+                        slotButton22.setEnabled(true);
+                        slotButton12.setEnabled(true);
+                        slotButton32.setEnabled(true);
+                        slotButton42.setEnabled(true);
+                        slotButton52.setEnabled(true);
+                        slotButton11.setEnabled(true);
+                        slotButton21.setEnabled(true);
+                        slotButton31.setEnabled(true);
+                        slotButton41.setEnabled(true);
+                        slotButton51.setEnabled(true);
+                        buyReserve(player2);
+                        turn *= -1;
+                        reserveDone = false;
+                    }
+                    break;
+            }
+        });
+
+        JLabel[] labels = {labelBtn1, labelBtn2, labelBtn3, labelBtn4, labelBtn5};
+        for (int i = 0; i < 5; i++) {
+            labels[i].setForeground(Color.white);
+            labels[i].setBackground(Color.blue);
+        }
+
+        gbc.gridy = 0;
+        gbc.gridx = 0;
+        gbc.gridwidth = 3;
+        slotContainer.add(returnButton, gbc);
+
+        gbc.gridy = 1;
+        gbc.gridx = 0;
+        gbc.gridwidth = 1;
+        slotContainer.add(labelBtn1, gbc);
+        gbc.gridy = 1;
+        gbc.gridx = 1;
+        gbc.gridwidth = 1;
+        slotContainer.add(slotButton11, gbc);
+        gbc.gridy = 1;
+        gbc.gridx = 2;
+        gbc.gridwidth = 1;
+        slotContainer.add(slotButton12, gbc);
+
+        gbc.gridy = 2;
+        gbc.gridx = 0;
+        gbc.gridwidth = 1;
+        slotContainer.add(labelBtn2, gbc);
+        gbc.gridy = 2;
+        gbc.gridx = 1;
+        gbc.gridwidth = 1;
+        slotContainer.add(slotButton21, gbc);
+        gbc.gridy = 2;
+        gbc.gridx = 2;
+        gbc.gridwidth = 1;
+        slotContainer.add(slotButton22, gbc);
+
+        gbc.gridy = 3;
+        gbc.gridx = 0;
+        gbc.gridwidth = 1;
+        slotContainer.add(labelBtn3, gbc);
+        gbc.gridy = 3;
+        gbc.gridx = 1;
+        gbc.gridwidth = 1;
+        slotContainer.add(slotButton31, gbc);
+        gbc.gridy = 3;
+        gbc.gridx = 2;
+        gbc.gridwidth = 1;
+        slotContainer.add(slotButton32, gbc);
+
+        gbc.gridy = 4;
+        gbc.gridx = 0;
+        gbc.gridwidth = 1;
+        slotContainer.add(labelBtn4, gbc);
+        gbc.gridy = 4;
+        gbc.gridx = 1;
+        gbc.gridwidth = 1;
+        slotContainer.add(slotButton41, gbc);
+        gbc.gridy = 4;
+        gbc.gridx = 2;
+        gbc.gridwidth = 1;
+        slotContainer.add(slotButton42, gbc);
+
+        gbc.gridy = 5;
+        gbc.gridx = 0;
+        gbc.gridwidth = 1;
+        slotContainer.add(labelBtn5, gbc);
+        gbc.gridy = 5;
+        gbc.gridx = 1;
+        gbc.gridwidth = 1;
+        slotContainer.add(slotButton51, gbc);
+        gbc.gridy = 5;
+        gbc.gridx = 2;
+        gbc.gridwidth = 1;
+        slotContainer.add(slotButton52, gbc);
+
+        slotPanel.add(slotContainer, BorderLayout.CENTER);
+        return slotPanel;
+    }
+
+    private JPanel createWinnerPanel() {
+        JPanel win = new JPanel();
+        return win;
+    }
+
+    //switch and move between panels
     private void switchPanel(JPanel panel) {
         frame.getContentPane().removeAll();
         frame.getContentPane().add(panel);

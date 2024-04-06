@@ -1,5 +1,3 @@
-import javax.swing.*;
-
 public class Coin {
     private String type;
     public int num;
