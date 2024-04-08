@@ -42,15 +42,20 @@ public class Players {
         if (sw) {
             for (int i = 0; i < 5; i++) {
                 if (card.coinList[i] != null) {
-                    coin[i].num += card.coinList[i].num;
-                    int remain = card.coinList[i].num - (player.playerCoin[i].num + player.playerSCoin[i].sNum);
-                    card.coinList[i].num -= remain;
-                    player.playerCoin[5].num -= remain;
-                    coin[5].num += remain;
-                    card.coinList[i].num -= player.playerSCoin[i].sNum;
-                    player.playerCoin[i].num -= card.coinList[i].num;
+                    if ((player.playerCoin[i].getNum() + player.playerSCoin[i].getsNum()) >= card.coinList[i].getNum()) {
+                        card.coinList[i].num -= player.playerSCoin[i].getsNum();
+                        player.playerCoin[i].num -= card.coinList[i].getNum();
+                        coin[i].num += card.coinList[i].getNum();
+                    } else {
+                        card.coinList[i].num -= player.playerSCoin[i].sNum;
+                        coin[i].num += card.coinList[i].num;
+                        card.coinList[i].num -= player.playerCoin[i].num;
+                        player.playerCoin[i].num = 0;
+                        player.playerCoin[5].num -= card.coinList[i].num;
+                        coin[5].num += card.coinList[i].num;
+                    }
                 }
-                if (card.SCoins[i] != null && player.playerSCoin[i] != null) {
+                if (card.SCoins[i] != null) {
                     player.playerSCoin[i].sNum += card.SCoins[i].sNum;
                 }
             }

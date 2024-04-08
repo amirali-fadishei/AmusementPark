@@ -11,7 +11,7 @@ public class Main {
 
     {
         try {
-            font = Font.createFont(Font.TRUETYPE_FONT, getClass().getClassLoader().getResourceAsStream("Vazirmatn-regular.ttf"));
+            font = Font.createFont(Font.TRUETYPE_FONT, getClass().getClassLoader().getResourceAsStream("Vazir.ttf"));
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(font);
         } catch (Exception e) {
@@ -51,7 +51,7 @@ public class Main {
     private int turn = 1;
     private int clickNum = 0;
     //coin slots
-    private Coin[] slotCoins = {new Coin(4, "green"), new Coin(4, "white"), new Coin(4, "black"), new Coin(4, "blue"), new Coin(4, "red"), new Coin(5, "gold")};
+    private final Coin[] slotCoins = {new Coin(4, "green"), new Coin(4, "white"), new Coin(4, "black"), new Coin(4, "blue"), new Coin(4, "red"), new Coin(5, "gold")};
     //slots label & button
     JLabel labelBtn1 = new JLabel("تعداد سکه های قرمز : ".concat(String.valueOf(slotCoins[4].getNum())), SwingConstants.CENTER);
     JLabel labelBtn2 = new JLabel("تعداد سکه های آبی : ".concat(String.valueOf(slotCoins[3].getNum())), SwingConstants.CENTER);
@@ -90,24 +90,26 @@ public class Main {
     public void updateReserveCards(Card[] cards, JPanel panel) {
         panel.removeAll();
         for (Card card : cards) {
-            panel.add(card.getCardImg());
-            card.getCardImg().addMouseListener(new MouseAdapter() {
-                public void mouseClicked(MouseEvent e) {
-                    if (panel == player1res) {
-                        player1.buyReserve(card, player1, slotCoins);
-                        coinPrinter();
-                        sCoinPrinter();
-                        scorePrinter();
-                        cardPrinter();
-                    } else {
-                        player2.buyReserve(card, player2, slotCoins);
-                        coinPrinter();
-                        sCoinPrinter();
-                        scorePrinter();
-                        cardPrinter();
+            if (card != null) {
+                panel.add(card.getCardImg());
+                card.getCardImg().addMouseListener(new MouseAdapter() {
+                    public void mouseClicked(MouseEvent e) {
+                        if (panel == player1res) {
+                            player1.buyReserve(card, player1, slotCoins);
+                            coinPrinter();
+                            sCoinPrinter();
+                            scorePrinter();
+                            cardPrinter();
+                        } else {
+                            player2.buyReserve(card, player2, slotCoins);
+                            coinPrinter();
+                            sCoinPrinter();
+                            scorePrinter();
+                            cardPrinter();
+                        }
                     }
-                }
-            });
+                });
+            }
         }
         panel.revalidate();
         panel.repaint();
@@ -271,11 +273,16 @@ public class Main {
     //change game turn
     public void changeTurn() {
         turn *= -1;
-        labelBtn1.setText("تعداد سکه های قرمز : ".concat(String.valueOf(slotCoins[4].getNum())));
-        labelBtn2.setText("تعداد سکه های آبی : ".concat(String.valueOf(slotCoins[3].getNum())));
-        labelBtn3.setText("تعداد سکه های سبز : ".concat(String.valueOf(slotCoins[0].getNum())));
-        labelBtn4.setText("تعداد سکه های سفید : ".concat(String.valueOf(slotCoins[1].getNum())));
-        labelBtn5.setText("تعداد سکه های سیاه : ".concat(String.valueOf(slotCoins[2].getNum())));
+        for (Coin coin : slotCoins) {
+            if (coin.getNum() > 4) {
+                coin.setNum(4);
+            }
+            labelBtn1.setText("تعداد سکه های قرمز : ".concat(String.valueOf(slotCoins[4].getNum())));
+            labelBtn2.setText("تعداد سکه های آبی : ".concat(String.valueOf(slotCoins[3].getNum())));
+            labelBtn3.setText("تعداد سکه های سبز : ".concat(String.valueOf(slotCoins[0].getNum())));
+            labelBtn4.setText("تعداد سکه های سفید : ".concat(String.valueOf(slotCoins[1].getNum())));
+            labelBtn5.setText("تعداد سکه های سیاه : ".concat(String.valueOf(slotCoins[2].getNum())));
+        }
         slotButton11.setEnabled(true);
         slotButton12.setEnabled(true);
         slotButton21.setEnabled(true);
@@ -319,8 +326,6 @@ public class Main {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 0, 40, 0);
 
         JLabel titleLabel = new JLabel("به شهربازی خوش آمدید!", SwingConstants.CENTER);
@@ -330,19 +335,28 @@ public class Main {
         titleLabel.setOpaque(true);
         welcomePanel.add(titleLabel, gbc);
 
-        GridBagConstraints gbcButton = new GridBagConstraints();
-        gbcButton.gridx = 0;
-        gbcButton.gridy = 1;
-        gbcButton.gridwidth = 1;
-        gbcButton.fill = GridBagConstraints.VERTICAL;
-
+        gbc.gridy = 1;
         JButton startButton = new JButton("شروع بازی");
         startButton.setPreferredSize(new Dimension(200, 50));
         startButton.setFont(normalFont);
         startButton.setBackground(Color.MAGENTA);
         startButton.setForeground(Color.white);
         startButton.addActionListener(e -> switchPanel(mainGamePanel));
-        welcomePanel.add(startButton, gbcButton);
+        welcomePanel.add(startButton, gbc);
+
+        gbc.gridy = 2;
+        JButton guideButton = new JButton("راهنما");
+        guideButton.setPreferredSize(new Dimension(200, 50));
+        guideButton.setFont(normalFont);
+        guideButton.setBackground(Color.MAGENTA);
+        guideButton.setForeground(Color.white);
+        welcomePanel.add(guideButton, gbc);
+
+        gbc.gridy = 3;
+        JLabel developer = new JLabel("طراحی و توسعه : امیرعلی فدیشه ای");
+        developer.setFont(normalFont);
+        developer.setForeground(Color.white);
+        welcomePanel.add(developer, gbc);
 
         return welcomePanel;
     }
@@ -749,6 +763,11 @@ public class Main {
                     if (coin.getNum() > 4) {
                         coin.setNum(4);
                     }
+                    labelBtn1.setText("تعداد سکه های قرمز : ".concat(String.valueOf(slotCoins[4].getNum())));
+                    labelBtn2.setText("تعداد سکه های آبی : ".concat(String.valueOf(slotCoins[3].getNum())));
+                    labelBtn3.setText("تعداد سکه های سبز : ".concat(String.valueOf(slotCoins[0].getNum())));
+                    labelBtn4.setText("تعداد سکه های سفید : ".concat(String.valueOf(slotCoins[1].getNum())));
+                    labelBtn5.setText("تعداد سکه های سیاه : ".concat(String.valueOf(slotCoins[2].getNum())));
                 }
                 coinPrinter();
             });
@@ -768,6 +787,7 @@ public class Main {
                         slotButton52.setEnabled(false);
                     } else {
                         changeTurn();
+                        clickNum = 0;
                     }
                     break;
                 case -1:
@@ -782,6 +802,7 @@ public class Main {
                         slotButton52.setEnabled(false);
                     } else {
                         changeTurn();
+                        clickNum = 0;
                     }
                     break;
             }
@@ -800,6 +821,7 @@ public class Main {
                         slotButton52.setEnabled(false);
                     } else {
                         changeTurn();
+                        clickNum = 0;
                     }
                     break;
                 case -1:
@@ -814,6 +836,7 @@ public class Main {
                         slotButton52.setEnabled(false);
                     } else {
                         changeTurn();
+                        clickNum = 0;
                     }
                     break;
             }
@@ -832,6 +855,7 @@ public class Main {
                         slotButton52.setEnabled(false);
                     } else {
                         changeTurn();
+                        clickNum = 0;
                     }
                     break;
                 case -1:
@@ -846,6 +870,7 @@ public class Main {
                         slotButton52.setEnabled(false);
                     } else {
                         changeTurn();
+                        clickNum = 0;
                     }
                     break;
             }
@@ -864,6 +889,7 @@ public class Main {
                         slotButton52.setEnabled(false);
                     } else {
                         changeTurn();
+                        clickNum = 0;
                     }
                     break;
                 case -1:
@@ -876,8 +902,14 @@ public class Main {
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
+                        labelBtn1.setText("تعداد سکه های قرمز : ".concat(String.valueOf(slotCoins[4].getNum())));
+                        labelBtn2.setText("تعداد سکه های آبی : ".concat(String.valueOf(slotCoins[3].getNum())));
+                        labelBtn3.setText("تعداد سکه های سبز : ".concat(String.valueOf(slotCoins[0].getNum())));
+                        labelBtn4.setText("تعداد سکه های سفید : ".concat(String.valueOf(slotCoins[1].getNum())));
+                        labelBtn5.setText("تعداد سکه های سیاه : ".concat(String.valueOf(slotCoins[2].getNum())));
                     } else {
                         changeTurn();
+                        clickNum = 0;
                     }
                     break;
             }
@@ -896,6 +928,7 @@ public class Main {
                         slotButton52.setEnabled(false);
                     } else {
                         changeTurn();
+                        clickNum = 0;
                     }
                     break;
                 case -1:
@@ -910,6 +943,7 @@ public class Main {
                         slotButton52.setEnabled(false);
                     } else {
                         changeTurn();
+                        clickNum = 0;
                     }
                     break;
             }
@@ -929,6 +963,7 @@ public class Main {
                         slotButton51.setEnabled(false);
                     } else {
                         changeTurn();
+                        clickNum = 0;
                     }
                     break;
                 case -1:
@@ -944,6 +979,7 @@ public class Main {
                         slotButton51.setEnabled(false);
                     } else {
                         changeTurn();
+                        clickNum = 0;
                     }
                     break;
             }
@@ -963,6 +999,7 @@ public class Main {
                         slotButton51.setEnabled(false);
                     } else {
                         changeTurn();
+                        clickNum = 0;
                     }
                     break;
                 case -1:
@@ -978,6 +1015,7 @@ public class Main {
                         slotButton51.setEnabled(false);
                     } else {
                         changeTurn();
+                        clickNum = 0;
                     }
                     break;
             }
@@ -997,6 +1035,7 @@ public class Main {
                         slotButton51.setEnabled(false);
                     } else {
                         changeTurn();
+                        clickNum = 0;
                     }
                     break;
                 case -1:
@@ -1012,6 +1051,7 @@ public class Main {
                         slotButton51.setEnabled(false);
                     } else {
                         changeTurn();
+                        clickNum = 0;
                     }
                     break;
             }
@@ -1031,6 +1071,7 @@ public class Main {
                         slotButton51.setEnabled(false);
                     } else {
                         changeTurn();
+                        clickNum = 0;
                     }
                     break;
                 case -1:
@@ -1046,6 +1087,7 @@ public class Main {
                         slotButton51.setEnabled(false);
                     } else {
                         changeTurn();
+                        clickNum = 0;
                     }
                     break;
             }
@@ -1066,6 +1108,7 @@ public class Main {
 
                     } else {
                         changeTurn();
+                        clickNum = 0;
                     }
                     break;
                 case -1:
@@ -1081,6 +1124,7 @@ public class Main {
                         slotButton51.setEnabled(false);
                     } else {
                         changeTurn();
+                        clickNum = 0;
                     }
                     break;
             }
