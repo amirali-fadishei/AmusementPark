@@ -5,7 +5,7 @@ public class Players {
     public int playerCoinNum;
     public specialCoin[] playerSCoin = new specialCoin[5];
     public Card[] playerCard = new Card[48];
-    public Card[] reservCard = new Card[3];
+    public Card[] reserveCard = new Card[3];
 
     public void takeCoin(int count, String color) {
         switch (color) {
@@ -94,13 +94,17 @@ public class Players {
                 coin[5].num--;
                 player.playerCoin[5].num++;
             }
-            for (int t = 0; t < player.reservCard.length; t++) {
-                if (player.reservCard[t] == null) {
-                    player.reservCard[t] = card;
+            for (int t = 0; t < player.reserveCard.length; t++) {
+                if (player.reserveCard[t] == null) {
+                    player.reserveCard[t] = card;
                     card.setAvailability(false);
                     break;
                 }
             }
         }
+    }
+
+    public void buyReserve(Card card, Players player, Coin[] coin) {
+        player.buy(card, player, coin);
     }
 }
