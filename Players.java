@@ -1,10 +1,11 @@
 public class Players {
-    public int pScore;
+    public int pScore = 0;
     public int reserveCount = 0;
     public Coin[] playerCoin = new Coin[6];
     public int playerCoinNum;
     public specialCoin[] playerSCoin = new specialCoin[5];
     public Card[] playerCard = new Card[48];
+    public int cardNum = 0;
     public Card[] reserveCard = new Card[3];
 
     public void takeCoin(int count, String color) {
@@ -60,6 +61,7 @@ public class Players {
                 }
             }
             player.pScore += card.getScore();
+            player.cardNum+=1;
             for (int j = 0; j < 45; j++) {
                 if (player.playerCard[j] == null) {
                     player.playerCard[j] = card;

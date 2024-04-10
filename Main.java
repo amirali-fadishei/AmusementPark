@@ -4,8 +4,9 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Random;
 
-public class Main {
+public class Main extends JFrame {
     //game Font
     Font font;
 
@@ -22,13 +23,14 @@ public class Main {
     Font bigFont = font.deriveFont(40f);
     Font normalFont = font.deriveFont(20f);
     //Frames and panels
-    private final JFrame frame;
+    private final JPanel mainPanel;
     private final JPanel loginPanel;
+    private final JScrollPane guidePanel;
     private final JPanel mainGamePanel;
     private final JPanel storePanel;
-    private final JPanel winnerPanel;
     private final JPanel coinPanel;
     private final JPanel reservePanel;
+    private final JPanel winnerPanel;
     private final JPanel centerPanel = new JPanel(new BorderLayout());
     private final JPanel topPanel = new JPanel(new FlowLayout());
     private final JPanel bottomPanel = new JPanel(new FlowLayout());
@@ -50,6 +52,7 @@ public class Main {
     private final Players player2 = new Players();
     private int turn = 1;
     private int clickNum = 0;
+    Random rand = new Random();//shuffle cards list
     //coin slots
     private final Coin[] slotCoins = {new Coin(4, "green"), new Coin(4, "white"), new Coin(4, "black"), new Coin(4, "blue"), new Coin(4, "red"), new Coin(5, "gold")};
     //slots label & button
@@ -68,52 +71,6 @@ public class Main {
     JButton slotButton42 = new JButton("یک سفید");
     JButton slotButton51 = new JButton("دو سیاه");
     JButton slotButton52 = new JButton("یک سیاه");
-
-    //show cards in shop panel
-    public void updateAvailableCards(Card[] cards, JPanel panel) {
-        panel.removeAll();
-        int availableCount = 0;
-        for (Card card : cards) {
-            if (card.getAvailability()) {
-                panel.add(card.getCardImg());
-                availableCount++;
-                if (availableCount == 4) {
-                    break;
-                }
-            }
-        }
-        panel.revalidate();
-        panel.repaint();
-    }
-
-    //show player reserve cards
-    public void updateReserveCards(Card[] cards, JPanel panel) {
-        panel.removeAll();
-        for (Card card : cards) {
-            if (card != null) {
-                panel.add(card.getCardImg());
-                card.getCardImg().addMouseListener(new MouseAdapter() {
-                    public void mouseClicked(MouseEvent e) {
-                        if (panel == player1res) {
-                            player1.buyReserve(card, player1, slotCoins);
-                            coinPrinter();
-                            sCoinPrinter();
-                            scorePrinter();
-                            cardPrinter();
-                        } else {
-                            player2.buyReserve(card, player2, slotCoins);
-                            coinPrinter();
-                            sCoinPrinter();
-                            scorePrinter();
-                            cardPrinter();
-                        }
-                    }
-                });
-            }
-        }
-        panel.revalidate();
-        panel.repaint();
-    }
 
     //show players cards
     public void cardPrinter() {
@@ -252,19 +209,22 @@ public class Main {
     }
 
     //show players score
-    public void scorePrinter() {
-        JLabel scoreLabel1 = new JLabel(String.valueOf(Math.max(0, player1.pScore)));
-        JLabel scoreLabel2 = new JLabel(String.valueOf(Math.max(0, player2.pScore)));
-        tScorePanel.removeAll();
-        tScorePanel.add(scoreLabel1);
-        tScorePanel.revalidate();
-        tScorePanel.repaint();
-        topPanel.add(tScorePanel);
-        bScorePanel.removeAll();
-        bScorePanel.add(scoreLabel2);
-        bScorePanel.revalidate();
-        bScorePanel.repaint();
-        bottomPanel.add(bScorePanel);
+    public void scorePrinter(Players player) {
+        if (player == player1) {
+            JLabel scoreLabel1 = new JLabel(String.valueOf(Math.max(0, player1.pScore)));
+            tScorePanel.removeAll();
+            tScorePanel.add(scoreLabel1);
+            tScorePanel.revalidate();
+            tScorePanel.repaint();
+            topPanel.add(tScorePanel);
+        } else {
+            JLabel scoreLabel2 = new JLabel(String.valueOf(Math.max(0, player2.pScore)));
+            bScorePanel.removeAll();
+            bScorePanel.add(scoreLabel2);
+            bScorePanel.revalidate();
+            bScorePanel.repaint();
+            bottomPanel.add(bScorePanel);
+        }
     }
 
     //one reserve for each turn
@@ -295,23 +255,110 @@ public class Main {
         slotButton52.setEnabled(true);
         reserveDone = false;
         clickNum = 0;
+        if (turn == 1) {
+            if ((player1.pScore >= 15 && player2.pScore <= 15) || (player1.pScore <= 15 && player2.pScore >= 15)) {
+                switchPanels(winnerPanel);
+            }
+        }
+    }
+
+    //show cards in shop panel
+    public void updateAvailableCards(Card[] cards, JPanel panel) {
+        panel.removeAll();
+        int availableCount = 0;
+        for (Card card : cards) {
+            if (card.getAvailability()) {
+                panel.add(card.getCardImg());
+                availableCount++;
+                if (availableCount == 4) {
+                    break;
+                }
+            }
+        }
+        panel.revalidate();
+        panel.repaint();
+    }
+
+    //show player reserve cards
+    public void updateReserveCards(Card[] cards, JPanel panel) {
+        panel.removeAll();
+        for (Card card : cards) {
+            if (card != null) {
+                panel.add(card.getCardImg());
+                card.getCardImg().addMouseListener(new MouseAdapter() {
+                    public void mouseClicked(MouseEvent e) {
+                        if (panel == player1res) {
+                            player1.buyReserve(card, player1, slotCoins);
+                            scorePrinter(player1);
+                        } else {
+                            player2.buyReserve(card, player2, slotCoins);
+                            scorePrinter(player2);
+                        }
+                        coinPrinter();
+                        sCoinPrinter();
+                        cardPrinter();
+                    }
+                });
+            }
+        }
+        panel.revalidate();
+        panel.repaint();
+    }
+
+    //buy or reserve by click on image
+    private void addCardMouseListener(Card card, JPanel panelToUpdate, Card[] cards) {
+        card.getCardImg().addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                Players currentPlayer = (turn == 1) ? player1 : player2;
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    currentPlayer.buy(card, currentPlayer, slotCoins);
+                } else if (SwingUtilities.isRightMouseButton(e) && !reserveDone) {
+                    currentPlayer.reserve(card, currentPlayer, slotCoins);
+                    reserveDone = true;
+                    if (currentPlayer == player1) {
+                        updateReserveCards(currentPlayer.reserveCard, player1res);
+                    } else {
+                        updateReserveCards(currentPlayer.reserveCard, player2res);
+                    }
+                }
+                coinPrinter();
+                sCoinPrinter();
+                scorePrinter(currentPlayer);
+                cardPrinter();
+                updateAvailableCards(cards, panelToUpdate);
+            }
+        });
+    }
+    private void addPrizeCardMouseListener(Card card, JPanel panelToUpdate, Card[] cards) {
+        card.getCardImg().addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                Players currentPlayer = (turn == 1) ? player1 : player2;
+                currentPlayer.buyPrize(card, currentPlayer);
+                scorePrinter(currentPlayer);
+                cardPrinter();
+                updateAvailableCards(cards, panelToUpdate);
+            }
+        });
     }
 
     public Main() {
-        frame = new JFrame("Amusement Park");//frame title
-        frame.setSize(1920, 1080);//frame window size
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//type of close operation
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);//maximize the window
+        mainPanel = new JPanel(new BorderLayout());
 
         loginPanel = createLoginPanel();
+        guidePanel = createGuidePanel();
         mainGamePanel = createMainGamePanel();
         storePanel = createStorePanel();
         coinPanel = createCoinPanel();
         reservePanel = createReservePanel();
         winnerPanel = createWinnerPanel();
 
-        frame.add(loginPanel);//first panel
-        frame.setVisible(true);//show window
+        mainPanel.add(loginPanel, BorderLayout.CENTER);
+
+        add(mainPanel);
+        setTitle("Amusement Park");
+        setSize(1920, 1080);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
 
     private JPanel createLoginPanel() {
@@ -329,27 +376,30 @@ public class Main {
         gbc.insets = new Insets(0, 0, 40, 0);
 
         JLabel titleLabel = new JLabel("به شهربازی خوش آمدید!", SwingConstants.CENTER);
+        titleLabel.setOpaque(true);
         titleLabel.setFont(bigFont);
         titleLabel.setForeground(Color.RED);
         titleLabel.setBackground(Color.BLACK);
-        titleLabel.setOpaque(true);
         welcomePanel.add(titleLabel, gbc);
 
         gbc.gridy = 1;
-        JButton startButton = new JButton("شروع بازی");
-        startButton.setPreferredSize(new Dimension(200, 50));
-        startButton.setFont(normalFont);
-        startButton.setBackground(Color.MAGENTA);
-        startButton.setForeground(Color.white);
-        startButton.addActionListener(e -> switchPanel(mainGamePanel));
+        JButton startButton = new JButton(new ImageIcon("images\\btns\\btn1.png"));
+        startButton.setOpaque(false);
+        startButton.setFocusPainted(false);
+        startButton.setBorderPainted(false);
+        startButton.setContentAreaFilled(false);
+        startButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        startButton.addActionListener(e -> switchPanels(mainGamePanel));
         welcomePanel.add(startButton, gbc);
 
         gbc.gridy = 2;
-        JButton guideButton = new JButton("راهنما");
-        guideButton.setPreferredSize(new Dimension(200, 50));
-        guideButton.setFont(normalFont);
-        guideButton.setBackground(Color.MAGENTA);
-        guideButton.setForeground(Color.white);
+        JButton guideButton = new JButton(new ImageIcon("images\\btns\\btn2.png"));
+        guideButton.setOpaque(false);
+        guideButton.setFocusPainted(false);
+        guideButton.setBorderPainted(false);
+        guideButton.setContentAreaFilled(false);
+        guideButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        guideButton.addActionListener(e -> switchGuide(guidePanel));
         welcomePanel.add(guideButton, gbc);
 
         gbc.gridy = 3;
@@ -359,6 +409,41 @@ public class Main {
         welcomePanel.add(developer, gbc);
 
         return welcomePanel;
+    }
+
+    private JScrollPane createGuidePanel() {
+        JPanel gPagePanel = new JPanel(new GridBagLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+
+        JLabel g1 = new JLabel(new ImageIcon("images\\guide\\g1.png"));
+        gPagePanel.add(g1, gbc);
+
+        gbc.gridy = 1;
+        JLabel g2 = new JLabel(new ImageIcon("images\\guide\\g2.png"));
+        gPagePanel.add(g2, gbc);
+
+        gbc.gridy = 2;
+        JLabel g3 = new JLabel(new ImageIcon("images\\guide\\g3.png"));
+        gPagePanel.add(g3, gbc);
+
+        gbc.gridy = 3;
+        JLabel g4 = new JLabel(new ImageIcon("images\\guide\\g4.png"));
+        gPagePanel.add(g4, gbc);
+
+        gbc.gridy = 4;
+        JButton returnMain = new JButton(new ImageIcon("images\\btns\\btn3.png"));
+        returnMain.addActionListener(e -> switchPanels(loginPanel));
+        returnMain.setOpaque(false);
+        returnMain.setFocusPainted(false);
+        returnMain.setBorderPainted(false);
+        returnMain.setContentAreaFilled(false);
+        returnMain.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        gPagePanel.add(returnMain, gbc);
+
+        return new JScrollPane(gPagePanel);
     }
 
     private JPanel createMainGamePanel() {
@@ -371,8 +456,12 @@ public class Main {
         };
 
         topPanel.setPreferredSize(new Dimension(1920, 100));
-        topPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
         topPanel.setOpaque(false);
+        topPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
+        JLabel p1Name = new JLabel("Player 1 :");
+        p1Name.setFont(normalFont);
+        p1Name.setForeground(Color.white);
+        topPanel.add(p1Name);
 
         player1.playerCoin = new Coin[]{new Coin(0, "green"), new Coin(0, "white"), new Coin(0, "black"), new Coin(0, "blue"), new Coin(0, "red"), new Coin(0, "gold")};
         player1.playerSCoin = new specialCoin[]{new specialCoin(0, "green"), new specialCoin(0, "white"), new specialCoin(0, "black"), new specialCoin(0, "blue"), new specialCoin(0, "red")};
@@ -380,8 +469,12 @@ public class Main {
         tCardPanel.setOpaque(false);
 
         bottomPanel.setPreferredSize(new Dimension(1920, 100));
-        bottomPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
         bottomPanel.setOpaque(false);
+        bottomPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
+        JLabel p2Name = new JLabel("Player 2 :");
+        p2Name.setFont(normalFont);
+        p2Name.setForeground(Color.white);
+        bottomPanel.add(p2Name);
 
         player2.playerCoin = new Coin[]{new Coin(0, "green"), new Coin(0, "white"), new Coin(0, "black"), new Coin(0, "blue"), new Coin(0, "red"), new Coin(0, "gold")};
         player2.playerSCoin = new specialCoin[]{new specialCoin(0, "green"), new specialCoin(0, "white"), new specialCoin(0, "black"), new specialCoin(0, "blue"), new specialCoin(0, "red")};
@@ -393,35 +486,43 @@ public class Main {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 0, 40, 40);
-        JButton shopButton = new JButton("فروشگاه");
-        shopButton.setPreferredSize(new Dimension(200, 50));
-        shopButton.setFont(normalFont);
-        shopButton.addActionListener(e -> switchPanel(storePanel));
+        JButton shopButton = new JButton(new ImageIcon("images\\btns\\btn4.png"));
+        shopButton.setOpaque(false);
+        shopButton.setFocusPainted(false);
+        shopButton.setBorderPainted(false);
+        shopButton.setContentAreaFilled(false);
+        shopButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        shopButton.addActionListener(e -> switchPanels(storePanel));
         sidePanel.add(shopButton, gbc);
 
         gbc.gridy = 1;
-        gbc.insets = new Insets(0, 0, 40, 40);
-        JButton coinButton = new JButton("دریافت سکه");
-        coinButton.setPreferredSize(new Dimension(200, 50));
-        coinButton.setFont(normalFont);
-        coinButton.addActionListener(e -> switchPanel(coinPanel));
+        JButton coinButton = new JButton(new ImageIcon("images\\btns\\btn5.png"));
+        coinButton.setOpaque(false);
+        coinButton.setFocusPainted(false);
+        coinButton.setBorderPainted(false);
+        coinButton.setContentAreaFilled(false);
+        coinButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        coinButton.addActionListener(e -> switchPanels(coinPanel));
         sidePanel.add(coinButton, gbc);
 
         gbc.gridy = 2;
-        gbc.insets = new Insets(0, 0, 40, 40);
-        JButton reserveButton = new JButton("کارت های رزرو");
-        reserveButton.setPreferredSize(new Dimension(200, 50));
-        reserveButton.setFont(normalFont);
-        reserveButton.addActionListener(e -> switchPanel(reservePanel));
+        JButton reserveButton = new JButton(new ImageIcon("images\\btns\\btn6.png"));
+        reserveButton.setOpaque(false);
+        reserveButton.setFocusPainted(false);
+        reserveButton.setBorderPainted(false);
+        reserveButton.setContentAreaFilled(false);
+        reserveButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        reserveButton.addActionListener(e -> switchPanels(reservePanel));
         sidePanel.add(reserveButton, gbc);
 
         gbc.gridy = 3;
-        gbc.insets = new Insets(0, 0, 0, 40);
-        JButton turnButton = new JButton("نوبت بعدی");
-        turnButton.setPreferredSize(new Dimension(200, 50));
-        turnButton.setFont(normalFont);
+        JButton turnButton = new JButton(new ImageIcon("images\\btns\\btn7.png"));
+        turnButton.setOpaque(false);
+        turnButton.setFocusPainted(false);
+        turnButton.setBorderPainted(false);
+        turnButton.setContentAreaFilled(false);
+        turnButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         turnButton.addActionListener(e -> changeTurn());
         sidePanel.add(turnButton, gbc);
 
@@ -438,7 +539,7 @@ public class Main {
     }
 
     private JPanel createStorePanel() {
-        JPanel grayPanel = new JPanel(new BorderLayout()) {
+        JPanel grayPanel = new JPanel(new GridBagLayout()) {
             @Override
             protected void paintComponent(Graphics b) {
                 super.paintComponent(b);
@@ -446,42 +547,39 @@ public class Main {
             }
         };
 
-        JPanel storeContainer = new JPanel(new GridBagLayout());
-        storeContainer.setOpaque(false);
         GridBagConstraints gbc = new GridBagConstraints();
-
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.insets = new Insets(0, 0, 20, 0);
         JPanel topPanel = new JPanel(new FlowLayout());
         topPanel.setOpaque(false);
-        storeContainer.add(topPanel, gbc);
         JPanel prizePanel = new JPanel(new GridLayout(1, 3, 20, 0));
         prizePanel.setOpaque(false);
-        JButton backward = new JButton("بازگشت");
-        backward.setPreferredSize(new Dimension(100, 50));
-        backward.setFont(normalFont);
-        backward.addActionListener(e -> switchPanel(mainGamePanel));
+        JButton backward = new JButton(new ImageIcon("images\\btns\\btn3.png"));
+        backward.setOpaque(false);
+        backward.setFocusPainted(false);
+        backward.setBorderPainted(false);
+        backward.setContentAreaFilled(false);
+        backward.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        backward.addActionListener(e -> switchPanels(mainGamePanel));
         topPanel.add(prizePanel);
         topPanel.add(backward);
-        storeContainer.add(topPanel, gbc);
+        grayPanel.add(topPanel, gbc);
 
         gbc.gridy = 1;
-        gbc.insets = new Insets(0, 0, 20, 0);
         JPanel set1panel = new JPanel(new GridLayout(1, 4, 20, 0));
         set1panel.setOpaque(false);
-        storeContainer.add(set1panel, gbc);
+        grayPanel.add(set1panel, gbc);
 
         gbc.gridy = 2;
-        gbc.insets = new Insets(0, 0, 20, 0);
         JPanel set2panel = new JPanel(new GridLayout(1, 4, 20, 0));
         set2panel.setOpaque(false);
-        storeContainer.add(set2panel, gbc);
+        grayPanel.add(set2panel, gbc);
 
         gbc.gridy = 3;
         JPanel set3panel = new JPanel(new GridLayout(1, 4, 20, 0));
         set3panel.setOpaque(false);
-        storeContainer.add(set3panel, gbc);
+        grayPanel.add(set3panel, gbc);
 
         specialCoin[] prize1Coins = new specialCoin[]{new specialCoin(4, "green"), null, null, null, new specialCoin(4, "red")};
         specialCoin[] prize2Coins = new specialCoin[]{new specialCoin(5, "green"), null, null, null, new specialCoin(5, "red")};
@@ -509,14 +607,14 @@ public class Main {
         specialCoin[] card14prize = new specialCoin[]{new specialCoin(1, "green"), null, null, null, null};
         specialCoin[] card15prize = new specialCoin[]{new specialCoin(1, "green"), null, null, null, null};
         specialCoin[] card16prize = new specialCoin[]{new specialCoin(1, "green"), null, null, null, null};
-        specialCoin[] card17prize = new specialCoin[]{new specialCoin(1, "green"), null, null, null, null};
-        specialCoin[] card18prize = new specialCoin[]{new specialCoin(1, "green"), null, null, null, null};
-        specialCoin[] card19prize = new specialCoin[]{new specialCoin(1, "green"), null, null, null, null};
-        specialCoin[] card110prize = new specialCoin[]{null, null, null, null, new specialCoin(1, "red")};
-        specialCoin[] card111prize = new specialCoin[]{null, null, null, null, new specialCoin(1, "red")};
+        specialCoin[] card17prize = new specialCoin[]{new specialCoin(2, "green"), null, null, null, null};
+        specialCoin[] card18prize = new specialCoin[]{new specialCoin(2, "green"), null, null, null, null};
+        specialCoin[] card19prize = new specialCoin[]{new specialCoin(2, "green"), null, null, null, null};
+        specialCoin[] card110prize = new specialCoin[]{null, null, null, null, new specialCoin(2, "red")};
+        specialCoin[] card111prize = new specialCoin[]{null, null, null, null, new specialCoin(2, "red")};
         specialCoin[] card112prize = new specialCoin[]{null, null, null, null, new specialCoin(1, "red")};
-        specialCoin[] card113prize = new specialCoin[]{null, null, null, null, new specialCoin(1, "red")};
-        specialCoin[] card114prize = new specialCoin[]{null, null, null, null, new specialCoin(1, "red")};
+        specialCoin[] card113prize = new specialCoin[]{null, null, null, null, new specialCoin(2, "red")};
+        specialCoin[] card114prize = new specialCoin[]{null, null, null, null, new specialCoin(2, "red")};
         specialCoin[] card115prize = new specialCoin[]{null, null, null, null, new specialCoin(1, "red")};
         Card[] setCard1 = {new Card(1, card11Coins, card11prize, new JLabel(new ImageIcon("images\\card1\\11.png"))), new Card(1, card12Coins, card12prize, new JLabel(new ImageIcon("images\\card1\\12.png"))), new Card(1, card13Coins, card13prize, new JLabel(new ImageIcon("images\\card1\\13.png"))), new Card(0, card14Coins, card14prize, new JLabel(new ImageIcon("images\\card1\\14.png"))), new Card(0, card15Coins, card15prize, new JLabel(new ImageIcon("images\\card1\\15.png"))), new Card(0, card16Coins, card16prize, new JLabel(new ImageIcon("images\\card1\\16.png"))), new Card(1, card17Coins, card17prize, new JLabel(new ImageIcon("images\\card1\\17.png"))), new Card(1, card18Coins, card18prize, new JLabel(new ImageIcon("images\\card1\\18.png"))), new Card(0, card19Coins, card19prize, new JLabel(new ImageIcon("images\\card1\\19.png"))), new Card(0, card110Coins, card110prize, new JLabel(new ImageIcon("images\\card1\\110.png"))), new Card(1, card111Coins, card111prize, new JLabel(new ImageIcon("images\\card1\\111.png"))), new Card(1, card112Coins, card112prize, new JLabel(new ImageIcon("images\\card1\\112.png"))), new Card(1, card113Coins, card113prize, new JLabel(new ImageIcon("images\\card1\\113.png"))), new Card(0, card114Coins, card114prize, new JLabel(new ImageIcon("images\\card1\\114.png"))), new Card(1, card115Coins, card115prize, new JLabel(new ImageIcon("images\\card1\\115.png")))};
 
@@ -538,18 +636,18 @@ public class Main {
         specialCoin[] card21prize = new specialCoin[]{null, null, null, new specialCoin(1, "blue"), null};
         specialCoin[] card22prize = new specialCoin[]{null, null, null, new specialCoin(1, "blue"), null};
         specialCoin[] card23prize = new specialCoin[]{null, null, null, new specialCoin(1, "blue"), null};
-        specialCoin[] card24prize = new specialCoin[]{null, null, null, new specialCoin(1, "blue"), null};
-        specialCoin[] card25prize = new specialCoin[]{null, null, null, new specialCoin(1, "blue"), null};
+        specialCoin[] card24prize = new specialCoin[]{null, null, null, new specialCoin(2, "blue"), null};
+        specialCoin[] card25prize = new specialCoin[]{null, null, null, new specialCoin(2, "blue"), null};
         specialCoin[] card26prize = new specialCoin[]{null, null, null, new specialCoin(1, "blue"), null};
-        specialCoin[] card27prize = new specialCoin[]{null, null, null, new specialCoin(1, "blue"), null};
+        specialCoin[] card27prize = new specialCoin[]{null, null, null, new specialCoin(2, "blue"), null};
         specialCoin[] card28prize = new specialCoin[]{null, null, null, new specialCoin(1, "blue"), null};
         specialCoin[] card29prize = new specialCoin[]{null, null, null, new specialCoin(1, "blue"), null};
         specialCoin[] card210prize = new specialCoin[]{new specialCoin(1, "green"), null, null, null, null};
         specialCoin[] card211prize = new specialCoin[]{new specialCoin(1, "green"), null, null, null, null};
         specialCoin[] card212prize = new specialCoin[]{new specialCoin(1, "green"), null, null, null, null};
         specialCoin[] card213prize = new specialCoin[]{new specialCoin(1, "green"), null, null, null, null};
-        specialCoin[] card214prize = new specialCoin[]{new specialCoin(1, "green"), null, null, null, null};
-        specialCoin[] card215prize = new specialCoin[]{new specialCoin(1, "green"), null, null, null, null};
+        specialCoin[] card214prize = new specialCoin[]{new specialCoin(2, "green"), null, null, null, null};
+        specialCoin[] card215prize = new specialCoin[]{new specialCoin(2, "green"), null, null, null, null};
         Card[] setCard2 = {new Card(2, card21Coins, card21prize, new JLabel(new ImageIcon("images\\card2\\21.png"))), new Card(2, card22Coins, card22prize, new JLabel(new ImageIcon("images\\card2\\22.png"))), new Card(2, card23Coins, card23prize, new JLabel(new ImageIcon("images\\card2\\23.png"))), new Card(2, card24Coins, card24prize, new JLabel(new ImageIcon("images\\card2\\24.png"))), new Card(2, card25Coins, card25prize, new JLabel(new ImageIcon("images\\card2\\25.png"))), new Card(3, card26Coins, card26prize, new JLabel(new ImageIcon("images\\card2\\26.png"))), new Card(3, card27Coins, card27prize, new JLabel(new ImageIcon("images\\card2\\27.png"))), new Card(3, card28Coins, card28prize, new JLabel(new ImageIcon("images\\card2\\28.png"))), new Card(3, card29Coins, card29prize, new JLabel(new ImageIcon("images\\card2\\29.png"))), new Card(3, card210Coins, card210prize, new JLabel(new ImageIcon("images\\card2\\210.png"))), new Card(4, card211Coins, card211prize, new JLabel(new ImageIcon("images\\card2\\211.png"))), new Card(4, card212Coins, card212prize, new JLabel(new ImageIcon("images\\card2\\212.png"))), new Card(4, card213Coins, card213prize, new JLabel(new ImageIcon("images\\card2\\213.png"))), new Card(4, card214Coins, card214prize, new JLabel(new ImageIcon("images\\card2\\214.png"))), new Card(4, card215Coins, card215prize, new JLabel(new ImageIcon("images\\card2\\215.png")))};
 
         Coin[] card31Coins = new Coin[]{new Coin(3, "green"), null, new Coin(3, "black"), null, new Coin(4, "red"), null};
@@ -567,23 +665,41 @@ public class Main {
         Coin[] card313Coins = new Coin[]{new Coin(3, "green"), null, new Coin(2, "black"), new Coin(1, "blue"), new Coin(1, "red"), null};
         Coin[] card314Coins = new Coin[]{new Coin(2, "green"), null, new Coin(2, "black"), new Coin(1, "blue"), new Coin(2, "red"), null};
         Coin[] card315Coins = new Coin[]{new Coin(2, "green"), null, new Coin(3, "black"), new Coin(1, "blue"), new Coin(2, "red"), null};
-        specialCoin[] card31prize = new specialCoin[]{new specialCoin(1, "white"), null, null, null, null};
-        specialCoin[] card32prize = new specialCoin[]{new specialCoin(1, "white"), null, null, null, null};
-        specialCoin[] card33prize = new specialCoin[]{new specialCoin(1, "white"), null, null, null, null};
+        specialCoin[] card31prize = new specialCoin[]{null, new specialCoin(1, "white"), null, null, null};
+        specialCoin[] card32prize = new specialCoin[]{null, new specialCoin(1, "white"), null, null, null};
+        specialCoin[] card33prize = new specialCoin[]{null, new specialCoin(1, "white"), null, null, null};
         specialCoin[] card34prize = new specialCoin[]{new specialCoin(1, "green"), null, null, null, null};
         specialCoin[] card35prize = new specialCoin[]{new specialCoin(1, "green"), null, null, null, null};
         specialCoin[] card36prize = new specialCoin[]{new specialCoin(1, "green"), null, null, null, null};
         specialCoin[] card37prize = new specialCoin[]{new specialCoin(1, "green"), null, null, null, null};
-        specialCoin[] card38prize = new specialCoin[]{new specialCoin(1, "white"), null, null, null, null};
-        specialCoin[] card39prize = new specialCoin[]{new specialCoin(1, "white"), null, null, null, null};
-        specialCoin[] card310prize = new specialCoin[]{new specialCoin(1, "white"), null, null, null, null};
-        specialCoin[] card311prize = new specialCoin[]{new specialCoin(1, "white"), null, null, null, null};
-        specialCoin[] card312prize = new specialCoin[]{new specialCoin(1, "white"), null, null, null, null};
+        specialCoin[] card38prize = new specialCoin[]{null, new specialCoin(1, "white"), null, null, null};
+        specialCoin[] card39prize = new specialCoin[]{null, new specialCoin(1, "white"), null, null, null};
+        specialCoin[] card310prize = new specialCoin[]{null, new specialCoin(1, "white"), null, null, null};
+        specialCoin[] card311prize = new specialCoin[]{null, new specialCoin(1, "white"), null, null, null};
+        specialCoin[] card312prize = new specialCoin[]{null, new specialCoin(1, "white"), null, null, null};
         specialCoin[] card313prize = new specialCoin[]{null, null, null, new specialCoin(1, "blue"), null};
         specialCoin[] card314prize = new specialCoin[]{null, null, null, new specialCoin(1, "blue"), null};
         specialCoin[] card315prize = new specialCoin[]{null, null, null, new specialCoin(1, "blue"), null};
         Card[] setCard3 = {new Card(3, card31Coins, card31prize, new JLabel(new ImageIcon("images\\card3\\31.png"))), new Card(4, card32Coins, card32prize, new JLabel(new ImageIcon("images\\card3\\32.png"))), new Card(5, card33Coins, card33prize, new JLabel(new ImageIcon("images\\card3\\33.png"))), new Card(3, card34Coins, card34prize, new JLabel(new ImageIcon("images\\card3\\34.png"))), new Card(3, card35Coins, card35prize, new JLabel(new ImageIcon("images\\card3\\35.png"))), new Card(4, card36Coins, card36prize, new JLabel(new ImageIcon("images\\card3\\36.png"))), new Card(5, card37Coins, card37prize, new JLabel(new ImageIcon("images\\card3\\37.png"))), new Card(5, card38Coins, card38prize, new JLabel(new ImageIcon("images\\card3\\38.png"))), new Card(5, card39Coins, card39prize, new JLabel(new ImageIcon("images\\card3\\39.png"))), new Card(4, card310Coins, card310prize, new JLabel(new ImageIcon("images\\card3\\310.png"))), new Card(4, card311Coins, card311prize, new JLabel(new ImageIcon("images\\card3\\311.png"))), new Card(3, card312Coins, card312prize, new JLabel(new ImageIcon("images\\card3\\312.png"))), new Card(3, card313Coins, card313prize, new JLabel(new ImageIcon("images\\card3\\313.png"))), new Card(3, card314Coins, card314prize, new JLabel(new ImageIcon("images\\card3\\314.png"))), new Card(3, card315Coins, card315prize, new JLabel(new ImageIcon("images\\card3\\315.png")))};
 
+        for (int i = 0; i < 15; i++) {
+            int randomIndexToSwap = rand.nextInt(setCard1.length);
+            Card temp = setCard1[randomIndexToSwap];
+            setCard1[randomIndexToSwap] = setCard1[i];
+            setCard1[i] = temp;
+        }
+        for (int i = 0; i < 15; i++) {
+            int randomIndexToSwap = rand.nextInt(setCard2.length);
+            Card temp = setCard2[randomIndexToSwap];
+            setCard2[randomIndexToSwap] = setCard2[i];
+            setCard2[i] = temp;
+        }
+        for (int i = 0; i < 15; i++) {
+            int randomIndexToSwap = rand.nextInt(setCard3.length);
+            Card temp = setCard3[randomIndexToSwap];
+            setCard3[randomIndexToSwap] = setCard3[i];
+            setCard3[i] = temp;
+        }
 
         updateAvailableCards(prizeList, prizePanel);
         updateAvailableCards(setCard1, set1panel);
@@ -591,145 +707,23 @@ public class Main {
         updateAvailableCards(setCard3, set3panel);
 
         for (Card card : prizeList) {
-            card.getCardImg().addMouseListener(new MouseAdapter() {
-                public void mouseClicked(MouseEvent e) {
-                    if (turn == 1) {
-                        player1.buyPrize(card, player1);
-                        sCoinPrinter();
-                        scorePrinter();
-                        cardPrinter();
-                    } else {
-                        player2.buyPrize(card, player2);
-                        sCoinPrinter();
-                        scorePrinter();
-                        cardPrinter();
-                    }
-                    updateAvailableCards(prizeList, prizePanel);
-                }
-            });
+            addPrizeCardMouseListener(card, prizePanel, prizeList);
         }
         for (Card card : setCard1) {
-            card.getCardImg().addMouseListener(new MouseAdapter() {
-                public void mouseClicked(MouseEvent e) {
-                    if (turn == 1) {
-                        if (SwingUtilities.isLeftMouseButton(e)) {
-                            player1.buy(card, player1, slotCoins);
-                            coinPrinter();
-                            sCoinPrinter();
-                            scorePrinter();
-                            cardPrinter();
-                        } else if (SwingUtilities.isRightMouseButton(e)) {
-                            if (!reserveDone) {
-                                player1.reserve(card, player1, slotCoins);
-                                reserveDone = true;
-                                coinPrinter();
-                                updateReserveCards(player1.reserveCard, player1res);
-                            }
-                        }
-                    } else {
-                        if (SwingUtilities.isLeftMouseButton(e)) {
-                            player2.buy(card, player2, slotCoins);
-                            coinPrinter();
-                            sCoinPrinter();
-                            scorePrinter();
-                            cardPrinter();
-                        } else if (SwingUtilities.isRightMouseButton(e)) {
-                            if (!reserveDone) {
-                                player2.reserve(card, player2, slotCoins);
-                                reserveDone = true;
-                                coinPrinter();
-                                updateReserveCards(player2.reserveCard, player2res);
-                            }
-                        }
-                    }
-                    updateAvailableCards(setCard1, set1panel);
-                }
-            });
+            addCardMouseListener(card, set1panel, setCard1);
         }
         for (Card card : setCard2) {
-            card.getCardImg().addMouseListener(new MouseAdapter() {
-                public void mouseClicked(MouseEvent e) {
-                    if (turn == 1) {
-                        if (SwingUtilities.isLeftMouseButton(e)) {
-                            player1.buy(card, player1, slotCoins);
-                            coinPrinter();
-                            sCoinPrinter();
-                            scorePrinter();
-                            cardPrinter();
-                        } else if (SwingUtilities.isRightMouseButton(e)) {
-                            if (!reserveDone) {
-                                player1.reserve(card, player1, slotCoins);
-                                reserveDone = true;
-                                coinPrinter();
-                                updateReserveCards(player1.reserveCard, player1res);
-                            }
-                        }
-                    } else {
-                        if (SwingUtilities.isLeftMouseButton(e)) {
-                            player2.buy(card, player2, slotCoins);
-                            coinPrinter();
-                            sCoinPrinter();
-                            scorePrinter();
-                            cardPrinter();
-                        } else if (SwingUtilities.isRightMouseButton(e)) {
-                            if (!reserveDone) {
-                                player2.reserve(card, player2, slotCoins);
-                                reserveDone = true;
-                                coinPrinter();
-                                updateReserveCards(player2.reserveCard, player2res);
-                            }
-                        }
-                    }
-                    updateAvailableCards(setCard2, set2panel);
-                }
-            });
+            addCardMouseListener(card, set2panel, setCard2);
         }
         for (Card card : setCard3) {
-            card.getCardImg().addMouseListener(new MouseAdapter() {
-                public void mouseClicked(MouseEvent e) {
-                    if (turn == 1) {
-                        if (SwingUtilities.isLeftMouseButton(e)) {
-                            player1.buy(card, player1, slotCoins);
-                            coinPrinter();
-                            sCoinPrinter();
-                            scorePrinter();
-                            cardPrinter();
-                        } else if (SwingUtilities.isRightMouseButton(e)) {
-                            if (!reserveDone) {
-                                player1.reserve(card, player1, slotCoins);
-                                reserveDone = true;
-                                coinPrinter();
-                                updateReserveCards(player1.reserveCard, player1res);
-                            }
-                        }
-                    } else {
-                        if (SwingUtilities.isLeftMouseButton(e)) {
-                            player2.buy(card, player2, slotCoins);
-                            coinPrinter();
-                            sCoinPrinter();
-                            scorePrinter();
-                            cardPrinter();
-                        } else if (SwingUtilities.isRightMouseButton(e)) {
-                            if (!reserveDone) {
-                                player2.reserve(card, player2, slotCoins);
-                                reserveDone = true;
-                                coinPrinter();
-                                updateReserveCards(player2.reserveCard, player2res);
-                            }
-                        }
-                    }
-                    updateAvailableCards(setCard3, set3panel);
-                }
-            });
+            addCardMouseListener(card, set3panel, setCard3);
         }
 
-
-        grayPanel.add(storeContainer, BorderLayout.CENTER);
         return grayPanel;
     }
 
     private JPanel createCoinPanel() {
-        JPanel slotPanel = new JPanel(new BorderLayout()) {
+        JPanel slotPanel = new JPanel(new GridBagLayout()) {
             @Override
             protected void paintComponent(Graphics b) {
                 super.paintComponent(b);
@@ -737,24 +731,26 @@ public class Main {
             }
         };
 
-        JPanel slotContainer = new JPanel(new GridBagLayout());
-        slotContainer.setOpaque(false);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
 
-        JButton returnButton = new JButton("بازگشت");
-        returnButton.setFont(normalFont);
-        returnButton.addActionListener(e -> switchPanel(mainGamePanel));
+        JButton returnButton = new JButton(new ImageIcon("images\\btns\\btn3.png"));
+        returnButton.setOpaque(false);
+        returnButton.setFocusPainted(false);
+        returnButton.setBorderPainted(false);
+        returnButton.setContentAreaFilled(false);
+        returnButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        returnButton.addActionListener(e -> switchPanels(mainGamePanel));
 
-        labelBtn1.setFont(normalFont);
-        labelBtn2.setFont(normalFont);
-        labelBtn3.setFont(normalFont);
-        labelBtn4.setFont(normalFont);
-        labelBtn5.setFont(normalFont);
+        JLabel[] labels = {labelBtn1, labelBtn2, labelBtn3, labelBtn4, labelBtn5};
+        for (int i = 0; i < 5; i++) {
+            labels[i].setForeground(Color.white);
+            labels[i].setBackground(Color.blue);
+            labels[i].setFont(normalFont);
+        }
 
         JButton[] btns = {slotButton11, slotButton12, slotButton21, slotButton22, slotButton31, slotButton32, slotButton41, slotButton42, slotButton51, slotButton52};
-
         for (JButton btn : btns) {
             btn.setFont(normalFont);
             btn.setPreferredSize(new Dimension(150, 50));
@@ -941,6 +937,11 @@ public class Main {
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
+                        labelBtn1.setText("تعداد سکه های قرمز : ".concat(String.valueOf(slotCoins[4].getNum())));
+                        labelBtn2.setText("تعداد سکه های آبی : ".concat(String.valueOf(slotCoins[3].getNum())));
+                        labelBtn3.setText("تعداد سکه های سبز : ".concat(String.valueOf(slotCoins[0].getNum())));
+                        labelBtn4.setText("تعداد سکه های سفید : ".concat(String.valueOf(slotCoins[1].getNum())));
+                        labelBtn5.setText("تعداد سکه های سیاه : ".concat(String.valueOf(slotCoins[2].getNum())));
                     } else {
                         changeTurn();
                         clickNum = 0;
@@ -1130,83 +1131,46 @@ public class Main {
             }
         });
 
-        JLabel[] labels = {labelBtn1, labelBtn2, labelBtn3, labelBtn4, labelBtn5};
-        for (int i = 0; i < 5; i++) {
-            labels[i].setForeground(Color.white);
-            labels[i].setBackground(Color.blue);
-        }
-
+        gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridx = 0;
         gbc.gridwidth = 3;
-        slotContainer.add(returnButton, gbc);
-
+        slotPanel.add(returnButton, gbc);
         gbc.gridy = 1;
-        gbc.gridx = 0;
         gbc.gridwidth = 1;
-        slotContainer.add(labelBtn1, gbc);
-        gbc.gridy = 1;
+        slotPanel.add(labelBtn1, gbc);
         gbc.gridx = 1;
-        gbc.gridwidth = 1;
-        slotContainer.add(slotButton11, gbc);
-        gbc.gridy = 1;
+        slotPanel.add(slotButton11, gbc);
         gbc.gridx = 2;
-        gbc.gridwidth = 1;
-        slotContainer.add(slotButton12, gbc);
-
+        slotPanel.add(slotButton12, gbc);
         gbc.gridy = 2;
         gbc.gridx = 0;
-        gbc.gridwidth = 1;
-        slotContainer.add(labelBtn2, gbc);
-        gbc.gridy = 2;
+        slotPanel.add(labelBtn2, gbc);
         gbc.gridx = 1;
-        gbc.gridwidth = 1;
-        slotContainer.add(slotButton21, gbc);
-        gbc.gridy = 2;
+        slotPanel.add(slotButton21, gbc);
         gbc.gridx = 2;
-        gbc.gridwidth = 1;
-        slotContainer.add(slotButton22, gbc);
-
+        slotPanel.add(slotButton22, gbc);
         gbc.gridy = 3;
         gbc.gridx = 0;
-        gbc.gridwidth = 1;
-        slotContainer.add(labelBtn3, gbc);
-        gbc.gridy = 3;
+        slotPanel.add(labelBtn3, gbc);
         gbc.gridx = 1;
-        gbc.gridwidth = 1;
-        slotContainer.add(slotButton31, gbc);
-        gbc.gridy = 3;
+        slotPanel.add(slotButton31, gbc);
         gbc.gridx = 2;
-        gbc.gridwidth = 1;
-        slotContainer.add(slotButton32, gbc);
-
+        slotPanel.add(slotButton32, gbc);
         gbc.gridy = 4;
         gbc.gridx = 0;
-        gbc.gridwidth = 1;
-        slotContainer.add(labelBtn4, gbc);
-        gbc.gridy = 4;
+        slotPanel.add(labelBtn4, gbc);
         gbc.gridx = 1;
-        gbc.gridwidth = 1;
-        slotContainer.add(slotButton41, gbc);
-        gbc.gridy = 4;
+        slotPanel.add(slotButton41, gbc);
         gbc.gridx = 2;
-        gbc.gridwidth = 1;
-        slotContainer.add(slotButton42, gbc);
-
+        slotPanel.add(slotButton42, gbc);
         gbc.gridy = 5;
         gbc.gridx = 0;
-        gbc.gridwidth = 1;
-        slotContainer.add(labelBtn5, gbc);
-        gbc.gridy = 5;
+        slotPanel.add(labelBtn5, gbc);
         gbc.gridx = 1;
-        gbc.gridwidth = 1;
-        slotContainer.add(slotButton51, gbc);
-        gbc.gridy = 5;
+        slotPanel.add(slotButton51, gbc);
         gbc.gridx = 2;
-        gbc.gridwidth = 1;
-        slotContainer.add(slotButton52, gbc);
+        slotPanel.add(slotButton52, gbc);
 
-        slotPanel.add(slotContainer, BorderLayout.CENTER);
         return slotPanel;
     }
 
@@ -1222,20 +1186,22 @@ public class Main {
         JPanel reserveContainer = new JPanel(new GridBagLayout());
         reserveContainer.setOpaque(false);
         GridBagConstraints gbc = new GridBagConstraints();
-
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 0, 20, 0);
         player1res.setOpaque(false);
         reserveContainer.add(player1res, gbc);
+
         gbc.gridy = 1;
-        gbc.insets = new Insets(0, 0, 20, 0);
-        JButton returnButton = new JButton("بازگشت");
-        returnButton.setPreferredSize(new Dimension(200, 50));
-        returnButton.setFont(normalFont);
-        returnButton.addActionListener(e -> switchPanel(mainGamePanel));
+        JButton returnButton = new JButton(new ImageIcon("images\\btns\\btn3.png"));
+        returnButton.setOpaque(false);
+        returnButton.setFocusPainted(false);
+        returnButton.setBorderPainted(false);
+        returnButton.setContentAreaFilled(false);
+        returnButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        returnButton.addActionListener(e -> switchPanels(mainGamePanel));
         reserveContainer.add(returnButton, gbc);
+
         gbc.gridy = 2;
         player2res.setOpaque(false);
         reserveContainer.add(player2res, gbc);
@@ -1245,19 +1211,64 @@ public class Main {
     }
 
     private JPanel createWinnerPanel() {
-        JPanel win = new JPanel();
+        JPanel win = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridy = 0;
+        gbc.gridx = 0;
+        gbc.insets = new Insets(0, 0, 40, 0);
+        JLabel endGame = new JLabel("برنده مسابقه : ");
+        endGame.setFont(normalFont);
+        endGame.setForeground(Color.RED);
+        win.add(endGame, gbc);
+        if (player1.pScore > player2.pScore) {
+            gbc.gridy = 1;
+            JLabel Winner = new JLabel("بازیکن 1");
+            Winner.setFont(bigFont);
+            Winner.setForeground(Color.BLACK);
+            win.add(Winner, gbc);
+        } else if (player1.pScore < player2.pScore) {
+            gbc.gridy = 1;
+            JLabel Winner = new JLabel("بازیکن 2");
+            Winner.setFont(bigFont);
+            Winner.setForeground(Color.BLACK);
+            win.add(Winner, gbc);
+        } else{
+            if (player1.cardNum < player2.cardNum) {
+                gbc.gridy = 1;
+                JLabel Winner = new JLabel("بازیکن 1");
+                Winner.setFont(bigFont);
+                Winner.setForeground(Color.BLACK);
+                win.add(Winner, gbc);
+            } else if (player2.cardNum < player1.cardNum) {
+                gbc.gridy = 1;
+                JLabel Winner = new JLabel("بازیکن 2");
+                Winner.setFont(bigFont);
+                Winner.setForeground(Color.BLACK);
+                win.add(Winner, gbc);
+            }
+        }
         return win;
     }
 
     //switch and move between panels
-    private void switchPanel(JPanel panel) {
-        frame.getContentPane().removeAll();
-        frame.getContentPane().add(panel);
-        frame.getContentPane().revalidate();
-        frame.getContentPane().repaint();
+    private void switchPanels(JPanel panel) {
+        mainPanel.removeAll();
+        mainPanel.add(panel);
+        mainPanel.revalidate();
+        mainPanel.repaint();
+    }
+
+    private void switchGuide(JScrollPane pane) {
+        mainPanel.removeAll();
+        mainPanel.add(pane);
+        mainPanel.revalidate();
+        mainPanel.repaint();
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(Main::new);
+        SwingUtilities.invokeLater(() -> {
+            Main game = new Main();
+            game.setVisible(true);
+        });
     }
 }
