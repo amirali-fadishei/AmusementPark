@@ -1,17 +1,17 @@
 import javax.swing.*;
 
 public class Card {
-    public Coin[] coinList = new Coin[5];
-    public specialCoin[] SCoins = new specialCoin[5];
+    private Coin[] coinList = new Coin[5];
+    private specialCoin[] cardSCoins = new specialCoin[5];
     private int Score;
     private JLabel cardImg;
     private boolean availability = true;
 
-    public Card(int score, Coin[] coins, specialCoin[] sCoins, JLabel img) {
+    public Card(int score, Coin[] coins, specialCoin[] sCoinList, JLabel img) {
         this.setScore(score);
-        this.coinList = coins;
+        this.setCoinList(coins);
         this.setCardImg(img);
-        this.SCoins = sCoins;
+        this.setSCoins(sCoinList);
     }
 
     public void setScore(int num) {
@@ -36,5 +36,21 @@ public class Card {
 
     public JLabel getCardImg() {
         return this.cardImg;
+    }
+
+    public void setCoinList(Coin[] coinList) {
+        this.coinList = coinList;
+    }
+
+    public Coin[] getCoinList() {
+        return this.coinList;
+    }
+
+    public void setSCoins(specialCoin[] sCoinList) {
+        this.cardSCoins = sCoinList;
+    }
+
+    public specialCoin[] getCardSCoins() {
+        return this.cardSCoins;
     }
 }

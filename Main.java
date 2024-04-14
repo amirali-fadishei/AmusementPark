@@ -4,26 +4,27 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Random;
 
 public class Main extends JFrame {
     //game Font
+    InputStream is = Main.class.getResourceAsStream("Vazir.ttf");
     Font font;
 
     {
         try {
-            font = Font.createFont(Font.TRUETYPE_FONT, getClass().getClassLoader().getResourceAsStream("Vazir.ttf"));
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            ge.registerFont(font);
-        } catch (Exception e) {
-            e.printStackTrace();
+            font = Font.createFont(Font.TRUETYPE_FONT, is);
+        } catch (FontFormatException | IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
     Font bigFont = font.deriveFont(40f);
     Font normalFont = font.deriveFont(20f);
     //Frames and panels
-    private final JPanel mainPanel;
+    private final JPanel mainPanel = new JPanel(new BorderLayout());
     private final JPanel loginPanel;
     private final JScrollPane guidePanel;
     private final JPanel mainGamePanel;
@@ -46,34 +47,39 @@ public class Main extends JFrame {
     private final JPanel player1res = new JPanel(new FlowLayout());
     private final JPanel player2res = new JPanel(new FlowLayout());
     //frame background
-    private final Image bgImage = Toolkit.getDefaultToolkit().createImage("images\\background.png");
+    private static final Image bgImage = Toolkit.getDefaultToolkit().createImage("images\\background.png");
     //turn system and players
-    private final Players player1 = new Players();
-    private final Players player2 = new Players();
-    private int turn = 1;
-    private int clickNum = 0;
-    Random rand = new Random();//shuffle cards list
+    Coin[] player1Coin = new Coin[]{new Coin(0, "green"), new Coin(0, "white"), new Coin(0, "black"), new Coin(0, "blue"), new Coin(0, "red"), new Coin(0, "gold")};
+    specialCoin[] player1SCoin = new specialCoin[]{new specialCoin(0, "green"), new specialCoin(0, "white"), new specialCoin(0, "black"), new specialCoin(0, "blue"), new specialCoin(0, "red")};
+    Coin[] player2Coin = new Coin[]{new Coin(0, "green"), new Coin(0, "white"), new Coin(0, "black"), new Coin(0, "blue"), new Coin(0, "red"), new Coin(0, "gold")};
+    specialCoin[] player2SCoin = new specialCoin[]{new specialCoin(0, "green"), new specialCoin(0, "white"), new specialCoin(0, "black"), new specialCoin(0, "blue"), new specialCoin(0, "red")};
+    private final Players player1 = new Players(player1Coin, player1SCoin);
+    private final Players player2 = new Players(player2Coin, player2SCoin);
+    private static int turn = 1;
+    private int clickNum = 0;//buy three different code
+    //shuffle cards list
+    Random rand = new Random();
     //coin slots
-    private final Coin[] slotCoins = {new Coin(4, "green"), new Coin(4, "white"), new Coin(4, "black"), new Coin(4, "blue"), new Coin(4, "red"), new Coin(5, "gold")};
+    private static final Coin[] slotCoins = {new Coin(4, "green"), new Coin(4, "white"), new Coin(4, "black"), new Coin(4, "blue"), new Coin(4, "red"), new Coin(5, "gold")};
     //slots label & button
-    JLabel labelBtn1 = new JLabel("تعداد سکه های قرمز : ".concat(String.valueOf(slotCoins[4].getNum())), SwingConstants.CENTER);
-    JLabel labelBtn2 = new JLabel("تعداد سکه های آبی : ".concat(String.valueOf(slotCoins[3].getNum())), SwingConstants.CENTER);
-    JLabel labelBtn3 = new JLabel("تعداد سکه های سبز : ".concat(String.valueOf(slotCoins[0].getNum())), SwingConstants.CENTER);
-    JLabel labelBtn4 = new JLabel("تعداد سکه های سفید : ".concat(String.valueOf(slotCoins[1].getNum())), SwingConstants.CENTER);
-    JLabel labelBtn5 = new JLabel("تعداد سکه های سیاه : ".concat(String.valueOf(slotCoins[2].getNum())), SwingConstants.CENTER);
-    JButton slotButton11 = new JButton("دو قرمز");
-    JButton slotButton12 = new JButton("یک قرمز");
-    JButton slotButton21 = new JButton("دو آبی");
-    JButton slotButton22 = new JButton("یک آبی");
-    JButton slotButton31 = new JButton("دو سبز");
-    JButton slotButton32 = new JButton("یک سبز");
-    JButton slotButton41 = new JButton("دو سفید");
-    JButton slotButton42 = new JButton("یک سفید");
-    JButton slotButton51 = new JButton("دو سیاه");
-    JButton slotButton52 = new JButton("یک سیاه");
+    private final JLabel labelBtn1 = new JLabel("تعداد سکه های قرمز : ".concat(String.valueOf(slotCoins[4].getNum())), SwingConstants.CENTER);
+    private final JLabel labelBtn2 = new JLabel("تعداد سکه های آبی : ".concat(String.valueOf(slotCoins[3].getNum())), SwingConstants.CENTER);
+    private final JLabel labelBtn3 = new JLabel("تعداد سکه های سبز : ".concat(String.valueOf(slotCoins[0].getNum())), SwingConstants.CENTER);
+    private final JLabel labelBtn4 = new JLabel("تعداد سکه های سفید : ".concat(String.valueOf(slotCoins[1].getNum())), SwingConstants.CENTER);
+    private final JLabel labelBtn5 = new JLabel("تعداد سکه های سیاه : ".concat(String.valueOf(slotCoins[2].getNum())), SwingConstants.CENTER);
+    private static final JButton slotButton11 = new JButton("دو قرمز");
+    private static final JButton slotButton12 = new JButton("یک قرمز");
+    private static final JButton slotButton21 = new JButton("دو آبی");
+    private static final JButton slotButton22 = new JButton("یک آبی");
+    private static final JButton slotButton31 = new JButton("دو سبز");
+    private static final JButton slotButton32 = new JButton("یک سبز");
+    private static final JButton slotButton41 = new JButton("دو سفید");
+    private static final JButton slotButton42 = new JButton("یک سفید");
+    private static final JButton slotButton51 = new JButton("دو سیاه");
+    private static final JButton slotButton52 = new JButton("یک سیاه");
 
     //show players cards
-    public void cardPrinter() {
+    private void cardPrinter() {
         for (int k = 0; k < player1.playerCard.length; k++) {
             if (player1.playerCard[k] != null) {
                 tCardPanel.add(player1.playerCard[k].getCardImg());
@@ -91,43 +97,42 @@ public class Main extends JFrame {
     }
 
     //show players coins
-    public void coinPrinter() {
+    private void coinPrinter() {
         tCoinPanel.removeAll();
         bCoinPanel.removeAll();
         String[] coinColors = {"green", "white", "black", "blue", "red", "gold"};
 
-        for (int i = 0; i < player1.playerCoin.length; i++) {
-            for (int k = 0; k < player1.playerCoin[i].getNum(); k++) {
+        for (int i = 0; i < player1.getPlayerCoin().length; i++) {
+            for (int k = 0; k < player1.getPlayerCoin()[i].getNum(); k++) {
                 JLabel coinLabel = new JLabel(new ImageIcon("images\\coins\\" + coinColors[i] + ".png"));
                 int finalI = i;
                 coinLabel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         if (player1.coinCounter() > 10) {
-                            String coinColor = coinColors[finalI];
-                            switch (coinColor) {
+                            switch (coinColors[finalI]) {
                                 case "green" -> {
-                                    slotCoins[0].num++;
+                                    slotCoins[0].setNum(slotCoins[0].getNum() + 1);
                                     labelBtn3.setText("تعداد سکه های سبز : ".concat(String.valueOf(slotCoins[0].getNum())));
                                 }
                                 case "white" -> {
-                                    slotCoins[1].num++;
+                                    slotCoins[1].setNum(slotCoins[1].getNum() + 1);
                                     labelBtn4.setText("تعداد سکه های سفید : ".concat(String.valueOf(slotCoins[1].getNum())));
                                 }
                                 case "black" -> {
-                                    slotCoins[2].num++;
+                                    slotCoins[2].setNum(slotCoins[2].getNum() + 1);
                                     labelBtn5.setText("تعداد سکه های سیاه : ".concat(String.valueOf(slotCoins[2].getNum())));
                                 }
                                 case "blue" -> {
-                                    slotCoins[3].num++;
+                                    slotCoins[3].setNum(slotCoins[3].getNum() + 1);
                                     labelBtn2.setText("تعداد سکه های آبی : ".concat(String.valueOf(slotCoins[3].getNum())));
                                 }
                                 case "red" -> {
-                                    slotCoins[4].num++;
+                                    slotCoins[4].setNum(slotCoins[4].getNum() + 1);
                                     labelBtn1.setText("تعداد سکه های قرمز : ".concat(String.valueOf(slotCoins[4].getNum())));
                                 }
                             }
-                            player1.playerCoin[finalI].num--;
+                            player1.getPlayerCoin()[finalI].setNum(player1.getPlayerCoin()[finalI].getNum() - 1);
                             coinPrinter();
                         }
                     }
@@ -135,38 +140,37 @@ public class Main extends JFrame {
                 tCoinPanel.add(coinLabel);
             }
         }
-        for (int i = 0; i < player2.playerCoin.length; i++) {
-            for (int k = 0; k < player2.playerCoin[i].getNum(); k++) {
+        for (int i = 0; i < player2.getPlayerCoin().length; i++) {
+            for (int k = 0; k < player2.getPlayerCoin()[i].getNum(); k++) {
                 JLabel coinLabel = new JLabel(new ImageIcon("images\\coins\\" + coinColors[i] + ".png"));
                 int finalI = i;
                 coinLabel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         if (player2.coinCounter() > 10) {
-                            String coinColor = coinColors[finalI];
-                            switch (coinColor) {
+                            switch (coinColors[finalI]) {
                                 case "green" -> {
-                                    slotCoins[0].num++;
+                                    slotCoins[0].setNum(slotCoins[0].getNum() + 1);
                                     labelBtn3.setText(String.valueOf(Math.max(0, slotCoins[0].getNum())));
                                 }
                                 case "white" -> {
-                                    slotCoins[1].num++;
+                                    slotCoins[1].setNum(slotCoins[1].getNum() + 1);
                                     labelBtn4.setText(String.valueOf(Math.max(0, slotCoins[1].getNum())));
                                 }
                                 case "black" -> {
-                                    slotCoins[2].num++;
+                                    slotCoins[2].setNum(slotCoins[2].getNum() + 1);
                                     labelBtn5.setText(String.valueOf(Math.max(0, slotCoins[2].getNum())));
                                 }
                                 case "blue" -> {
-                                    slotCoins[3].num++;
+                                    slotCoins[3].setNum(slotCoins[3].getNum() + 1);
                                     labelBtn2.setText(String.valueOf(Math.max(0, slotCoins[3].getNum())));
                                 }
                                 case "red" -> {
-                                    slotCoins[4].num++;
+                                    slotCoins[4].setNum(slotCoins[4].getNum() + 1);
                                     labelBtn1.setText(String.valueOf(Math.max(0, slotCoins[4].getNum())));
                                 }
                             }
-                            player2.playerCoin[finalI].num--;
+                            player2.getPlayerCoin()[finalI].setNum(player2.getPlayerCoin()[finalI].getNum() - 1);
                             coinPrinter();
                         }
                     }
@@ -177,72 +181,52 @@ public class Main extends JFrame {
 
         tCoinPanel.revalidate();
         tCoinPanel.repaint();
-        topPanel.add(tCoinPanel);
         bCoinPanel.revalidate();
         bCoinPanel.repaint();
-        bottomPanel.add(bCoinPanel);
     }
 
     //show players special coins
-    public void sCoinPrinter() {
+    private void sCoinPrinter() {
         tSCoinPanel.removeAll();
         bSCoinPanel.removeAll();
         String[] sCoinColors = {"green", "white", "black", "blue", "red"};
 
-        for (int i = 0; i < player1.playerSCoin.length; i++) {
-            for (int k = 0; k < player1.playerSCoin[i].getsNum(); k++) {
+        for (int i = 0; i < player1.getPlayerSCoin().length; i++) {
+            for (int k = 0; k < player1.getPlayerSCoin()[i].getsNum(); k++) {
                 tSCoinPanel.add(new JLabel(new ImageIcon("images\\coins\\" + sCoinColors[i] + ".png")));
             }
         }
-        for (int i = 0; i < player2.playerSCoin.length; i++) {
-            for (int k = 0; k < player2.playerSCoin[i].getsNum(); k++) {
+        for (int i = 0; i < player2.getPlayerSCoin().length; i++) {
+            for (int k = 0; k < player2.getPlayerSCoin()[i].getsNum(); k++) {
                 bSCoinPanel.add(new JLabel(new ImageIcon("images\\coins\\" + sCoinColors[i] + ".png")));
             }
         }
 
         tSCoinPanel.revalidate();
         tSCoinPanel.repaint();
-        topPanel.add(tSCoinPanel);
         bSCoinPanel.revalidate();
         bSCoinPanel.repaint();
-        bottomPanel.add(bSCoinPanel);
     }
 
     //show players score
-    public void scorePrinter(Players player) {
-        if (player == player1) {
-            JLabel scoreLabel1 = new JLabel(String.valueOf(Math.max(0, player1.pScore)));
-            tScorePanel.removeAll();
-            tScorePanel.add(scoreLabel1);
-            tScorePanel.revalidate();
-            tScorePanel.repaint();
-            topPanel.add(tScorePanel);
-        } else {
-            JLabel scoreLabel2 = new JLabel(String.valueOf(Math.max(0, player2.pScore)));
-            bScorePanel.removeAll();
-            bScorePanel.add(scoreLabel2);
-            bScorePanel.revalidate();
-            bScorePanel.repaint();
-            bottomPanel.add(bScorePanel);
-        }
+    private void scorePrinter() {
+        tScorePanel.removeAll();
+        tScorePanel.add(new JLabel(String.valueOf(Math.max(0, player1.getPScore()))));
+        tScorePanel.revalidate();
+        tScorePanel.repaint();
+
+        bScorePanel.removeAll();
+        bScorePanel.add(new JLabel(String.valueOf(Math.max(0, player2.getPScore()))));
+        bScorePanel.revalidate();
+        bScorePanel.repaint();
     }
 
     //one reserve for each turn
-    public boolean reserveDone = false;
+    private boolean reserveDone = false;
 
     //change game turn
-    public void changeTurn() {
+    private void changeTurn() {
         turn *= -1;
-        for (Coin coin : slotCoins) {
-            if (coin.getNum() > 4) {
-                coin.setNum(4);
-            }
-            labelBtn1.setText("تعداد سکه های قرمز : ".concat(String.valueOf(slotCoins[4].getNum())));
-            labelBtn2.setText("تعداد سکه های آبی : ".concat(String.valueOf(slotCoins[3].getNum())));
-            labelBtn3.setText("تعداد سکه های سبز : ".concat(String.valueOf(slotCoins[0].getNum())));
-            labelBtn4.setText("تعداد سکه های سفید : ".concat(String.valueOf(slotCoins[1].getNum())));
-            labelBtn5.setText("تعداد سکه های سیاه : ".concat(String.valueOf(slotCoins[2].getNum())));
-        }
         slotButton11.setEnabled(true);
         slotButton12.setEnabled(true);
         slotButton21.setEnabled(true);
@@ -255,8 +239,9 @@ public class Main extends JFrame {
         slotButton52.setEnabled(true);
         reserveDone = false;
         clickNum = 0;
+        //show the winner player
         if (turn == 1) {
-            if ((player1.pScore >= 15 && player2.pScore <= 15) || (player1.pScore <= 15 && player2.pScore >= 15)) {
+            if (player1.getPScore() >= 15 || player2.getPScore() >= 15) {
                 switchPanels(winnerPanel);
             }
         }
@@ -289,11 +274,10 @@ public class Main extends JFrame {
                     public void mouseClicked(MouseEvent e) {
                         if (panel == player1res) {
                             player1.buyReserve(card, player1, slotCoins);
-                            scorePrinter(player1);
                         } else {
                             player2.buyReserve(card, player2, slotCoins);
-                            scorePrinter(player2);
                         }
+                        scorePrinter();
                         coinPrinter();
                         sCoinPrinter();
                         cardPrinter();
@@ -323,18 +307,19 @@ public class Main extends JFrame {
                 }
                 coinPrinter();
                 sCoinPrinter();
-                scorePrinter(currentPlayer);
+                scorePrinter();
                 cardPrinter();
                 updateAvailableCards(cards, panelToUpdate);
             }
         });
     }
+
     private void addPrizeCardMouseListener(Card card, JPanel panelToUpdate, Card[] cards) {
         card.getCardImg().addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 Players currentPlayer = (turn == 1) ? player1 : player2;
                 currentPlayer.buyPrize(card, currentPlayer);
-                scorePrinter(currentPlayer);
+                scorePrinter();
                 cardPrinter();
                 updateAvailableCards(cards, panelToUpdate);
             }
@@ -342,7 +327,10 @@ public class Main extends JFrame {
     }
 
     public Main() {
-        mainPanel = new JPanel(new BorderLayout());
+        setTitle("Amusement Park");
+        setSize(1920, 1080);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         loginPanel = createLoginPanel();
         guidePanel = createGuidePanel();
@@ -355,10 +343,6 @@ public class Main extends JFrame {
         mainPanel.add(loginPanel, BorderLayout.CENTER);
 
         add(mainPanel);
-        setTitle("Amusement Park");
-        setSize(1920, 1080);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
 
     private JPanel createLoginPanel() {
@@ -388,7 +372,6 @@ public class Main extends JFrame {
         startButton.setFocusPainted(false);
         startButton.setBorderPainted(false);
         startButton.setContentAreaFilled(false);
-        startButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         startButton.addActionListener(e -> switchPanels(mainGamePanel));
         welcomePanel.add(startButton, gbc);
 
@@ -398,7 +381,6 @@ public class Main extends JFrame {
         guideButton.setFocusPainted(false);
         guideButton.setBorderPainted(false);
         guideButton.setContentAreaFilled(false);
-        guideButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         guideButton.addActionListener(e -> switchGuide(guidePanel));
         welcomePanel.add(guideButton, gbc);
 
@@ -416,31 +398,27 @@ public class Main extends JFrame {
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 0;
-
-        JLabel g1 = new JLabel(new ImageIcon("images\\guide\\g1.png"));
-        gPagePanel.add(g1, gbc);
-
         gbc.gridy = 1;
-        JLabel g2 = new JLabel(new ImageIcon("images\\guide\\g2.png"));
-        gPagePanel.add(g2, gbc);
+
+        gPagePanel.add(new JLabel(new ImageIcon("images\\guide\\g1.png")), gbc);
 
         gbc.gridy = 2;
-        JLabel g3 = new JLabel(new ImageIcon("images\\guide\\g3.png"));
-        gPagePanel.add(g3, gbc);
+        gPagePanel.add(new JLabel(new ImageIcon("images\\guide\\g2.png")), gbc);
 
         gbc.gridy = 3;
-        JLabel g4 = new JLabel(new ImageIcon("images\\guide\\g4.png"));
-        gPagePanel.add(g4, gbc);
+        gPagePanel.add(new JLabel(new ImageIcon("images\\guide\\g3.png")), gbc);
 
         gbc.gridy = 4;
+        gPagePanel.add(new JLabel(new ImageIcon("images\\guide\\g4.png")), gbc);
+
+        gbc.gridy = 0;
+        gbc.insets = new Insets(60,0,0,0);
         JButton returnMain = new JButton(new ImageIcon("images\\btns\\btn3.png"));
-        returnMain.addActionListener(e -> switchPanels(loginPanel));
         returnMain.setOpaque(false);
         returnMain.setFocusPainted(false);
         returnMain.setBorderPainted(false);
         returnMain.setContentAreaFilled(false);
-        returnMain.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        returnMain.addActionListener(e -> switchPanels(loginPanel));
         gPagePanel.add(returnMain, gbc);
 
         return new JScrollPane(gPagePanel);
@@ -455,44 +433,42 @@ public class Main extends JFrame {
             }
         };
 
-        topPanel.setPreferredSize(new Dimension(1920, 100));
+        topPanel.setPreferredSize(new Dimension(1920, 80));
         topPanel.setOpaque(false);
         topPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
         JLabel p1Name = new JLabel("Player 1 :");
         p1Name.setFont(normalFont);
         p1Name.setForeground(Color.white);
         topPanel.add(p1Name);
-
-        player1.playerCoin = new Coin[]{new Coin(0, "green"), new Coin(0, "white"), new Coin(0, "black"), new Coin(0, "blue"), new Coin(0, "red"), new Coin(0, "gold")};
-        player1.playerSCoin = new specialCoin[]{new specialCoin(0, "green"), new specialCoin(0, "white"), new specialCoin(0, "black"), new specialCoin(0, "blue"), new specialCoin(0, "red")};
-
+        topPanel.add(tCoinPanel);
+        topPanel.add(tSCoinPanel);
+        topPanel.add(tScorePanel);
         tCardPanel.setOpaque(false);
 
-        bottomPanel.setPreferredSize(new Dimension(1920, 100));
+        bottomPanel.setPreferredSize(new Dimension(1920, 80));
         bottomPanel.setOpaque(false);
-        bottomPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
+        bottomPanel.setBorder(new EmptyBorder(15, 0, 0, 0));
         JLabel p2Name = new JLabel("Player 2 :");
         p2Name.setFont(normalFont);
         p2Name.setForeground(Color.white);
         bottomPanel.add(p2Name);
-
-        player2.playerCoin = new Coin[]{new Coin(0, "green"), new Coin(0, "white"), new Coin(0, "black"), new Coin(0, "blue"), new Coin(0, "red"), new Coin(0, "gold")};
-        player2.playerSCoin = new specialCoin[]{new specialCoin(0, "green"), new specialCoin(0, "white"), new specialCoin(0, "black"), new specialCoin(0, "blue"), new specialCoin(0, "red")};
-
+        bottomPanel.add(bCoinPanel);
+        bottomPanel.add(bSCoinPanel);
+        bottomPanel.add(bScorePanel);
         bCardPanel.setOpaque(false);
+
 
         sidePanel.setPreferredSize(new Dimension(300, 880));
         sidePanel.setOpaque(false);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.insets = new Insets(0, 0, 40, 40);
+        gbc.insets = new Insets(30, 0, 30, 30);
         JButton shopButton = new JButton(new ImageIcon("images\\btns\\btn4.png"));
         shopButton.setOpaque(false);
         shopButton.setFocusPainted(false);
         shopButton.setBorderPainted(false);
         shopButton.setContentAreaFilled(false);
-        shopButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         shopButton.addActionListener(e -> switchPanels(storePanel));
         sidePanel.add(shopButton, gbc);
 
@@ -502,7 +478,6 @@ public class Main extends JFrame {
         coinButton.setFocusPainted(false);
         coinButton.setBorderPainted(false);
         coinButton.setContentAreaFilled(false);
-        coinButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         coinButton.addActionListener(e -> switchPanels(coinPanel));
         sidePanel.add(coinButton, gbc);
 
@@ -512,7 +487,6 @@ public class Main extends JFrame {
         reserveButton.setFocusPainted(false);
         reserveButton.setBorderPainted(false);
         reserveButton.setContentAreaFilled(false);
-        reserveButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         reserveButton.addActionListener(e -> switchPanels(reservePanel));
         sidePanel.add(reserveButton, gbc);
 
@@ -522,7 +496,6 @@ public class Main extends JFrame {
         turnButton.setFocusPainted(false);
         turnButton.setBorderPainted(false);
         turnButton.setContentAreaFilled(false);
-        turnButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         turnButton.addActionListener(e -> changeTurn());
         sidePanel.add(turnButton, gbc);
 
@@ -560,7 +533,6 @@ public class Main extends JFrame {
         backward.setFocusPainted(false);
         backward.setBorderPainted(false);
         backward.setContentAreaFilled(false);
-        backward.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         backward.addActionListener(e -> switchPanels(mainGamePanel));
         topPanel.add(prizePanel);
         topPanel.add(backward);
@@ -621,13 +593,13 @@ public class Main extends JFrame {
         Coin[] card21Coins = new Coin[]{null, new Coin(2, "white"), new Coin(2, "black"), new Coin(2, "blue"), null, null};
         Coin[] card22Coins = new Coin[]{null, new Coin(2, "white"), new Coin(2, "black"), new Coin(3, "blue"), null, null};
         Coin[] card23Coins = new Coin[]{null, new Coin(2, "white"), new Coin(3, "black"), new Coin(3, "blue"), null, null};
-        Coin[] card24Coins = new Coin[]{null, new Coin(4, "white"), new Coin(2, "black"), new Coin(3, "blue"), null, null};
+        Coin[] card24Coins = new Coin[]{null, new Coin(4, "white"), new Coin(2, "black"), new Coin(2, "blue"), null, null};
         Coin[] card25Coins = new Coin[]{null, new Coin(2, "white"), new Coin(2, "black"), new Coin(2, "blue"), new Coin(2, "red"), null};
         Coin[] card26Coins = new Coin[]{null, null, new Coin(3, "black"), new Coin(3, "blue"), new Coin(2, "red"), null};
         Coin[] card27Coins = new Coin[]{null, null, new Coin(2, "black"), new Coin(3, "blue"), new Coin(3, "red"), null};
         Coin[] card28Coins = new Coin[]{null, null, new Coin(2, "black"), new Coin(3, "blue"), new Coin(2, "red"), null};
         Coin[] card29Coins = new Coin[]{null, null, new Coin(2, "black"), new Coin(2, "blue"), new Coin(2, "red"), null};
-        Coin[] card210Coins = new Coin[]{null, null, new Coin(3, "black"), new Coin(2, "blue"), new Coin(1, "red"), null};
+        Coin[] card210Coins = new Coin[]{null, null, new Coin(3, "black"), new Coin(4, "blue"), new Coin(1, "red"), null};
         Coin[] card211Coins = new Coin[]{null, null, new Coin(3, "black"), new Coin(3, "blue"), new Coin(2, "red"), null};
         Coin[] card212Coins = new Coin[]{new Coin(1, "green"), null, new Coin(2, "black"), new Coin(3, "blue"), new Coin(2, "red"), null};
         Coin[] card213Coins = new Coin[]{new Coin(2, "green"), null, new Coin(2, "black"), null, new Coin(2, "red"), null};
@@ -740,7 +712,6 @@ public class Main extends JFrame {
         returnButton.setFocusPainted(false);
         returnButton.setBorderPainted(false);
         returnButton.setContentAreaFilled(false);
-        returnButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         returnButton.addActionListener(e -> switchPanels(mainGamePanel));
 
         JLabel[] labels = {labelBtn1, labelBtn2, labelBtn3, labelBtn4, labelBtn5};
@@ -775,30 +746,34 @@ public class Main extends JFrame {
                     if (slotCoins[4].getNum() == 4 && clickNum < 1) {
                         player1.takeCoin(2, "red");
                         clickNum++;
-                        slotCoins[4].num -= 2;
+                        slotCoins[4].setNum(slotCoins[4].getNum() - 2);
                         slotButton12.setEnabled(false);
                         slotButton22.setEnabled(false);
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                    } else {
-                        changeTurn();
-                        clickNum = 0;
+                        slotButton11.setEnabled(false);
+                        slotButton21.setEnabled(false);
+                        slotButton31.setEnabled(false);
+                        slotButton41.setEnabled(false);
+                        slotButton51.setEnabled(false);
                     }
                     break;
                 case -1:
                     if (slotCoins[4].getNum() == 4 && clickNum < 1) {
                         player2.takeCoin(2, "red");
-                        slotCoins[4].num -= 2;
+                        slotCoins[4].setNum(slotCoins[4].getNum() - 2);
                         clickNum++;
                         slotButton12.setEnabled(false);
                         slotButton22.setEnabled(false);
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                    } else {
-                        changeTurn();
-                        clickNum = 0;
+                        slotButton11.setEnabled(false);
+                        slotButton21.setEnabled(false);
+                        slotButton31.setEnabled(false);
+                        slotButton41.setEnabled(false);
+                        slotButton51.setEnabled(false);
                     }
                     break;
             }
@@ -808,31 +783,35 @@ public class Main extends JFrame {
                 case 1:
                     if (slotCoins[3].getNum() == 4 && clickNum < 1) {
                         player1.takeCoin(2, "blue");
-                        slotCoins[3].num -= 2;
+                        slotCoins[3].setNum(slotCoins[3].getNum() - 2);
                         clickNum++;
                         slotButton12.setEnabled(false);
                         slotButton22.setEnabled(false);
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                    } else {
-                        changeTurn();
-                        clickNum = 0;
+                        slotButton11.setEnabled(false);
+                        slotButton21.setEnabled(false);
+                        slotButton31.setEnabled(false);
+                        slotButton41.setEnabled(false);
+                        slotButton51.setEnabled(false);
                     }
                     break;
                 case -1:
                     if (slotCoins[3].getNum() == 4 && clickNum < 1) {
                         player2.takeCoin(2, "blue");
-                        slotCoins[3].num -= 2;
+                        slotCoins[3].setNum(slotCoins[3].getNum() - 2);
                         clickNum++;
                         slotButton12.setEnabled(false);
                         slotButton22.setEnabled(false);
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                    } else {
-                        changeTurn();
-                        clickNum = 0;
+                        slotButton11.setEnabled(false);
+                        slotButton21.setEnabled(false);
+                        slotButton31.setEnabled(false);
+                        slotButton41.setEnabled(false);
+                        slotButton51.setEnabled(false);
                     }
                     break;
             }
@@ -842,31 +821,35 @@ public class Main extends JFrame {
                 case 1:
                     if (slotCoins[0].getNum() == 4 && clickNum < 1) {
                         player1.takeCoin(2, "green");
-                        slotCoins[0].num -= 2;
+                        slotCoins[0].setNum(slotCoins[0].getNum() - 2);
                         clickNum++;
                         slotButton12.setEnabled(false);
                         slotButton22.setEnabled(false);
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                    } else {
-                        changeTurn();
-                        clickNum = 0;
+                        slotButton11.setEnabled(false);
+                        slotButton21.setEnabled(false);
+                        slotButton31.setEnabled(false);
+                        slotButton41.setEnabled(false);
+                        slotButton51.setEnabled(false);
                     }
                     break;
                 case -1:
                     if (slotCoins[0].getNum() == 4 && clickNum < 1) {
                         player2.takeCoin(2, "green");
-                        slotCoins[0].num -= 2;
+                        slotCoins[0].setNum(slotCoins[0].getNum() - 2);
                         clickNum++;
                         slotButton12.setEnabled(false);
                         slotButton22.setEnabled(false);
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                    } else {
-                        changeTurn();
-                        clickNum = 0;
+                        slotButton11.setEnabled(false);
+                        slotButton21.setEnabled(false);
+                        slotButton31.setEnabled(false);
+                        slotButton41.setEnabled(false);
+                        slotButton51.setEnabled(false);
                     }
                     break;
             }
@@ -876,36 +859,35 @@ public class Main extends JFrame {
                 case 1:
                     if (slotCoins[1].getNum() == 4 && clickNum < 1) {
                         player1.takeCoin(2, "white");
+                        slotCoins[1].setNum(slotCoins[1].getNum() - 2);
                         clickNum++;
-                        slotCoins[1].num -= 2;
                         slotButton12.setEnabled(false);
                         slotButton22.setEnabled(false);
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                    } else {
-                        changeTurn();
-                        clickNum = 0;
+                        slotButton11.setEnabled(false);
+                        slotButton21.setEnabled(false);
+                        slotButton31.setEnabled(false);
+                        slotButton41.setEnabled(false);
+                        slotButton51.setEnabled(false);
                     }
                     break;
                 case -1:
                     if (slotCoins[1].getNum() == 4 && clickNum < 1) {
                         player2.takeCoin(2, "white");
+                        slotCoins[1].setNum(slotCoins[1].getNum() - 2);
                         clickNum++;
-                        slotCoins[1].num -= 2;
                         slotButton12.setEnabled(false);
                         slotButton22.setEnabled(false);
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                        labelBtn1.setText("تعداد سکه های قرمز : ".concat(String.valueOf(slotCoins[4].getNum())));
-                        labelBtn2.setText("تعداد سکه های آبی : ".concat(String.valueOf(slotCoins[3].getNum())));
-                        labelBtn3.setText("تعداد سکه های سبز : ".concat(String.valueOf(slotCoins[0].getNum())));
-                        labelBtn4.setText("تعداد سکه های سفید : ".concat(String.valueOf(slotCoins[1].getNum())));
-                        labelBtn5.setText("تعداد سکه های سیاه : ".concat(String.valueOf(slotCoins[2].getNum())));
-                    } else {
-                        changeTurn();
-                        clickNum = 0;
+                        slotButton11.setEnabled(false);
+                        slotButton21.setEnabled(false);
+                        slotButton31.setEnabled(false);
+                        slotButton41.setEnabled(false);
+                        slotButton51.setEnabled(false);
                     }
                     break;
             }
@@ -915,36 +897,35 @@ public class Main extends JFrame {
                 case 1:
                     if (slotCoins[2].getNum() == 4 && clickNum < 1) {
                         player1.takeCoin(2, "black");
+                        slotCoins[2].setNum(slotCoins[2].getNum() - 2);
                         clickNum++;
-                        slotCoins[2].num -= 2;
                         slotButton12.setEnabled(false);
                         slotButton22.setEnabled(false);
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                    } else {
-                        changeTurn();
-                        clickNum = 0;
+                        slotButton11.setEnabled(false);
+                        slotButton21.setEnabled(false);
+                        slotButton31.setEnabled(false);
+                        slotButton41.setEnabled(false);
+                        slotButton51.setEnabled(false);
                     }
                     break;
                 case -1:
                     if (slotCoins[2].getNum() == 4 && clickNum < 1) {
                         player2.takeCoin(2, "black");
+                        slotCoins[2].setNum(slotCoins[2].getNum() - 2);
                         clickNum++;
-                        slotCoins[2].num -= 2;
                         slotButton12.setEnabled(false);
                         slotButton22.setEnabled(false);
                         slotButton32.setEnabled(false);
                         slotButton42.setEnabled(false);
                         slotButton52.setEnabled(false);
-                        labelBtn1.setText("تعداد سکه های قرمز : ".concat(String.valueOf(slotCoins[4].getNum())));
-                        labelBtn2.setText("تعداد سکه های آبی : ".concat(String.valueOf(slotCoins[3].getNum())));
-                        labelBtn3.setText("تعداد سکه های سبز : ".concat(String.valueOf(slotCoins[0].getNum())));
-                        labelBtn4.setText("تعداد سکه های سفید : ".concat(String.valueOf(slotCoins[1].getNum())));
-                        labelBtn5.setText("تعداد سکه های سیاه : ".concat(String.valueOf(slotCoins[2].getNum())));
-                    } else {
-                        changeTurn();
-                        clickNum = 0;
+                        slotButton11.setEnabled(false);
+                        slotButton21.setEnabled(false);
+                        slotButton31.setEnabled(false);
+                        slotButton41.setEnabled(false);
+                        slotButton51.setEnabled(false);
                     }
                     break;
             }
@@ -954,7 +935,7 @@ public class Main extends JFrame {
                 case 1:
                     if (slotCoins[4].getNum() > 0 && clickNum < 3) {
                         player1.takeCoin(1, "red");
-                        slotCoins[4].num--;
+                        slotCoins[4].setNum(slotCoins[4].getNum() - 1);
                         clickNum++;
                         slotButton12.setEnabled(false);
                         slotButton11.setEnabled(false);
@@ -962,15 +943,12 @@ public class Main extends JFrame {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
-                    } else {
-                        changeTurn();
-                        clickNum = 0;
                     }
                     break;
                 case -1:
                     if (slotCoins[4].getNum() > 0 && clickNum < 3) {
                         player2.takeCoin(1, "red");
-                        slotCoins[4].num--;
+                        slotCoins[4].setNum(slotCoins[4].getNum() - 1);
                         clickNum++;
                         slotButton12.setEnabled(false);
                         slotButton11.setEnabled(false);
@@ -978,9 +956,6 @@ public class Main extends JFrame {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
-                    } else {
-                        changeTurn();
-                        clickNum = 0;
                     }
                     break;
             }
@@ -990,7 +965,7 @@ public class Main extends JFrame {
                 case 1:
                     if (slotCoins[3].getNum() > 0 && clickNum < 3) {
                         player1.takeCoin(1, "blue");
-                        slotCoins[3].num--;
+                        slotCoins[3].setNum(slotCoins[3].getNum() - 1);
                         clickNum++;
                         slotButton22.setEnabled(false);
                         slotButton11.setEnabled(false);
@@ -998,15 +973,12 @@ public class Main extends JFrame {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
-                    } else {
-                        changeTurn();
-                        clickNum = 0;
                     }
                     break;
                 case -1:
                     if (slotCoins[3].getNum() > 0 && clickNum < 3) {
                         player2.takeCoin(1, "blue");
-                        slotCoins[3].num--;
+                        slotCoins[3].setNum(slotCoins[3].getNum() - 1);
                         clickNum++;
                         slotButton22.setEnabled(false);
                         slotButton11.setEnabled(false);
@@ -1014,9 +986,6 @@ public class Main extends JFrame {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
-                    } else {
-                        changeTurn();
-                        clickNum = 0;
                     }
                     break;
             }
@@ -1026,7 +995,7 @@ public class Main extends JFrame {
                 case 1:
                     if (slotCoins[0].getNum() > 0 && clickNum < 3) {
                         player1.takeCoin(1, "green");
-                        slotCoins[0].num--;
+                        slotCoins[0].setNum(slotCoins[0].getNum() - 1);
                         clickNum++;
                         slotButton32.setEnabled(false);
                         slotButton11.setEnabled(false);
@@ -1034,15 +1003,12 @@ public class Main extends JFrame {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
-                    } else {
-                        changeTurn();
-                        clickNum = 0;
                     }
                     break;
                 case -1:
                     if (slotCoins[0].getNum() > 0 && clickNum < 3) {
                         player2.takeCoin(1, "green");
-                        slotCoins[0].num--;
+                        slotCoins[0].setNum(slotCoins[0].getNum() - 1);
                         clickNum++;
                         slotButton32.setEnabled(false);
                         slotButton11.setEnabled(false);
@@ -1050,9 +1016,6 @@ public class Main extends JFrame {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
-                    } else {
-                        changeTurn();
-                        clickNum = 0;
                     }
                     break;
             }
@@ -1062,7 +1025,7 @@ public class Main extends JFrame {
                 case 1:
                     if (slotCoins[1].getNum() > 0 && clickNum < 3) {
                         player1.takeCoin(1, "white");
-                        slotCoins[1].num--;
+                        slotCoins[1].setNum(slotCoins[1].getNum() - 1);
                         clickNum++;
                         slotButton42.setEnabled(false);
                         slotButton11.setEnabled(false);
@@ -1070,15 +1033,12 @@ public class Main extends JFrame {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
-                    } else {
-                        changeTurn();
-                        clickNum = 0;
                     }
                     break;
                 case -1:
                     if (slotCoins[1].getNum() > 0 && clickNum < 3) {
                         player2.takeCoin(1, "white");
-                        slotCoins[1].num--;
+                        slotCoins[1].setNum(slotCoins[1].getNum() - 1);
                         clickNum++;
                         slotButton42.setEnabled(false);
                         slotButton11.setEnabled(false);
@@ -1086,9 +1046,6 @@ public class Main extends JFrame {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
-                    } else {
-                        changeTurn();
-                        clickNum = 0;
                     }
                     break;
             }
@@ -1098,7 +1055,7 @@ public class Main extends JFrame {
                 case 1:
                     if (slotCoins[2].getNum() > 0 && clickNum < 3) {
                         player1.takeCoin(1, "black");
-                        slotCoins[2].num--;
+                        slotCoins[2].setNum(slotCoins[2].getNum() - 1);
                         clickNum++;
                         slotButton52.setEnabled(false);
                         slotButton11.setEnabled(false);
@@ -1106,16 +1063,12 @@ public class Main extends JFrame {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
-
-                    } else {
-                        changeTurn();
-                        clickNum = 0;
                     }
                     break;
                 case -1:
                     if (slotCoins[2].getNum() > 0 && clickNum < 3) {
                         player2.takeCoin(1, "black");
-                        slotCoins[2].num--;
+                        slotCoins[2].setNum(slotCoins[2].getNum() - 1);
                         clickNum++;
                         slotButton52.setEnabled(false);
                         slotButton11.setEnabled(false);
@@ -1123,9 +1076,6 @@ public class Main extends JFrame {
                         slotButton31.setEnabled(false);
                         slotButton41.setEnabled(false);
                         slotButton51.setEnabled(false);
-                    } else {
-                        changeTurn();
-                        clickNum = 0;
                     }
                     break;
             }
@@ -1175,7 +1125,7 @@ public class Main extends JFrame {
     }
 
     private JPanel createReservePanel() {
-        JPanel resPanel = new JPanel(new BorderLayout()) {
+        JPanel resPanel = new JPanel(new GridBagLayout()) {
             @Override
             protected void paintComponent(Graphics b) {
                 super.paintComponent(b);
@@ -1183,14 +1133,12 @@ public class Main extends JFrame {
             }
         };
 
-        JPanel reserveContainer = new JPanel(new GridBagLayout());
-        reserveContainer.setOpaque(false);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.insets = new Insets(0, 0, 20, 0);
         player1res.setOpaque(false);
-        reserveContainer.add(player1res, gbc);
+        resPanel.add(player1res, gbc);
 
         gbc.gridy = 1;
         JButton returnButton = new JButton(new ImageIcon("images\\btns\\btn3.png"));
@@ -1198,20 +1146,19 @@ public class Main extends JFrame {
         returnButton.setFocusPainted(false);
         returnButton.setBorderPainted(false);
         returnButton.setContentAreaFilled(false);
-        returnButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         returnButton.addActionListener(e -> switchPanels(mainGamePanel));
-        reserveContainer.add(returnButton, gbc);
+        resPanel.add(returnButton, gbc);
 
         gbc.gridy = 2;
         player2res.setOpaque(false);
-        reserveContainer.add(player2res, gbc);
+        resPanel.add(player2res, gbc);
 
-        resPanel.add(reserveContainer, BorderLayout.CENTER);
         return resPanel;
     }
 
     private JPanel createWinnerPanel() {
         JPanel win = new JPanel(new GridBagLayout());
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridy = 0;
         gbc.gridx = 0;
@@ -1220,33 +1167,33 @@ public class Main extends JFrame {
         endGame.setFont(normalFont);
         endGame.setForeground(Color.RED);
         win.add(endGame, gbc);
-        if (player1.pScore > player2.pScore) {
-            gbc.gridy = 1;
-            JLabel Winner = new JLabel("بازیکن 1");
-            Winner.setFont(bigFont);
-            Winner.setForeground(Color.BLACK);
-            win.add(Winner, gbc);
-        } else if (player1.pScore < player2.pScore) {
-            gbc.gridy = 1;
-            JLabel Winner = new JLabel("بازیکن 2");
-            Winner.setFont(bigFont);
-            Winner.setForeground(Color.BLACK);
-            win.add(Winner, gbc);
-        } else{
-            if (player1.cardNum < player2.cardNum) {
-                gbc.gridy = 1;
-                JLabel Winner = new JLabel("بازیکن 1");
-                Winner.setFont(bigFont);
-                Winner.setForeground(Color.BLACK);
-                win.add(Winner, gbc);
-            } else if (player2.cardNum < player1.cardNum) {
-                gbc.gridy = 1;
-                JLabel Winner = new JLabel("بازیکن 2");
-                Winner.setFont(bigFont);
-                Winner.setForeground(Color.BLACK);
-                win.add(Winner, gbc);
+
+        gbc.gridy = 1;
+        JLabel Winner = new JLabel();
+        win.add(Winner, gbc);
+        Winner.setFont(bigFont);
+        Winner.setForeground(Color.BLACK);
+
+        gbc.gridy = 2;
+        JButton showBtn = new JButton("نمایش");
+        showBtn.setPreferredSize(new Dimension(150, 50));
+        showBtn.setFont(normalFont);
+        win.add(showBtn, gbc);
+        showBtn.addActionListener((ActionEvent e) -> {
+            if (player1.getPScore() > player2.getPScore()) {
+                Winner.setText("بازیکن 1");
+            } else if (player2.getPScore() > player1.getPScore()) {
+                Winner.setText("بازیکن 2");
+            } else {
+                if (player1.getCardNum() < player2.getCardNum()) {
+                    Winner.setText("بازیکن 1");
+                } else if (player2.getCardNum() < player1.getCardNum()) {
+                    Winner.setText("بازیکن 2");
+                }
             }
-        }
+            win.revalidate();
+            win.repaint();
+        });
         return win;
     }
 

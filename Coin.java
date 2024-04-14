@@ -1,6 +1,6 @@
 public class Coin {
     private String type;
-    public int num;
+    private int num;
 
     public Coin(int n, String name) {
         setNum(n);
@@ -9,10 +9,6 @@ public class Coin {
 
     public void setType(String name) {
         this.type = name;
-    }
-
-    public String getType() {
-        return this.type;
     }
 
     public void setNum(int n) {
