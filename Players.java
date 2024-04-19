@@ -1,3 +1,5 @@
+import javax.swing.*;
+
 public class Players {
     private int pScore;
     private int reserveCount;
@@ -52,7 +54,7 @@ public class Players {
     public int getCardNum() {
         return cardNum;
     }
-    
+
     public Coin[] getPlayerCoin() {
         return playerCoin;
     }
